@@ -7,9 +7,13 @@ interface Props {
 }
 const { callToAction, buttonText, companyName } = Astro.props;
 
-const imageURL = "headerbg.png"
+const bgImageURL = "headerbg.png"
+const btnImageURL = "moving.gif"
 const bgStyle = {
-  backgroundImage: `url('/images/${imageURL}')`,
+  backgroundImage: `url('/images/${bgImageURL}')`,
+};
+const btnStyle = {
+  background: `url('/images/${btnImageURL}')`,
 };
 const buttonHref = "https://wa.me/6586111941?text=I'm%20interested%20in%20your%20social%20media%20service"
 ---
@@ -24,7 +28,7 @@ const buttonHref = "https://wa.me/6586111941?text=I'm%20interested%20in%20your%2
   
       <h1 class="font-extrabold text-9xl tracking-wide mb-4 uppercase italic">{callToAction}</h1>
       <a href={buttonHref}>
-        <button class="purpleBG p-2 uppercase text-black font-bold">{buttonText}</button>
+        <button class="movingBG p-2 uppercase text-black font-bold" style={btnStyle}>{buttonText}</button>
       </a>
     </div>
 </header>
