@@ -1,0 +1,17 @@
+---
+interface Props {
+  text: string;
+  imageURL: string;
+}
+const { text = "", imageURL = "" } = Astro.props;
+const imageStyle = {
+  backgroundImage: `url(/logos/${imageURL})`,
+};
+---
+
+<div
+  class="p-20 bg-contain bg-center m-8 bg-gray-700 bg-blend-multiply rounded-full bg-no-repeat"
+  style={imageStyle}
+>
+  <h2 class="text-white uppercase text-2xl italic">{text}</h2>
+</div>

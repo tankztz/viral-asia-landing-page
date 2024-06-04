@@ -1,0 +1,69 @@
+---
+import PartnerCard from "./PartnerCard.astro";
+
+// Define props from Astro
+const { title, subTitle } = Astro.props;
+
+// Define TypeScript interface for props
+interface Props {
+  title: string;
+  subTitle?: string;
+}
+
+const offers = [
+    {
+        imageURL:"stayr.png",
+        offerText:"Stayr"
+    },
+    {
+        imageURL:"ibis.jpeg",
+        offerText:"Ibis"
+    },
+    {
+        imageURL:"klook.png",
+        offerText:"Klook"
+    },
+    {
+        imageURL:"cube.png",
+        offerText:"cube"
+    },
+    {
+        imageURL:"subway.png",
+        offerText:"subway"
+    },
+    {
+        imageURL:"crosscoop.png",
+        offerText:"cross coop"
+    },
+    {
+        imageURL:"spinelli.png",
+        offerText:"spinelli"
+    },
+    {
+        imageURL:"mox.png",
+        offerText:"mox"
+    },
+    {
+        imageURL:"socialchamber.jpeg",
+        offerText:"social chamber"
+    },
+    {
+        imageURL:"hotalcalmo.jpeg",
+        offerText:"hotal calmo"
+    }
+]
+---
+
+
+<section class="py-20 text-center">
+<h1 class="purpleText text-5xl italic uppercase">{title}</h1>
+<p class="text-white">{subTitle}</p>
+<div class="grid grid-cols-2 md:grid-cols-5 center">
+{
+    offers.map((offer)=>(
+        <PartnerCard imageURL={offer.imageURL} text={offer.offerText} />
+    ))
+}
+
+</div>
+</section>
