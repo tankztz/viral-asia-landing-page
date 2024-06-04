@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  linkText: string;
+  image1: string;
+  image2: string;
+  image3: string;
+}
+const { linkText, image1: imageOne, image2: imageTwo, image3: imageThree } = Astro.props;
+---
+
+<section class="py-12">
+  <div class="grid grid-cols-2 p-4">
+    <div>
+      <h1 class="text-white text-5xl italic max-w-xs purpleText pb-8">About Our Viral Accounts</h1>
+      <p class="text-white max-w-sm">
+        Viral Asia is a leading social media marketing company in Singapore that helps businesses grow their online presence. We have a team of experts who can help you create a viral marketing campaign that will get your brand noticed by millions of people.
+      </p>
+      <p class="text-white mt-8 underline">
+        <a href={linkText}>Learn more</a>
+      </p>
+    </div>
+    <div class="grid grid-cols-3">
+        <Image src={'/images/'+imageOne} 
+        width={300} 
+        height={300/1.5} 
+        alt="MyNextHome65" 
+        class="object-cover w-48"/>
+        <Image src={'/images/'+imageTwo}
+         width={300} height={600/1.5} alt="cupidSG" class="object-cover w-48 pt-8"/>
+        <Image src={'/images/'+imageThree}
+        width={300} height={600/1.5} alt="pin3" class="object-cover w-48 pt-16"/>
+    </div>
+  </div>
+</section>

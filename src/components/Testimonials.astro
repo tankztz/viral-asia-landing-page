@@ -1,0 +1,41 @@
+---
+const testimonials = [
+  {
+    profileURL: "socialchamber.png",
+    parterName: "Social Chamber",
+    quote:
+      "Social Chamber’s month on month revenue growth 5X after our vertical video release. ",
+  },
+  {
+    profileURL: "stayr.png",
+    parterName: "Stayr Pte Ltd",
+    quote:
+      "Top 3 in iOS most downloaded chart after our social media management within 1st month ",
+  },
+  {
+    profileURL: "familymookata.png",
+    parterName: "Family Mookata",
+    quote:
+      "Our partner Family Mookata run out of meat after out posting on IG and TikTok went over 1.2m views. ",
+  },
+];
+---
+<section class="py-12">
+  <h1 class="purpleText text-5xl italic uppercase text-center">Before and After</h1>
+  <div class="grid grid-cols-1 md:grid-cols-3">
+    {
+      testimonials.map((profile)=>(
+        <div class="m-4">
+          <img src={'/images/'+profile.profileURL} alt="Testimonial" class="object-cover w-full h-48"/>
+          <div class="purpleBG p-8">
+            <p class="pb-4 font-bold">
+              {profile.quote}
+              </p>
+              <small>{profile.parterName}</small>
+            </div>
+          </div>
+
+      ))
+    }
+  </div>
+</section>
