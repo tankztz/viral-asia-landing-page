@@ -7,11 +7,7 @@ const { text = "", imageURL = "" } = Astro.props;
 const imageStyle = {
   backgroundImage: `url(/logos/${imageURL})`,
 };
+const imageSrc = `/logos/${imageURL}`;
 ---
 
-<div
-  class="p-20 bg-contain bg-center m-8 bg-gray-700 bg-blend-multiply rounded-full bg-no-repeat"
-  style={imageStyle}
->
-  <h2 class="text-white uppercase text-2xl italic">{text}</h2>
-</div>
+<img src={imageSrc} alt="{{text}}" class="w-48 h-36 object-contain p-2 m-8 center" />
