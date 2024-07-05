@@ -23,11 +23,17 @@ const { linkText, image1: imageOne, image2: imageTwo, image3: imageThree } = Ast
     </div>
     <div class="grid grid-cols-3">
         <Image src={'/images/'+imageOne} 
-        width={300} height={600/1.5} alt="MyNextHome65" class="object-cover w-48 rounded-md" align="right"/>
+        width={300} height={600/1.5} alt="MyNextHome65" 
+        class="object-cover w-48 rounded-md transition duration-300 ease-in-out hover:scale-150" 
+        align="right"/>
         <Image src={'/images/'+imageTwo}
-        width={300} height={600/1.5} alt="cupidSG" class="object-cover w-48 mt-8 rounded-md" align="top"/>
+        width={300} height={600/1.5} alt="cupidSG" 
+        class="object-cover w-48 mt-8 rounded-md transition duration-300 ease-in-out hover:scale-150" 
+        align="top"/>
         <Image src={'/images/'+imageThree}
-        width={300} height={600/1.5} alt="pin3" class="object-cover w-48 mt-16 rounded-md" align="left"/>
+        width={300} height={600/1.5} alt="pin3" 
+        class="object-cover w-48 mt-16 rounded-md transition duration-300 ease-in-out hover:scale-150" 
+        align="left"/>
     </div>
   </div>
 </section>
