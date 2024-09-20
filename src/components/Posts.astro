@@ -1,17 +1,24 @@
 ---
 import { Image } from 'astro:assets';
 
-interface Props {
-  linkText: string;
-  image1: string;
-  image2: string;
-  image3: string;
-}
-const { linkText, image1: imageOne, image2: imageTwo, image3: imageThree } = Astro.props;
+// Import all images from the viral-posts folder
+const images = import.meta.glob('/public/viral-posts/*.{png,jpg,jpeg,gif}');
+
+// Create the posts list dynamically
+const posts = await Promise.all(
+  Object.entries(images).map(async ([path, importFunc]) => {
+    const imagePath = path.replace('/public', '');
+    const fileName = path.split('/').pop() || '';
+    const alt = fileName.split('.').slice(0, -1).join('.');
+    return { image: imagePath, alt };
+  })
+);
+
+const linkText = '/';
 ---
 
 <section class="py-12">
-  <div class="grid grid-cols-2 p-4">
+  <div class="grid grid-cols-[1fr,2fr] p-4 gap-8 pr-12">
     <div class="pl-4">
       <h1 class="text-white text-5xl italic max-w-xs purpleText pb-8">Our Viral Posts</h1>
       <p class="text-white max-w-sm">
@@ -22,16 +29,61 @@ const { linkText, image1: imageOne, image2: imageTwo, image3: imageThree } = Ast
         <a href={linkText}>Learn more</a>
       </p>
     </div>
-    <div class="grid grid-cols-3">
-        <Image src={'/images/'+imageOne} 
-        width={300} height={600/1.5} alt="MyNextHome65" 
-        class="object-cover w-48 rounded-md transition duration-300 ease-in-out hover:scale-150"/>
-        <Image src={'/images/'+imageTwo}
-        width={300} height={600/1.5} alt="cupidSG" 
-        class="object-cover w-48 mt-8 rounded-md transition duration-300 ease-in-out hover:scale-150"/>
-        <Image src={'/images/'+imageThree}
-        width={300} height={600/1.5} alt="pin3" 
-        class="object-cover w-48 mt-16 rounded-md transition duration-300 ease-in-out hover:scale-150"/>
+    <div class="overflow-hidden h-[400px] flex items-center relative">
+      <div class="fade-left"></div>
+      <div class="fade-right"></div>
+      <div class="flex animate-scroll hover:pause">
+        {[...posts, ...posts, ...posts].map((post) => (
+          <div class="flex-shrink-0 w-48 mx-2">
+            <Image 
+              src={post.image}
+              width={300}
+              height={400}
+              alt={post.alt}
+              class="object-cover w-full h-full rounded-md"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
+    width: 200%;
+  }
+
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
+
+  .fade-left, .fade-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .fade-left {
+    left: 0;
+    background: linear-gradient(to right, #141414, rgba(20,20,20,0));
+  }
+
+  .fade-right {
+    right: 0;
+    background: linear-gradient(to left, #141414, rgba(20,20,20,0));
+  }
+</style>
