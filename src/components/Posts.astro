@@ -37,26 +37,38 @@ const linkText = "/";
     <div class="overflow-hidden h-[400px] flex items-center relative">
       <div class="fade-left"></div>
       <div class="fade-right"></div>
-      <div class="flex scroll-container animate-scroll hover:pause">
-        {
-          [...posts, ...posts, ...posts].map((post) => (
-            <div class="flex-shrink-0 w-48 mx-2">
-              <Image
-                src={post.image}
-                width={300}
-                height={400}
-                alt={post.alt}
-                class="object-cover w-full h-full rounded-md"
-              />
-            </div>
-          ))
-        }
+      <div class="scroll-container">
+        <div class="flex animate-scroll hover:pause">
+          {
+            [...posts, ...posts, ...posts].map((post) => (
+              <div class="flex-shrink-0 w-48 mx-2">
+                <Image
+                  src={post.image}
+                  width={300}
+                  height={400}
+                  alt={post.alt}
+                  class="object-cover w-full h-full rounded-md"
+                />
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
+  .scroll-container {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .animate-scroll {
+    display: flex;
+    animation: scroll 40s linear infinite;
+  }
+
   @keyframes scroll {
     0% {
       transform: translateX(0);
@@ -64,10 +76,6 @@ const linkText = "/";
     100% {
       transform: translateX(calc(-250px * 7));
     }
-  }
-
-  .animate-scroll {
-    animation: scroll 40s linear infinite;
   }
 
   .hover\:pause:hover {
@@ -93,35 +101,24 @@ const linkText = "/";
     right: 0;
     background: linear-gradient(to left, #141414, rgba(20, 20, 20, 0));
   }
-
-  .scroll-container {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .scroll-container::-webkit-scrollbar {
-    display: none;
-  }
 </style>
 
 <script>
   const scrollContainer = document.querySelector('.scroll-container');
+  const scrollContent = scrollContainer.querySelector('.animate-scroll');
 
-  if (scrollContainer) {
+  if (scrollContainer && scrollContent) {
     let isManualScrolling = false;
     let autoScrollInterval;
 
     function startAutoScroll() {
       if (!isManualScrolling) {
-        scrollContainer.classList.add('animate-scroll');
+        scrollContent.classList.add('animate-scroll');
       }
     }
 
     function stopAutoScroll() {
-      scrollContainer.classList.remove('animate-scroll');
+      scrollContent.classList.remove('animate-scroll');
     }
 
     scrollContainer.addEventListener('wheel', (evt) => {
