@@ -37,7 +37,7 @@ const linkText = "/";
     <div class="overflow-hidden h-[400px] flex items-center relative">
       <div class="fade-left"></div>
       <div class="fade-right"></div>
-      <div class="flex scroll-container animate-scroll hover:pause">
+      <div class="flex animate-scroll hover:pause">
         {
           [...posts, ...posts, ...posts].map((post) => (
             <div class="flex-shrink-0 w-48 mx-2">
@@ -62,15 +62,16 @@ const linkText = "/";
       transform: translateX(0);
     }
     100% {
-      transform: translateX(calc(-250px * 7));
+      transform: translateX(-50%);
     }
   }
 
   .animate-scroll {
-    animation: scroll 40s linear infinite;
+    animation: scroll 20s linear infinite;
+    width: 200%;
   }
 
-  .hover\:pause:hover {
+  .animate-scroll:hover {
     animation-play-state: paused;
   }
 
@@ -93,83 +94,4 @@ const linkText = "/";
     right: 0;
     background: linear-gradient(to left, #141414, rgba(20, 20, 20, 0));
   }
-
-  .scroll-container {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .scroll-container::-webkit-scrollbar {
-    display: none;
-  }
 </style>
-
-<script>
-  const scrollContainer = document.querySelector('.scroll-container');
-
-  if (scrollContainer) {
-    let isManualScrolling = false;
-    let autoScrollInterval;
-
-    function startAutoScroll() {
-      if (!isManualScrolling) {
-        scrollContainer.classList.add('animate-scroll');
-      }
-    }
-
-    function stopAutoScroll() {
-      scrollContainer.classList.remove('animate-scroll');
-    }
-
-    scrollContainer.addEventListener('wheel', (evt) => {
-      evt.preventDefault();
-      stopAutoScroll();
-      scrollContainer.scrollLeft += evt.deltaY;
-      isManualScrolling = true;
-      clearTimeout(autoScrollInterval);
-      autoScrollInterval = setTimeout(() => {
-        isManualScrolling = false;
-        startAutoScroll();
-      }, 2000);
-    });
-
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    scrollContainer.addEventListener('mousedown', (e) => {
-      isDown = true;
-      startX = e.pageX - scrollContainer.offsetLeft;
-      scrollLeft = scrollContainer.scrollLeft;
-      stopAutoScroll();
-    });
-
-    scrollContainer.addEventListener('mouseleave', () => {
-      isDown = false;
-      startAutoScroll();
-    });
-
-    scrollContainer.addEventListener('mouseup', () => {
-      isDown = false;
-      isManualScrolling = true;
-      clearTimeout(autoScrollInterval);
-      autoScrollInterval = setTimeout(() => {
-        isManualScrolling = false;
-        startAutoScroll();
-      }, 2000);
-    });
-
-    scrollContainer.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - scrollContainer.offsetLeft;
-      const walk = (x - startX) * 2;
-      scrollContainer.scrollLeft = scrollLeft - walk;
-    });
-
-    startAutoScroll();
-  }
-</script>
