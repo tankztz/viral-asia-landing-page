@@ -33,7 +33,7 @@ const accounts = [
     <div class="grid grid-cols-3 gap-4">
       {
         accounts.map((account, index) => (
-          <div class="flex flex-col items-center">
+          <a href={account.link} target="_blank" rel="noopener noreferrer" class="flex flex-col items-center">
             <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100">
               <Image
                 src={"/company/" + account.image}
@@ -47,7 +47,7 @@ const accounts = [
             <p class="text-white text-sm text-center mt-1">
               {account.description}
             </p>
-          </div>
+          </a>
         ))
       }
     </div>
