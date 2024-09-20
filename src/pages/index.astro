@@ -1,29 +1,40 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import ClientsSection from '../components/ClientsSection.astro';
-import Posts from '../components/Posts.astro';
-import Offers from '../components/Offers.astro';
-import Testimonials from '../components/Testimonials.astro';
-import Footer from '../components/Footer.astro';
-import Accounts from '../components/Accounts.astro';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import ClientsSection from "../components/ClientsSection.astro";
+import Posts from "../components/Posts.astro";
+import Offers from "../components/Offers.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Footer from "../components/Footer.astro";
+import Accounts from "../components/Accounts.astro";
 ---
 
 <Layout title="Viral Asia">
-	<main>
-	<Header callToAction='Get VIRAL Today!', buttonText='Enquire Now' companyName='Viral Asia Pte Ltd'/>
-	
-	<Posts linkText="/"/>
-	<Accounts linkText="/" image1='SGDaily.png', image2='SGHomez.png', image3='SGCupid.png' />
-	<Offers />
-	<Testimonials />
-	
-	<ClientsSection
-    title="Our Viral Partners"
-    subTitle="Experience the reliability chosen by industry giants."
-  	/>
+  <main>
+    <Header
+      callToAction="Get VIRAL Today!"
+      ,
+      buttonText="Enquire Now"
+      companyName="Viral Asia Pte Ltd"
+    />
 
-	<Footer callToAction='Get in Touch Today' />
-	</main>
+    <Posts linkText="/" />
+    <Accounts
+      linkText="/"
+      image1="SGDaily.png"
+      ,
+      image2="SGHomez.png"
+      ,
+      image3="SGCupid.png"
+    />
+    <Offers />
+    <Testimonials />
+
+    <ClientsSection
+      title="Our Viral Partners"
+      subTitle="Experience the reliability chosen by industry giants."
+    />
+
+    <Footer callToAction="Get in Touch Today" />
+  </main>
 </Layout>
-

@@ -6,11 +6,12 @@ interface Props {
 }
 const { callToAction, buttonText, companyName } = Astro.props;
 
-const btnImageURL = "moving.gif"
+const btnImageURL = "moving.gif";
 const btnStyle = {
   background: `url('/images/${btnImageURL}')`,
 };
-const buttonHref = "https://wa.me/6586111941?text=I'm%20interested%20in%20your%20social%20media%20service"
+const buttonHref =
+  "https://wa.me/6586111941?text=I'm%20interested%20in%20your%20social%20media%20service";
 ---
 
 <header class="gradient-bg bg-gray-100 bg-blend-multiply">
@@ -20,9 +21,14 @@ const buttonHref = "https://wa.me/6586111941?text=I'm%20interested%20in%20your%2
     </ul>
   </nav>
   <div class="px-4 mx-auto max-w-screen-xl text-center py-36 text-white">
-    <h1 class="font-extrabold text-9xl tracking-wide mb-4 uppercase italic">{callToAction}</h1>
+    <h1 class="font-extrabold text-9xl tracking-wide mb-4 uppercase italic">
+      {callToAction}
+    </h1>
     <a href={buttonHref}>
-      <button class="movingBG mt-10 p-3 rounded-lg uppercase text-black font-bold" style={btnStyle}>{buttonText}</button>
+      <button
+        class="movingBG mt-10 p-3 rounded-lg uppercase text-black font-bold"
+        style={btnStyle}>{buttonText}</button
+      >
     </a>
   </div>
 </header>
