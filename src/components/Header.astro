@@ -21,7 +21,7 @@ const buttonHref =
     </ul>
   </nav>
   <div class="px-4 mx-auto max-w-screen-xl text-center py-36 text-white">
-    <h1 class="font-extrabold text-9xl tracking-wide mb-4 uppercase italic">
+    <h1 class="font-extrabold text-9xl tracking-wide mb-4 uppercase italic call-to-action-shadow">
       {callToAction}
     </h1>
     <a href={buttonHref}>
@@ -50,5 +50,9 @@ const buttonHref =
     100% {
       background-position: 0% 50%;
     }
+  }
+
+  .call-to-action-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 </style>
