@@ -2,33 +2,47 @@
 interface Props {
   callToAction: string;
   buttonText: string;
-  companyName:string;
-  //    logoImage:string;
+  companyName: string;
 }
 const { callToAction, buttonText, companyName } = Astro.props;
 
-const bgImageURL = "big_animated.gif"
 const btnImageURL = "moving.gif"
-const bgStyle = {
-  backgroundImage: `url('/images/${bgImageURL}')`,
-};
 const btnStyle = {
   background: `url('/images/${btnImageURL}')`,
 };
 const buttonHref = "https://wa.me/6586111941?text=I'm%20interested%20in%20your%20social%20media%20service"
 ---
 
-<header class="bg-cover bg-no-repeat bg-gray-100 bg-blend-multiply" style={bgStyle}>
+<header class="gradient-bg bg-gray-100 bg-blend-multiply">
   <nav class="text-white uppercase pt-8 p-4 font-bold2">
     <ul>
       <li>{companyName}</li>
     </ul>
   </nav>
   <div class="px-4 mx-auto max-w-screen-xl text-center py-36 text-white">
-  
     <h1 class="font-extrabold text-9xl tracking-wide mb-4 uppercase italic">{callToAction}</h1>
     <a href={buttonHref}>
       <button class="movingBG mt-10 p-3 rounded-lg uppercase text-black font-bold" style={btnStyle}>{buttonText}</button>
     </a>
   </div>
 </header>
+
+<style>
+  .gradient-bg {
+    background: linear-gradient(-45deg, #ffea00, #f9609b, #4902a7, #ae0000);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+</style>
