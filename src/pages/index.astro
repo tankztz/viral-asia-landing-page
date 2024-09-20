@@ -2,20 +2,19 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import ClientsSection from '../components/ClientsSection.astro';
-import About from '../components/About.astro';
+import Posts from '../components/Posts.astro';
 import Offers from '../components/Offers.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Footer from '../components/Footer.astro';
-import Posts from '../components/Posts.astro';
+import Accounts from '../components/Accounts.astro';
 ---
 
 <Layout title="Viral Asia">
 	<main>
-		<!-- Add Call To action, company Name and Button text2 -->
 	<Header callToAction='Get VIRAL Today!', buttonText='Enquire Now' companyName='Viral Asia'/>
 	
-	<About linkText="/" image1='smm4.png', image2='smm2.png', image3='smm3.png' />
-	<Posts linkText="/" image1='SGDaily.png', image2='SGHomez.png', image3='SGCupid.png' />
+	<Posts linkText="/" image1='smm4.png', image2='smm2.png', image3='smm3.png' />
+	<Accounts linkText="/" image1='SGDaily.png', image2='SGHomez.png', image3='SGCupid.png' />
 	<Offers />
 	<Testimonials />
 	
