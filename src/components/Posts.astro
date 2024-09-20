@@ -1,0 +1,49 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  linkText: string;
+  image1: string;
+  image2: string;
+  image3: string;
+}
+const { linkText, image1: imageOne, image2: imageTwo, image3: imageThree } = Astro.props;
+
+const accounts = [
+  { image: imageOne, name: "SGDaily", description: "Daily updates on Singapore life" },
+  { image: imageTwo, name: "SGHomez", description: "Singapore's top real estate platform" },
+  { image: imageThree, name: "SGCupid", description: "Singapore's leading dating community" }
+];
+---
+
+<section class="py-12">
+  <div class="grid grid-cols-2 p-4 pr-12 items-center">
+    <div class="grid grid-cols-3 gap-4">
+      {accounts.map((account, index) => (
+        <div class="flex flex-col items-center">
+          <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100">
+            <Image 
+              src={'/company/'+account.image} 
+              width={128} 
+              height={128} 
+              alt={account.name}
+              class="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 filter grayscale-[30%] opacity-90"
+            />
+          </div>
+          <h3 class="text-white text-lg font-bold mt-2">{account.name}</h3>
+          <p class="text-white text-sm text-center mt-1">{account.description}</p>
+        </div>
+      ))}
+    </div>
+    <div class="pl-4 text-right">
+      <h1 class="text-white text-5xl italic max-w-xs purpleText pb-8 ml-auto">About Our Viral Accounts</h1>
+      <p class="text-white max-w-sm ml-auto">
+        As a Singapore grown company, we understand the Singapore social media landscape and our unique culture. 
+        Our experts can help you create a viral marketing campaign that will get your brand noticed by millions of people.
+      </p>
+      <p class="text-white mt-8 underline">
+        <a href={linkText}>Learn more</a>
+      </p>
+    </div>
+  </div>
+</section>
