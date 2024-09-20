@@ -3,32 +3,27 @@ import { Image } from "astro:assets";
 
 interface Props {
   linkText: string;
-  image1: string;
-  image2: string;
-  image3: string;
 }
-const {
-  linkText,
-  image1: imageOne,
-  image2: imageTwo,
-  image3: imageThree,
-} = Astro.props;
+const { linkText } = Astro.props;
 
 const accounts = [
   {
-    image: imageOne,
+    image: "SGDaily.png",
     name: "SGDaily",
     description: "Daily updates on Singapore life",
+    link: "https://www.tiktok.com/@thesgdaily",
   },
   {
-    image: imageTwo,
+    image: "SGHomez.png",
     name: "SGHomez",
     description: "Singapore's top real estate platform",
+    link: "https://www.tiktok.com/@thesghomez",
   },
   {
-    image: imageThree,
+    image: "SGCupid.png",
     name: "SGCupid",
     description: "Singapore's leading dating community",
+    link: "https://www.tiktok.com/@sgcupid",
   },
 ];
 ---
