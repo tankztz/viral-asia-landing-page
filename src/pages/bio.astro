@@ -1,0 +1,24 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LinkTree from "../components/LinkTree.astro";
+
+const from = Astro.url.searchParams.get("from");
+const account = from || "all";
+const title =
+  account !== "all"
+    ? `${account.toUpperCase()} - LinkTree`
+    : "Our Viral Accounts";
+---
+
+<Layout title={title}>
+  <main class="min-h-screen bg-gradient-to-b from-purple-600 to-blue-600 py-12">
+    <div class="flex justify-center mb-8">
+      <img
+        src="/company/ViralAsia.png"
+        alt="ViralAsia Logo"
+        class="w-32 h-auto"
+      />
+    </div>
+    <LinkTree account={account} />
+  </main>
+</Layout>

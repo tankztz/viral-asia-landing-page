@@ -1,0 +1,101 @@
+---
+import { Image } from "astro:assets";
+
+const allAccounts = [
+  {
+    image: "SGDaily.png",
+    name: "SGDaily",
+    description: "Daily updates on Singapore life",
+    link: "https://www.tiktok.com/@thesgdaily",
+    id: "sgdaily",
+  },
+  {
+    image: "SGDaily.png",
+    name: "SGDaily",
+    description: "Daily updates on Singapore life",
+    link: "https://www.tiktok.com/@thesgdaily",
+    id: "sgdaily",
+  },
+  {
+    image: "SGHomez.png",
+    name: "SGHomez",
+    description: "Singapore's top real estate platform",
+    link: "https://www.tiktok.com/@thesghomez",
+    id: "sghomez",
+  },
+  {
+    image: "SGCupid.png",
+    name: "SGCupid",
+    description: "Singapore's leading dating community",
+    link: "https://www.tiktok.com/@sgcupid",
+    id: "sgcupid",
+  },
+];
+---
+
+<div
+  id="linkTree"
+  class="max-w-md mx-auto p-6 bg-gray-100 rounded-lg shadow-md"
+>
+  <h1 id="linkTreeTitle" class="text-3xl font-bold text-center mb-6">
+    Our Viral Accounts
+  </h1>
+  <div id="accountList" class="space-y-4">
+    {
+      allAccounts.map((account) => (
+        <a
+          href={account.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="account-item block bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-300 ease-in-out"
+          data-id={account.id}
+        >
+          <div class="flex items-center">
+            <div class="w-16 h-16 rounded-full overflow-hidden mr-4">
+              <Image
+                src={`/company/${account.image}`}
+                width={64}
+                height={64}
+                alt={account.name}
+                class="object-cover w-full h-full"
+              />
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold">{account.name}</h2>
+              <p class="text-sm text-gray-600">{account.description}</p>
+            </div>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  function updateLinkTree() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const from = urlParams.get("from");
+    const linkTree = document.getElementById("linkTree");
+    const linkTreeTitle = document.getElementById("linkTreeTitle");
+    const accountItems = document.querySelectorAll(".account-item");
+
+    if (from && from !== "all") {
+      linkTreeTitle.textContent = from.toUpperCase();
+      accountItems.forEach((item) => {
+        if (item.dataset.id !== from) {
+          item.style.display = "none";
+        } else {
+          item.style.display = "block";
+        }
+      });
+    } else {
+      linkTreeTitle.textContent = "Our Viral Accounts";
+      accountItems.forEach((item) => {
+        item.style.display = "block";
+      });
+    }
+  }
+
+  // Run the function when the page loads
+  document.addEventListener("DOMContentLoaded", updateLinkTree);
+</script>
