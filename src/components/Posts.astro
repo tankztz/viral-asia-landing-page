@@ -1,30 +1,39 @@
 ---
 import { Image } from "astro:assets";
 
-// Import all images from the viral-posts folder
-const images = import.meta.glob("/public/viral-posts/*.{png,jpg,jpeg,gif}");
+const food_images = import.meta.glob("/public/viral-posts/food/*.{png,jpg,jpeg,gif}");
+const things_to_do_images = import.meta.glob("/public/viral-posts/things_to_do/*.{png,jpg,jpeg,gif}");
+const property_images = import.meta.glob("/public/viral-posts/property/*.{png,jpg,jpeg,gif}");
 
-// Create the posts list dynamically
-const posts = await Promise.all(
-  Object.entries(images).map(async ([path, importFunc]) => {
-    const imagePath = path.replace("/public", "");
-    const fileName = path.split("/").pop() || "";
-    const alt = fileName.split(".").slice(0, -1).join(".");
-    return { image: imagePath, alt };
-  }),
-);
+// Function to process images for a given category
+async function processImages(images: Record<string, () => Promise<unknown>>) {
+  return Promise.all(
+    Object.entries(images).map(async ([path]) => {
+      const imagePath = path.replace("/public", "");
+      const fileName = path.split("/").pop() || "";
+      const alt = fileName.split(".").slice(0, -1).join(".");
+      return { image: imagePath, alt };
+    })
+  );
+}
+
+// Create the posts list dynamically for each category
+const posts_food = await processImages(food_images);
+const posts_things_to_do = await processImages(things_to_do_images);
+const posts_property = await processImages(property_images);
 
 const linkText = "https://www.tiktok.com/@thesgdaily";
 ---
 
 <section class="py-12">
-  <div class="grid grid-cols-[1fr,2fr] p-4 gap-8 pr-12">
+  <!-- First section -->
+  <div class="grid grid-cols-1 md:grid-cols-[1fr,2fr] p-4 gap-8 md:pr-12">
     <div class="pl-4">
-      <h1 class="text-white text-5xl italic max-w-xs purpleText pb-8">
+      <h1 class="text-white text-4xl md:text-5xl italic max-w-xs purpleText pb-8">
         Our Viral Posts
       </h1>
       <p class="text-white max-w-sm">
-        Viral Asia is a leading social media marketing company in Singapore that
+        Viral Asia Pte Ltd is a leading social media marketing company in Singapore that
         helps businesses grow their online presence. Our content is tailor-made
         for the Singapore market, delivering high engagement with over 100,000
         view post every month, helping your brand reach a vibrant and active
@@ -34,13 +43,107 @@ const linkText = "https://www.tiktok.com/@thesgdaily";
         <a href={linkText}>Learn more in TikTok</a>
       </p>
     </div>
-    <div class="overflow-hidden h-[400px] flex items-center relative">
+    <div class="overflow-hidden h-[400px] flex items-center relative mt-8 md:mt-0">
       <div class="fade-left"></div>
       <div class="fade-right"></div>
       <div class="scroll-container">
         <div class="flex animate-scroll hover:pause">
           {
-            [...posts, ...posts, ...posts].map((post) => (
+            [...posts_food, ...posts_food, ...posts_food].map((post) => (
+              <div class="flex-shrink-0 w-48 mx-2">
+                <Image
+                  src={post.image}
+                  width={300}
+                  height={400}
+                  alt={post.alt}
+                  class="object-cover w-full h-full rounded-md"
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second section -->
+  <div class="grid grid-cols-1 md:grid-cols-[2fr,1fr] p-4 gap-8 md:pl-12 mt-12 md:mt-24">
+    <div class="overflow-hidden h-[400px] flex items-center relative order-last md:order-first">
+      <div class="fade-left"></div>
+      <div class="fade-right"></div>
+      <div class="scroll-container">
+        <div class="flex animate-scroll hover:pause">
+          {
+            [...posts_things_to_do, ...posts_things_to_do, ...posts_things_to_do].map((post) => (
+              <div class="flex-shrink-0 w-48 mx-2">
+                <Image
+                  src={post.image}
+                  width={300}
+                  height={400}
+                  alt={post.alt}
+                  class="object-cover w-full h-full rounded-md"
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+    <div class="pr-4 text-right">
+      <h2 class="text-white text-3xl md:text-4xl italic purpleText pb-4 ml-auto">Diverse Content for Every Business</h2>
+      <p class="text-white ml-auto mb-4">
+        We have content for all types of businesses, from food to property,
+        lifestyle to dating, and more! Our versatile team creates engaging posts for:
+      </p>
+      <ul class="text-white list-none ml-auto space-y-2">
+        <li>🍽️ Restaurants and food delivery services</li>
+        <li>🏠 Home renovation and properties</li>
+        <li>💑 Dating and relationship</li>
+        <li>✈️ Attractions and tourism boards</li>
+      </ul>
+      <p class="text-white mt-4">
+        No matter your industry, we tailor our content to resonate with your target audience,
+        boost engagement, and drive results for your business in the Singapore market.
+      </p>
+      <p class="text-white mt-8 underline">
+        <a href={linkText}>Explore our content on TikTok</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Third section (if needed) -->
+  <div class="grid grid-cols-1 md:grid-cols-[1fr,2fr] p-4 gap-8 md:pr-12 mt-12 md:mt-24">
+    <div class="pl-4">
+      <h2 class="text-white text-3xl md:text-4xl italic purpleText pb-4">Versatile Content Formats</h2>
+      <p class="text-white mb-4">
+        We offer a wide range of content formats to suit your marketing needs and target audience preferences:
+      </p>
+      <ul class="text-white list-none space-y-2">
+        <li>📏 Long and short-form videos</li>
+        <li>🌏 Content in both English and Chinese</li>
+        <li>📱 Tailored for various platforms:</li>
+      </ul>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <span class="text-white">• YouTube</span>
+        <span class="text-white">• TikTok</span>
+        <span class="text-white">• Xiaohongshu (小红书)</span>
+        <span class="text-white">• Instagram</span>
+      </div>
+      <p class="text-white mt-4">
+        Our multi-platform approach ensures your brand reaches the widest possible audience across Singapore's diverse social media landscape.
+      </p>
+
+      <p class="text-white mt-8 underline">
+        <a href={linkText}>Learn more in TikTok</a>
+      </p>
+    </div>
+    <div class="overflow-hidden h-[400px] flex items-center relative mt-8 md:mt-0">
+      <div class="fade-left"></div>
+      <div class="fade-right"></div>
+      <div class="scroll-container">
+        <div class="flex animate-scroll hover:pause">
+          {
+            [...posts_property, ...posts_property, ...posts_property].map((post) => (
               <div class="flex-shrink-0 w-48 mx-2">
                 <Image
                   src={post.image}
