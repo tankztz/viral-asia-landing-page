@@ -4,6 +4,7 @@ import { Image } from "astro:assets";
 const food_images = import.meta.glob("/public/viral-posts/food/*.{png,jpg,jpeg,gif}");
 const things_to_do_images = import.meta.glob("/public/viral-posts/things_to_do/*.{png,jpg,jpeg,gif}");
 const property_images = import.meta.glob("/public/viral-posts/property/*.{png,jpg,jpeg,gif}");
+const horizontal_images = import.meta.glob("/public/viral-posts/horizontal/*.{png,jpg,jpeg,gif}");
 
 // Function to process images for a given category
 async function processImages(images: Record<string, () => Promise<unknown>>) {
@@ -21,6 +22,7 @@ async function processImages(images: Record<string, () => Promise<unknown>>) {
 const posts_food = await processImages(food_images);
 const posts_things_to_do = await processImages(things_to_do_images);
 const posts_property = await processImages(property_images);
+const posts_horizontal = await processImages(horizontal_images);
 
 const linkText = "https://www.tiktok.com/@thesgdaily";
 ---
@@ -144,11 +146,11 @@ const linkText = "https://www.tiktok.com/@thesgdaily";
         <div class="flex animate-scroll hover:pause">
           {
             [...posts_property, ...posts_property, ...posts_property].map((post) => (
-              <div class="flex-shrink-0 w-48 mx-2">
+              <div class={`flex-shrink-0 mx-2 ${post.image.includes('horizontal') ? 'h-72' : 'w-48'}`}>
                 <Image
                   src={post.image}
-                  width={300}
-                  height={400}
+                  width={post.image.includes('horizontal') ? 640 : 300}
+                  height={post.image.includes('horizontal') ? 360 : 400}
                   alt={post.alt}
                   class="object-cover w-full h-full rounded-md"
                 />
@@ -159,6 +161,22 @@ const linkText = "https://www.tiktok.com/@thesgdaily";
       </div>
     </div>
   </div>
+
+  <!-- Section for horizontal videos, removeing, too ugly-->
+  <!-- <div class="grid grid-cols-3">
+    <div></div>
+    {posts_horizontal.slice(0, 2).map((post) => (
+      <div class="w-full aspect-video flex justify-center items-center">
+        <Image
+          src={post.image}
+          width={240}
+          height={135}
+          alt={post.alt}
+          class="object-cover w-2/3 h-2/3 rounded-md"
+        />
+      </div>
+    ))}
+  </div> -->
 </section>
 
 <style>
