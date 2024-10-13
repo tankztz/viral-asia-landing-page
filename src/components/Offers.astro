@@ -3,17 +3,18 @@ const offers = [
   {
     imageURL: "ad_posting.png",
     offerText: "VERTICAL video production",
-    tailwindClass: "w-[18rem] h-[28rem] bg-center"
+    tailwindClass: "w-full h-[28rem] bg-top"
   },
   {
     imageURL: "smm.png",
     offerText: "Managing your social media",
-    tailwindClass: "w-4/5 h-[28rem] bg-top" // Adjusted size here
+    tailwindClass: "w-full h-[28rem]",
+    bgSize: "contain" // Add this property
   },
   {
     imageURL: "influencer.png",
     offerText: "Influencer marketing",
-    tailwindClass: "w-2/3 h-[28rem] bg-top"
+    tailwindClass: "w-full h-[28rem] bg-top"
   },
 ];
 ---
@@ -26,7 +27,10 @@ const offers = [
       offers.map((offer) => (
         <div class="flex flex-col items-center bg-gradient-to-b from-purple-900 to-pink-900 rounded-lg p-6 shadow-lg">
           <h3 class="text-white uppercase text-3xl italic mb-8">{offer.offerText}</h3>
-          <div class={`${offer.tailwindClass} bg-cover rounded-md`} style={`background-image: url(/images/${offer.imageURL})`}></div>
+          <div 
+            class={`${offer.tailwindClass} bg-no-repeat bg-center rounded-md`}
+            style={`background-image: url(/images/${offer.imageURL}); background-size: ${offer.bgSize || 'cover'};`}
+          ></div>
         </div>
       ))
     }
