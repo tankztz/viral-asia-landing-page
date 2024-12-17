@@ -1,0 +1,71 @@
+---
+import { Image } from "astro:assets";
+---
+
+<section class="py-12 px-4 bg-gradient-to-br from-[#1a1a1a] to-[#2d1a4a]">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-8">
+    <div class="flex-1 mb-12 md:mb-0">
+      <h1 class="text-white italic mb-6">
+        <div class="block text-3xl">Singapore's Leading</div>
+        <div class="block text-6xl font-bold mt-2 md:mt-0 md:inline purpleText">TikTok Affiliate Partner</div>
+      </h1>
+      <p class="text-white text-lg mb-8">
+        From platforms, for businesses: We know what drives engagement and how to make your brand stand out through strategic TikTok partnerships.
+      </p>
+      <a 
+        href="https://wa.me/6586111941?text=I'm%20interested%20in%20TikTok%20affiliate%20marketing" 
+        class="inline-block bg-[#5514ff] text-white px-8 py-3 rounded-lg hover:bg-[#4010cc] transition-colors font-bold"
+      >
+        Start Earning Today
+      </a>
+    </div>
+    <div class="flex-1 flex justify-center items-center gap-8">
+      <Image
+        src="/company/ViralAsia.png"
+        alt="Viral Asia Logo"
+        width={200}
+        height={200}
+        class="w-32 md:w-40 animate-float"
+      />
+      <span class="text-white text-4xl">×</span>
+      <Image
+        src="/images/tiktok-logo.gif"
+        alt="TikTok Logo"
+        width={200}
+        height={200}
+        class="w-32 md:w-40 animate-pulse"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-float {
+    animation: float 0.5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+</style> 
