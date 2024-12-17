@@ -32,15 +32,20 @@ const content = [
     >
       {callToAction}
     </h1>
-    <div class="purpleBG grid grid-cols-1 md:grid-cols-3">
-      {
-        content.map((item) => (
-          <div class="p-12">
-            <h1 class="uppercase text-2xl italic">{item.heading}</h1>
-            <p>{item.info}</p>
-          </div>
-        ))
-      }
+    <div class="purpleBG">
+      <div class="grid grid-cols-1 md:grid-cols-3">
+        {
+          content.map((item) => (
+            <div class="p-12">
+              <h1 class="uppercase text-2xl italic">{item.heading}</h1>
+              <p>{item.info}</p>
+            </div>
+          ))
+        }
+      </div>
+      <div class="text-center text-black/80">
+        © 2025 VIRALASIA PTE LTD. ALL RIGHTS RESERVED.
+      </div>
     </div>
   </div>
 </footer>
