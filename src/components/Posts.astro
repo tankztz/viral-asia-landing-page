@@ -4,7 +4,28 @@ import { Image } from "astro:assets";
 const food_images = import.meta.glob("/public/viral-posts/food/*.{png,jpg,jpeg,gif}");
 const things_to_do_images = import.meta.glob("/public/viral-posts/things_to_do/*.{png,jpg,jpeg,gif}");
 const property_images = import.meta.glob("/public/viral-posts/property/*.{png,jpg,jpeg,gif}");
-const horizontal_images = import.meta.glob("/public/viral-posts/horizontal/*.{png,jpg,jpeg,gif}");
+
+// Horizontal images work differently, so we need to map them to the youtube links
+const horizontal_image_map: {
+  image: string; youtubeLink: string 
+}[] = [
+  {
+    image: "/viral-posts/horizontal/59JCT.jpg",
+    youtubeLink: "https://www.youtube.com/watch?v=-fMmrm7shjY"
+  },
+  {
+    image: "/viral-posts/horizontal/bali.png",
+    youtubeLink: "https://www.youtube.com/watch?v=FQXLzUmQsLM"
+  },
+  {
+    image: "/viral-posts/horizontal/intan.png",
+    youtubeLink: "https://www.youtube.com/watch?v=jtkM3z5l3xc"
+  },
+  {
+    image: "/viral-posts/horizontal/shophouse160.jpg",
+    youtubeLink: "https://www.youtube.com/watch?v=nbXoNcELyyI"
+  }
+];
 
 // Function to process images for a given category
 async function processImages(images: Record<string, () => Promise<unknown>>) {
@@ -22,7 +43,6 @@ async function processImages(images: Record<string, () => Promise<unknown>>) {
 const posts_food = await processImages(food_images);
 const posts_things_to_do = await processImages(things_to_do_images);
 const posts_property = await processImages(property_images);
-const posts_horizontal = await processImages(horizontal_images);
 
 const linkText = "https://www.tiktok.com/@thesgdaily";
 const link_to_enquire = "https://wa.me/6586111941?text=I'm%20interested%20in%20your%20social%20media%20service";
@@ -164,16 +184,18 @@ const link_to_enquire = "https://wa.me/6586111941?text=I'm%20interested%20in%20y
   <div class="grid grid-cols-1 md:grid-cols-6 mt-1">
     <div></div>
     <div></div>
-    {posts_horizontal.slice(0, 4).map((post) => (
-      <div class="flex justify-center items-center p-1">
-        <Image
-          src={post.image}
-          width={240}
-          height={135}
-          alt={post.alt}
-          class="object-cover w-3/4 h-auto rounded-md transition-transform duration-300 hover:scale-150"
-        />
-      </div>
+    {horizontal_image_map.slice(0, 4).map((post) => (
+      <a href={horizontal_image_map.find(link => link.image === post.image)?.youtubeLink} target="_blank" rel="noopener noreferrer">
+        <div class="flex justify-center items-center p-1">
+          <Image
+            src={post.image}
+            width={240}
+            height={135}
+            alt="horizontal video"
+            class="object-cover w-3/4 h-auto rounded-md transition-transform duration-300 hover:scale-150"
+          />
+        </div>
+      </a>
     ))}
   </div>
 </section>
