@@ -36,10 +36,8 @@ const link_to_enquire = "https://wa.me/6586111941?text=I'm%20interested%20in%20y
         Our Viral Posts
       </h1>
       <p class="text-white max-w-sm">
-        Viral Asia Pte Ltd is a leading social media marketing company in Singapore that
-        helps businesses grow their online presence. Our content is tailor-made
-        for the Singapore market, delivering high engagement with every post, helping
-        your brand reach a vibrant and active Singapore local audience.
+        Our content is tailor-made for the Singapore market, delivering 
+        high engagement with every post, helping your brand reach a vibrant and active Singapore local audience.
       </p>
       <p class="text-white mt-8 underline">
         <a href={link_to_enquire}>Enquire now</a>
@@ -163,16 +161,17 @@ const link_to_enquire = "https://wa.me/6586111941?text=I'm%20interested%20in%20y
   </div>
 
   <!-- Section for horizontal videos -->
-  <div class="grid grid-cols-1 md:grid-cols-3 mt-1">
+  <div class="grid grid-cols-1 md:grid-cols-6 mt-1">
     <div></div>
-    {posts_horizontal.slice(0, 2).map((post) => (
+    <div></div>
+    {posts_horizontal.slice(0, 4).map((post) => (
       <div class="flex justify-center items-center p-1">
         <Image
           src={post.image}
           width={240}
           height={135}
           alt={post.alt}
-          class="object-cover w-1/2 h-auto rounded-md transition-transform duration-300 hover:scale-150"
+          class="object-cover w-3/4 h-auto rounded-md transition-transform duration-300 hover:scale-150"
         />
       </div>
     ))}
