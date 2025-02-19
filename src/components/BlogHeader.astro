@@ -1,0 +1,78 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  showBackButton?: boolean;
+}
+
+const { title, subtitle, showBackButton = false } = Astro.props;
+---
+
+<header class="sticky top-0 z-50 bg-gradient-to-r from-[#2e1a67] via-[#2e1a67] to-purple-800 text-white transition-all duration-300" id="blog-header">
+  <div class="container mx-auto px-4 py-8 transition-all duration-300" id="header-content">
+    {showBackButton && (
+      <a href="/blog" class="inline-flex items-center text-gray-200 font-semibold mb-6 hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Blog
+      </a>
+    )}
+    <div class="flex items-center justify-between gap-8">
+      <div class="flex items-center gap-8">
+        <a href="/" class="flex-shrink-0">
+          <img 
+            src="/company/ViralAsia.png" 
+            alt="Viral Asia Logo" 
+            class="h-16 md:h-20 transition-all duration-300"
+            id="header-logo"
+          />
+        </a>
+        <div>
+          <h1 class="text-4xl font-bold text-white transition-all duration-300" id="header-title">{title}</h1>
+          {subtitle && <p class="mt-2 text-xl text-gray-200">{subtitle}</p>}
+        </div>
+      </div>
+      
+      <a href="https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service">
+        <button
+          class="movingBG p-3 rounded-lg uppercase text-black font-bold"
+          style={{background: `url('/images/moving.gif')`}}
+        >
+          Enquire Now
+        </button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('blog-header');
+  const headerContent = document.getElementById('header-content');
+  const headerTitle = document.getElementById('header-title');
+  const headerLogo = document.getElementById('header-logo');
+
+  if (header && headerContent && headerTitle && headerLogo) {
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        header.classList.add('shadow-lg');
+        headerContent.classList.add('py-4');
+        headerContent.classList.remove('py-8');
+        headerTitle.classList.add('text-2xl');
+        headerTitle.classList.remove('text-4xl');
+        headerLogo.classList.add('h-16');
+        headerLogo.classList.remove('h-20', 'md:h-24');
+      } else {
+        header.classList.remove('shadow-lg');
+        headerContent.classList.remove('py-4');
+        headerContent.classList.add('py-8');
+        headerTitle.classList.remove('text-2xl');
+        headerTitle.classList.add('text-4xl');
+        headerLogo.classList.remove('h-16');
+        headerLogo.classList.add('h-20', 'md:h-24');
+      }
+    });
+  }
+</script> 

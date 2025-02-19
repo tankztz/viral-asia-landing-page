@@ -3,6 +3,7 @@ import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "sanity:client";
 import Layout from "../../layouts/Layout.astro";
 import Footer from "../../components/Footer.astro";
+import BlogHeader from "../../components/BlogHeader.astro";
 
 const POSTS_QUERY = `*[
   _type == "post"
@@ -24,13 +25,11 @@ const posts = await sanityClient.fetch<SanityDocument[]>(POSTS_QUERY);
 ---
 
 <Layout title="Blog | Viral Asia">
-  <main>
-    <section class="bg-gradient-to-b from-purple-900 to-indigo-900 text-white py-20">
-      <div class="container mx-auto max-w-4xl px-4">
-        <h1 class="text-5xl font-bold text-center mb-6">Viral Asia Blog</h1>
-        <p class="text-xl text-center text-gray-200">Latest insights on TikTok marketing and viral strategies</p>
-      </div>
-    </section>
+  <main class="pt-0">
+    <BlogHeader 
+      title="Viral Asia Blog" 
+      subtitle="Latest insights on TikTok marketing and viral strategies" 
+    />
 
     <section class="py-16">
       <div class="container mx-auto max-w-4xl px-4">

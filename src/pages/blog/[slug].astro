@@ -6,6 +6,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import Footer from "../../components/Footer.astro";
+import BlogHeader from "../../components/BlogHeader.astro";
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   title,
@@ -35,27 +36,16 @@ const postMainImageUrl = post.mainImage?.asset?.url;
 ---
 
 <Layout title={`${post.title} | Viral Asia Blog`}>
-  <main>
-    <section class="bg-gradient-to-b from-purple-900 to-indigo-900 text-white py-20">
-      <div class="container mx-auto max-w-4xl px-4">
-        <div class="flex flex-col items-center">
-          <a href="/blog" class="text-gray-200 hover:text-white mb-8 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-            </svg>
-            Back to Blogs
-          </a>
-          <h1 class="text-4xl md:text-5xl font-bold text-center mb-6">{post.title}</h1>
-          <time class="text-gray-200">
-            {new Date(post.publishedAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </time>
-        </div>
-      </div>
-    </section>
+  <main class="pt-0">
+    <BlogHeader 
+      title={post.title}
+      subtitle={new Date(post.publishedAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })}
+      showBackButton={true}
+    />
 
     <article class="py-16">
       <div class="container mx-auto max-w-3xl px-4">
