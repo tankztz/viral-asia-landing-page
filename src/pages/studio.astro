@@ -1,0 +1,35 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Sanity Studio - Viral Asia">
+  <div id="sanity"></div>
+  <script>
+    import { defineConfig } from 'sanity';
+    import { deskTool } from 'sanity/desk';
+    import { visionTool } from '@sanity/vision';
+    import post from '../schemas/post';
+
+    const config = defineConfig({
+      projectId: '3an9f3n5',
+      dataset: 'production',
+      title: 'Viral Asia Blog',
+      apiVersion: '2024-03-19',
+      basePath: '/studio',
+      plugins: [deskTool(), visionTool()],
+      schema: {
+        types: [post],
+      },
+    });
+
+    window.addEventListener('load', async () => {
+      const { createClient } = await import('@sanity/client');
+      const { renderStudio } = await import('sanity');
+
+      renderStudio(
+        document.getElementById('sanity'),
+        config
+      );
+    });
+  </script>
+</Layout> 
