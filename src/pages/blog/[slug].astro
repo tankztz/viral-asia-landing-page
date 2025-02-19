@@ -47,20 +47,54 @@ const postMainImageUrl = post.mainImage?.asset?.url;
       showBackButton={true}
     />
 
-    <article class="bg-[#f0f0f0]py-16">
-      <div class="container mx-auto max-w-3xl px-4">
-        {postMainImageUrl && (
-          <div class="mb-12">
-            <img
-              src={postMainImageUrl}
-              alt={post.title}
-              class="w-full rounded-xl shadow-lg"
-              width="1200"
-              height="675"
-            />
+    <section class="bg-gradient-to-b from-[#2e1a67] to-[#f0f0f0] text-white py-20">
+      <div class="container mx-auto max-w-5xl px-4">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          {postMainImageUrl && (
+            <div class="order-2 md:order-1">
+              <img
+                src={postMainImageUrl}
+                alt={post.title}
+                class="w-full rounded-xl shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                width="1200"
+                height="675"
+              />
+            </div>
+          )}
+          <div class="order-1 md:order-2">
+            <div class="space-y-6">
+              <div class="flex items-center gap-4">
+                <img 
+                  src="/company/ViralAsia.png"
+                  alt="Author"
+                  class="w-12 h-12 rounded-full bg-white p-2"
+                />
+                <div>
+                  <div class="font-semibold">Viral Asia</div>
+                  <time class="text-sm text-gray-200">
+                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </time>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-purple-700 rounded-full text-sm">TikTok Marketing</span>
+                <span class="px-3 py-1 bg-purple-700 rounded-full text-sm">Social Media</span>
+              </div>
+              <p class="text-lg text-gray-200">
+                Discover the latest insights on TikTok marketing strategies and learn how to grow your brand's social media presence.
+              </p>
+            </div>
           </div>
-        )}
-        
+        </div>
+      </div>
+    </section>
+
+    <article class="bg-[#f0f0f0] py-16">
+      <div class="container mx-auto max-w-3xl px-4">
         <div class="prose prose-lg max-w-none">
           {Array.isArray(post.body) && <PortableText value={post.body} />}
         </div>
