@@ -10,14 +10,6 @@ const { title, subtitle, showBackButton = false } = Astro.props;
 
 <header class="sticky top-0 z-50 bg-gradient-to-r from-[#2e1a67] via-[#2e1a67] to-purple-800 text-white transition-all duration-300" id="blog-header">
   <div class="container mx-auto px-4 py-8 transition-all duration-300" id="header-content">
-    {showBackButton && (
-      <a href="/blog" class="inline-flex items-center text-gray-200 font-semibold mb-6 hover:text-white">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-        </svg>
-        Back to Blog
-      </a>
-    )}
     <div class="flex items-center justify-between gap-8">
       <div class="flex items-center gap-8">
         <a href="/" class="flex-shrink-0">
@@ -29,12 +21,20 @@ const { title, subtitle, showBackButton = false } = Astro.props;
           />
         </a>
         <div>
+          {showBackButton && (
+            <a href="/blog" class="inline-flex items-center text-gray-200 font-semibold mb-4 hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+              </svg>
+              Back to Blog
+            </a>
+          )}
           <h1 class="text-4xl font-bold text-white transition-all duration-300" id="header-title">{title}</h1>
           {subtitle && <p class="mt-2 text-xl text-gray-200">{subtitle}</p>}
         </div>
       </div>
       
-      <a href="https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service">
+      <a href="https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service" class="self-center">
         <button
           class="movingBG p-3 rounded-lg uppercase text-black font-bold"
           style={{background: `url('/images/moving.gif')`}}
