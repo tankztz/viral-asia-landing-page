@@ -1,35 +1,52 @@
----
-import Layout from "../layouts/Layout.astro";
----
+<html>
+  <head>
+    <title>Sanity Studio</title>
+    <!-- Make sure the page takes up full height -->
+    <style>
+      html, body, #sanity {
+        height: 100%;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sanity"></div>
+    <script>
+      import { defineConfig } from 'sanity';
+      import { deskTool } from 'sanity/desk';
+      import { visionTool } from '@sanity/vision';
+      import post from '../schemas/post';
 
-<Layout title="Sanity Studio - Viral Asia">
-  <div id="sanity"></div>
-  <script>
-    import { defineConfig } from 'sanity';
-    import { deskTool } from 'sanity/desk';
-    import { visionTool } from '@sanity/vision';
-    import post from '../schemas/post';
+      const config = defineConfig({
+        projectId: '3an9f3n5',
+        dataset: 'production',
+        title: 'Viral Asia Blog',
+        apiVersion: '2024-03-19',
+        basePath: '/studio',
+        plugins: [deskTool(), visionTool()],
+        schema: {
+          types: [post],
+        },
+      });
 
-    const config = defineConfig({
-      projectId: '3an9f3n5',
-      dataset: 'production',
-      title: 'Viral Asia Blog',
-      apiVersion: '2024-03-19',
-      basePath: '/studio',
-      plugins: [deskTool(), visionTool()],
-      schema: {
-        types: [post],
-      },
-    });
+      // Modified initialization code
+      const initSanity = async () => {
+        const { createClient } = await import('@sanity/client');
+        const { renderStudio } = await import('sanity');
 
-    window.addEventListener('load', async () => {
-      const { createClient } = await import('@sanity/client');
-      const { renderStudio } = await import('sanity');
+        try {
+          renderStudio(document.getElementById('sanity'), config);
+        } catch (error) {
+          console.error('Failed to initialize Sanity Studio:', error);
+        }
+      };
 
-      renderStudio(
-        document.getElementById('sanity'),
-        config
-      );
-    });
-  </script>
-</Layout> 
+      // Call initialization when the DOM is ready
+      if (document.readyState !== 'loading') {
+        initSanity();
+      } else {
+        document.addEventListener('DOMContentLoaded', initSanity);
+      }
+    </script>
+  </body>
+</html>
