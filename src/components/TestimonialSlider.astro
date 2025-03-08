@@ -1,0 +1,118 @@
+---
+const testimonialData = [
+  {
+    quote: "Working with this team has transformed our digital presence completely. Their strategic approach and creative solutions have exceeded our expectations.",
+    companyLogo: "/images/company1-logo.png",
+    signature: "John Smith",
+    position: "CEO, TechCorp",
+  },
+  {
+    quote: "The results we've seen since partnering with them have been phenomenal. Our engagement rates have skyrocketed.",
+    companyLogo: "/images/company2-logo.png",
+    signature: "Sarah Johnson",
+    position: "Marketing Director, InnovateCo",
+  },
+  {
+    quote: "Their team's dedication to excellence and innovative strategies have helped us reach new heights in our market.",
+    companyLogo: "/images/company3-logo.png",
+    signature: "Michael Chen",
+    position: "Founder, NextGen Solutions",
+  },
+  {
+    quote: "We've seen remarkable growth in our social media presence and customer engagement since working with them.",
+    companyLogo: "/images/company4-logo.png",
+    signature: "Emma Davis",
+    position: "CMO, GrowthWorks",
+  },
+  {
+    quote: "Their expertise in digital marketing and social media strategy is unmatched. They've been instrumental in our success.",
+    companyLogo: "/images/company5-logo.png",
+    signature: "David Wilson",
+    position: "Director, FutureTech",
+  },
+  {
+    quote: "The level of professionalism and results-driven approach has made them an invaluable partner in our growth journey.",
+    companyLogo: "/images/company6-logo.png",
+    signature: "Lisa Zhang",
+    position: "COO, GlobalReach",
+  },
+];
+---
+
+<style>
+  .testimonial-swiper {
+    position: relative;
+    padding: 0 40px;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #6B46C1 !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .swiper-button-next:after,
+  .swiper-button-prev:after {
+    font-size: 24px !important;
+  }
+
+  .swiper-button-disabled {
+    opacity: 0.35 !important;
+    cursor: not-allowed !important;
+  }
+</style>
+
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <h2 class="purpleText text-4xl italic uppercase text-center mb-12">
+      What Our Clients Say
+    </h2>
+    <div class="testimonial-swiper">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          {testimonialData.map((testimonial) => (
+            <div class="swiper-slide">
+              <div class="bg-white rounded-lg shadow-lg p-8 mx-4">
+                <div class="flex flex-col items-center">
+                  <img
+                    src={testimonial.companyLogo}
+                    alt="Company Logo"
+                    class="h-16 mb-6"
+                  />
+                  <blockquote class="text-lg text-gray-700 text-center mb-6">
+                    "{testimonial.quote}"
+                  </blockquote>
+                  <div class="text-center">
+                    <p class="font-semibold text-gray-900">{testimonial.signature}</p>
+                    <p class="text-sm text-gray-600">{testimonial.position}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/navigation';
+
+  // Initialize Swiper
+  new Swiper('.testimonial-swiper .swiper', {
+    modules: [Navigation],
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    spaceBetween: 30,
+    slidesPerView: 1,
+  });
+</script> 
