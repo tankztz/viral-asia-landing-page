@@ -10,6 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/react": "^4.2.1",
     "@astrojs/tailwind": "^5.1.0",
     "@sanity/astro": "^3.2.5",
     "@sanity/client": "^6.28.0",
@@ -22,6 +23,7 @@
     "react-is": "^19.0.0",
     "sanity": "^3.76.1",
     "styled-components": "^6.1.15",
+    "swiper": "^11.2.5",
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
