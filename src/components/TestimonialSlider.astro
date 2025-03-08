@@ -1,40 +1,40 @@
 ---
 const testimonialData = [
   {
-    quote: "Working with this team has transformed our digital presence completely. Their strategic approach and creative solutions have exceeded our expectations.",
-    companyLogo: "/images/company1-logo.png",
-    signature: "John Smith",
-    position: "CEO, TechCorp",
+    quote: "Working with Viral Asia has been great! Their passion for showcasing local businesses like ours is much appreciated. The feature they created for 87 Just Thai not only captured the essence of our restaurant but also resonated with our customers. We've received quite a few compliments from patrons who discovered us through Viral Asia's post.",
+    companyLogo: "/logos/3. 87 Just Thai.jpg",
+    signature: "Eric Tan",
+    position: "Director, 87 Just Thai Pte Ltd",
   },
   {
-    quote: "The results we've seen since partnering with them have been phenomenal. Our engagement rates have skyrocketed.",
-    companyLogo: "/images/company2-logo.png",
-    signature: "Sarah Johnson",
-    position: "Marketing Director, InnovateCo",
+    quote: "Partnering with Viral Asia has been an incredibly valuable decision for our business. As a B2B company, we needed a content marketing strategy that could not only raise brand awareness but also build meaningful connections with potential partners and clients. Viral Asia delivered exactly that.",
+    companyLogo: "/logos/16. Grow Public Relations.png",
+    signature: "Christel Goh",
+    position: "Director, GROW PUBLIC RELATIONS PTE LTD",
   },
   {
-    quote: "Their team's dedication to excellence and innovative strategies have helped us reach new heights in our market.",
-    companyLogo: "/images/company3-logo.png",
-    signature: "Michael Chen",
-    position: "Founder, NextGen Solutions",
+    quote: "Collaborating with Viral Asia has been a game-changer for our software business. As a B2B company, we needed a content marketing strategy that could effectively communicate the value of our solutions to our audience. Viral Asia has exceeded our expectations by creating insightful, targeted content.",
+    companyLogo: "/logos/17. Jigsawstack.jpg",
+    signature: "Yoeven D. Khemlani",
+    position: "CEO, JIGSAWSTACK PTE LTD",
   },
   {
-    quote: "We've seen remarkable growth in our social media presence and customer engagement since working with them.",
-    companyLogo: "/images/company4-logo.png",
-    signature: "Emma Davis",
-    position: "CMO, GrowthWorks",
+    quote: "Working with Viral Asia has been a game-changer for our business. Their team has a sharp understanding of market trends and knows how to create compelling content that drives results. Thanks to their expertise, we've seen noticeable improvements in brand awareness and customer engagement.",
+    companyLogo: "/logos/12. Nurture Studio.jpg",
+    signature: "Tianze Zhao",
+    position: "Director, NURTURE STUDIO PTE LTD",
   },
   {
-    quote: "Their expertise in digital marketing and social media strategy is unmatched. They've been instrumental in our success.",
-    companyLogo: "/images/company5-logo.png",
-    signature: "David Wilson",
-    position: "Director, FutureTech",
+    quote: "Viral Asia's marketing expertise has helped our beauty business reach new heights. Their strategic approach to content creation and social media management has significantly increased our brand visibility and customer engagement.",
+    companyLogo: "/logos/9. Shebella.jpeg",
+    signature: "Shebella Beauty",
+    position: "Beauty & Cosmetics",
   },
   {
-    quote: "The level of professionalism and results-driven approach has made them an invaluable partner in our growth journey.",
-    companyLogo: "/images/company6-logo.png",
-    signature: "Lisa Zhang",
-    position: "COO, GlobalReach",
+    quote: "Social Chamber's month on month revenue growth 5X after Viral Asia's vertical video release. Their attention to detail and strategic approach has made a significant impact on our marketing efforts.",
+    companyLogo: "/logos/1. The Social Chamber.png",
+    signature: "Travis Tay",
+    position: "Director, The Social Chamber",
   },
 ];
 ---
@@ -63,7 +63,7 @@ const testimonialData = [
   }
 </style>
 
-<section class="py-16 bg-gray-50">
+<section class="py-16">
   <div class="container mx-auto px-4">
     <h2 class="purpleText text-4xl italic uppercase text-center mb-12">
       What Our Clients Say
@@ -73,19 +73,21 @@ const testimonialData = [
         <div class="swiper-wrapper">
           {testimonialData.map((testimonial) => (
             <div class="swiper-slide">
-              <div class="bg-white rounded-lg shadow-lg p-8 mx-4">
+              <div class="bg-[#1a1a1a] rounded-lg shadow-lg p-8 mx-4 border border-[#333333]">
                 <div class="flex flex-col items-center">
-                  <img
-                    src={testimonial.companyLogo}
-                    alt="Company Logo"
-                    class="h-16 mb-6"
-                  />
-                  <blockquote class="text-lg text-gray-700 text-center mb-6">
+                  <div class="h-20 w-40 flex items-center justify-center mb-6">
+                    <img
+                      src={testimonial.companyLogo}
+                      alt={`${testimonial.signature} Logo`}
+                      class="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <blockquote class="text-lg text-white text-center mb-6">
                     "{testimonial.quote}"
                   </blockquote>
                   <div class="text-center">
-                    <p class="font-semibold text-gray-900">{testimonial.signature}</p>
-                    <p class="text-sm text-gray-600">{testimonial.position}</p>
+                    <p class="font-semibold text-white">{testimonial.signature}</p>
+                    <p class="text-sm text-gray-400">{testimonial.position}</p>
                   </div>
                 </div>
               </div>
