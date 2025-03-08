@@ -23,10 +23,14 @@
     "sanity": "^3.76.1",
     "sanity-plugin-webhooks-trigger": "^0.3.1",
     "styled-components": "^6.1.15",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "@rollup/rollup-linux-x64-gnu": "4.9.6"
   },
   "devDependencies": {
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1"
+  },
+  "overrides": {
+    "@rollup/rollup-linux-x64-gnu": "4.9.6"
   }
 }
