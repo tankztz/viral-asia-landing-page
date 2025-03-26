@@ -42,24 +42,35 @@ const testimonialData = [
 <style>
   .testimonial-swiper {
     position: relative;
-    padding: 0 40px;
+    padding: 0 80px;
   }
 
   .swiper-button-next,
   .swiper-button-prev {
-    color: #6B46C1 !important;
-    width: 40px !important;
-    height: 40px !important;
+    color: white !important;
+    width: 50px !important;
+    height: 50px !important;
+    background-color: #6B46C1;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background-color: #553C9A;
+    transform: scale(1.1);
   }
 
   .swiper-button-next:after,
   .swiper-button-prev:after {
     font-size: 24px !important;
+    font-weight: bold;
   }
 
   .swiper-button-disabled {
     opacity: 0.35 !important;
     cursor: not-allowed !important;
+    background-color: #4A5568 !important;
   }
 </style>
 
@@ -72,10 +83,10 @@ const testimonialData = [
       <div class="swiper">
         <div class="swiper-wrapper">
           {testimonialData.map((testimonial) => (
-            <div class="swiper-slide">
-              <div class="bg-[#1a1a1a] rounded-lg shadow-lg p-8 mx-4 border border-[#333333]">
+            <div class="swiper-slide px-8">
+              <div class="bg-[#1a1a1a] rounded-lg shadow-lg p-8 sm:p-10 mx-4 border border-[#333333]">
                 <div class="flex flex-col items-center">
-                  <div class="h-20 w-40 flex items-center justify-center mb-6">
+                  <div class="h-20 w-40 flex items-center justify-center mb-8">
                     <img
                       src={testimonial.companyLogo}
                       alt={`${testimonial.signature} Logo`}
