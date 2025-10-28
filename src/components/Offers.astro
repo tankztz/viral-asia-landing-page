@@ -7,6 +7,12 @@ const offers = [
     bgSize: "contain"
   },
   {
+    imageURL: "tahsh.png",
+    offerText: "HORIZONTAL video production",
+    tailwindClass: "w-full h-[28rem]",
+    bgSize: "contain"
+  },
+  {
     imageURL: "smm.png",
     offerText: "Managing your social media",
     tailwindClass: "w-full h-[28rem]",
@@ -29,13 +35,14 @@ const offers = [
 <section class="py-16 text-center">
   <h1 class="purpleText text-5xl italic uppercase mb-4">What we offer</h1>
   <p class="text-white text-xl mb-12">We offer a wide range of services to help your business grow</p>
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4 gap-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
     {
-      offers.map((offer) => (
-        <div class="flex flex-col items-center bg-gradient-to-b from-[#392F5A] to-[#20183A] rounded-lg p-6 shadow-lg">
-          <h3 class="text-white uppercase text-3xl italic mb-8">{offer.offerText}</h3>
+      offers.map((offer, index) => (
+        <div class="flex flex-col items-center bg-gradient-to-br from-[#4a3f7a] via-[#392F5A] to-[#20183A] rounded-xl p-8 shadow-2xl hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 border border-purple-500/20"
+          class:list={{ 'lg:col-start-1': index === 3 }}>
+          <h3 class="text-white uppercase text-3xl italic mb-8 font-bold text-center">{offer.offerText}</h3>
           <div 
-            class={`${offer.tailwindClass} bg-no-repeat bg-center rounded-md`}
+            class={`${offer.tailwindClass} bg-no-repeat bg-center rounded-lg overflow-hidden shadow-lg`}
             style={`background-image: url(/images/${offer.imageURL}); background-size: ${offer.bgSize || 'cover'};`}
           ></div>
         </div>
