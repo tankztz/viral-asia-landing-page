@@ -72,3 +72,4 @@ Do not configure staging to write to the Sanity `production` dataset.
 - [Current audit and risks](docs/AUDIT.md)
 - [Staging and Cloudflare workflow](docs/STAGING.md)
 - [Decoupling and redesign roadmap](docs/ROADMAP.md)
+- [Content baseline for the style refactor](docs/content/CONTENT-BASELINE.md)
