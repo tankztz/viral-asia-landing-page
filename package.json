@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:staging": "PUBLIC_SITE_ENV=staging astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "build:staging": "PUBLIC_SITE_ENV=staging astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

@@ -1,90 +1,74 @@
-# Viral Asia Landing Page
+# Viral Asia Website
 
-A modern Astro-based landing page for Viral Asia, a TikTok affiliate marketing partner specializing in viral content creation and social media marketing.
+Astro marketing site for [viralasia.co](https://viralasia.co).
 
-## 🚀 Project Structure
+The current production site is automatically deployed by Cloudflare from the
+`main` branch. Do not push experimental work directly to `main`.
 
-Inside of this Viral Asia Landing Page, you'll see the following folders and files:
+## Environments
 
-```text
-/
-├── public/
-│   ├── images/           # Static images and assets
-│   ├── logos/           # Company logos and brand assets
-│   ├── viral-posts/     # Sample viral content examples
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   ├── Accounts.astro
-│   │   ├── BlogHeader.astro
-│   │   ├── Card.astro
-│   │   ├── ClientsSection.astro
-│   │   ├── Footer.astro
-│   │   ├── Header.astro
-│   │   ├── ImageCard.astro
-│   │   ├── LinkTree.astro
-│   │   ├── Offers.astro
-│   │   ├── PartnerCard.astro
-│   │   ├── Posts.astro
-│   │   ├── Testimonials.astro
-│   │   ├── TestimonialSlider.astro
-│   │   └── TikTokAffiliate.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   ├── lib/
-│   │   └── sanity.ts     # Sanity CMS integration
-│   ├── pages/
-│   │   ├── bio.astro
-│   │   ├── blog/
-│   │   │   ├── [slug].astro
-│   │   │   └── index.astro
-│   │   ├── index.astro
-│   │   └── studio.astro
-│   └── schemas/
-│       └── [Sanity schemas]
-└── package.json
+| Environment | Git branch       | Purpose                                   |
+| ----------- | ---------------- | ----------------------------------------- |
+| Production  | `main`           | Live site at `viralasia.co`               |
+| Staging     | `staging`        | Review and test changes before production |
+| Local       | Any local branch | Development on your machine               |
+
+Cloudflare Pages exposes `CF_PAGES_BRANCH` during builds. Any Cloudflare branch
+preview other than `main` automatically receives `noindex, nofollow`, a
+disallowing `robots.txt`, and a visible staging banner.
+
+For local staging behavior, use `npm run dev:staging` or
+`npm run build:staging`.
+
+## Local Development
+
+Requirements:
+
+- Node.js 20
+- npm
+
+```bash
+npm ci
+npm run dev:staging
 ```
 
-## 🛠️ Tech Stack
+Production-equivalent build:
 
-- **Astro 4.1.1** - Static site generator
-- **React 19.0.0** - Component framework
-- **Tailwind CSS** - Utility-first CSS framework
-- **Sanity CMS** - Headless content management
-- **Swiper** - Touch slider component
-- **Styled Components** - CSS-in-JS styling
+```bash
+npm run build
+npm run preview
+```
 
-## 📄 Pages
+Staging build with search-indexing protection:
 
-- **Home** (`/`) - Main landing page with TikTok affiliate marketing content
-- **Bio** (`/bio`) - Team and company information
-- **Blog** (`/blog`) - Content marketing blog with dynamic posts
-- **Studio** (`/studio`) - Sanity CMS studio for content management
+```bash
+npm run build:staging
+npm run preview
+```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Project Boundaries
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- `src/pages` contains public routes.
+- `src/components` contains the current landing-page sections.
+- `public` contains static marketing assets and portfolio examples.
+- Sanity project `3an9f3n5`, dataset `production`, supplies blog content.
+- `viral-asia-blog` is a separate Sanity Studio project embedded in this
+  repository. It is not part of the root Astro build.
+- `/studio` is also currently bundled into the root Astro site. This duplicate
+  Studio integration should be removed during the decoupling phase.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Deployment Safety
 
-## 🧞 Commands
+1. Create changes on `staging` or a feature branch.
+2. Run `npm ci` and `npm run build:staging`.
+3. Push the non-`main` branch and review the Cloudflare preview.
+4. Merge to `main` only after approval. A merge to `main` deploys production.
 
-All commands are run from the root of the project, from a terminal:
+Do not attach `viralasia.co` or another production domain to a preview branch.
+Do not configure staging to write to the Sanity `production` dataset.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Documentation
 
-## 🎯 Features
-
-- **TikTok Affiliate Marketing** - Specialized landing page for TikTok partnerships
-- **Dynamic Blog System** - Content management with Sanity CMS
-- **Responsive Design** - Mobile-first approach with Tailwind CSS
-- **Testimonial Sliders** - Interactive client testimonials
-- **Viral Content Showcase** - Portfolio of successful campaigns
-- **Multi-page Architecture** - Bio, blog, and studio pages
+- [Current audit and risks](docs/AUDIT.md)
+- [Staging and Cloudflare workflow](docs/STAGING.md)
+- [Decoupling and redesign roadmap](docs/ROADMAP.md)

@@ -1,4 +1,6 @@
 ---
+import { isProduction, siteEnvironment } from "../config/environment";
+
 interface Props {
   title: string;
 }
@@ -23,13 +25,35 @@ const { title } = Astro.props;
       rel="stylesheet"
     />
     <meta name="generator" content={Astro.generator} />
+    {!isProduction && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
   </head>
   <body>
+    {
+      !isProduction && (
+        <aside class="staging-banner" role="status">
+          Staging preview: {siteEnvironment}
+        </aside>
+      )
+    }
     <slot />
   </body>
 </html>
 <style is:global>
+  .staging-banner {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    background: #facc15;
+    color: #18181b;
+    font:
+      700 0.75rem/1.25 system-ui,
+      sans-serif;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+  }
   section {
     background-color: #141414;
   }
