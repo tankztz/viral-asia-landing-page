@@ -417,16 +417,19 @@ const partners = [
       <blockquote>
         <span class="intro-quote-mark" aria-hidden="true">&ldquo;</span>
         <p class="intro-quote-copy">
-          <span class="quote-line quote-line-1">From platforms,</span>
-          <span class="quote-line quote-line-2">for businesses:</span>
-          <span class="quote-line quote-line-3">
-            we know what drives engagement
+          <span class="quote-line quote-context">
+            <span>From platforms,</span>
+            <span>for businesses:</span>
           </span>
-          <span class="quote-line quote-line-4">
-            and how to make your brand stand out
+          <span class="quote-line quote-capability">
+            we know what drives <strong>engagement</strong>
           </span>
-          <span class="quote-line quote-line-5">
-            through strategic TikTok partnerships.
+          <span class="quote-line quote-outcome">
+            <span class="quote-outcome-lead">and how to</span>
+            <span class="quote-value">make your brand stand out</span>
+          </span>
+          <span class="quote-line quote-method">
+            through <strong>strategic TikTok partnerships.</strong>
           </span>
         </p>
         <footer>
@@ -1272,46 +1275,72 @@ const partners = [
     will-change: transform, opacity;
   }
 
-  .quote-line-1 {
-    color: rgba(247, 245, 255, 0.48);
-    font-size: clamp(1.35rem, 2.8vw, 2.8rem);
-    font-weight: 650;
+  .quote-context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.28em;
+    color: rgba(247, 245, 255, 0.42);
+    font-size: clamp(1.1rem, 1.9vw, 1.75rem);
+    font-weight: 750;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .quote-capability {
+    margin-top: clamp(1rem, 2vw, 1.6rem);
+    color: rgba(247, 245, 255, 0.55);
+    font-size: clamp(1.45rem, 2.5vw, 2.5rem);
+    font-weight: 740;
     line-height: 1;
     letter-spacing: -0.055em;
   }
 
-  .quote-line-2 {
-    color: rgba(247, 245, 255, 0.62);
-    font-size: clamp(1.8rem, 3.7vw, 3.8rem);
-    font-weight: 720;
-    line-height: 0.96;
-    letter-spacing: -0.065em;
-  }
-
-  .quote-line-3 {
-    margin-top: clamp(0.6rem, 1.3vw, 1rem);
-    color: rgba(247, 245, 255, 0.76);
-    font-size: clamp(2.25rem, 4.7vw, 4.8rem);
-    font-weight: 790;
-    line-height: 0.92;
-    letter-spacing: -0.075em;
-  }
-
-  .quote-line-4 {
-    color: var(--ink);
-    font-size: clamp(2.65rem, 5.7vw, 5.9rem);
-    font-weight: 860;
-    line-height: 0.88;
-    letter-spacing: -0.085em;
-  }
-
-  .quote-line-5 {
+  .quote-capability strong {
+    display: block;
     color: var(--accent-2);
-    font-size: clamp(2.9rem, 6.4vw, 6.7rem);
+    font-size: clamp(4.4rem, 10vw, 10.2rem);
     font-weight: 950;
-    line-height: 0.86;
+    line-height: 0.78;
+    letter-spacing: -0.115em;
+    text-shadow: 0 20px 90px rgba(116, 82, 255, 0.34);
+    will-change: transform, opacity;
+  }
+
+  .quote-outcome {
+    margin-top: clamp(2rem, 4.5vw, 3.8rem);
+  }
+
+  .quote-outcome-lead {
+    display: block;
+    color: rgba(247, 245, 255, 0.46);
+    font-size: clamp(1.35rem, 2.5vw, 2.5rem);
+    font-weight: 740;
+    line-height: 1;
+    letter-spacing: -0.055em;
+  }
+
+  .quote-value {
+    display: block;
+    max-width: 1060px;
+    color: var(--ink);
+    font-size: clamp(3rem, 6.6vw, 6.8rem);
+    font-weight: 900;
+    line-height: 0.88;
     letter-spacing: -0.095em;
-    text-shadow: 0 20px 80px rgba(116, 82, 255, 0.24);
+  }
+
+  .quote-method {
+    margin-top: clamp(1.15rem, 2.2vw, 1.8rem);
+    color: rgba(247, 245, 255, 0.38);
+    font-size: clamp(1.25rem, 2.3vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.05em;
+  }
+
+  .quote-method strong {
+    color: rgba(184, 168, 255, 0.78);
+    font-weight: 850;
   }
 
   .intro footer {
@@ -1959,31 +1988,42 @@ const partners = [
       font-size: 6.8rem;
     }
 
-    .quote-line-1 {
-      font-size: clamp(1.15rem, 5.8vw, 1.8rem);
+    .quote-context {
+      font-size: clamp(1rem, 4.6vw, 1.3rem);
+      line-height: 1.05;
+    }
+
+    .quote-capability {
+      margin-top: 1rem;
+      font-size: clamp(1.25rem, 6vw, 1.7rem);
       line-height: 1;
     }
 
-    .quote-line-2 {
-      font-size: clamp(1.55rem, 7.8vw, 2.35rem);
-      line-height: 0.98;
+    .quote-capability strong {
+      margin-top: 0.12em;
+      font-size: clamp(3.25rem, 15.6vw, 4.4rem);
+      line-height: 0.8;
+      letter-spacing: -0.12em;
     }
 
-    .quote-line-3 {
-      margin-top: 0.65rem;
-      font-size: clamp(1.9rem, 9.6vw, 2.9rem);
-      line-height: 0.94;
+    .quote-outcome {
+      margin-top: 2rem;
     }
 
-    .quote-line-4 {
-      font-size: clamp(2.15rem, 10.8vw, 3.3rem);
-      line-height: 0.92;
+    .quote-outcome-lead {
+      font-size: clamp(1.2rem, 5.8vw, 1.65rem);
     }
 
-    .quote-line-5 {
-      font-size: clamp(2.35rem, 11.8vw, 3.65rem);
+    .quote-value {
+      font-size: clamp(2.55rem, 12.7vw, 3.8rem);
       line-height: 0.9;
-      letter-spacing: -0.085em;
+      letter-spacing: -0.095em;
+    }
+
+    .quote-method {
+      margin-top: 1.2rem;
+      font-size: clamp(1.1rem, 5.3vw, 1.5rem);
+      line-height: 1.06;
     }
 
     .intro footer {
@@ -2175,13 +2215,30 @@ const partners = [
         .from(
           quoteLines,
           {
-            yPercent: (index) => 45 + index * 10,
+            yPercent: 32,
             opacity: 0,
-            scale: (index) => 1 - index * 0.012,
-            duration: 0.88,
-            stagger: 0.085,
+            duration: 0.72,
+            stagger: 0.09,
           },
           0,
+        )
+        .from(
+          ".quote-value",
+          {
+            letterSpacing: "-0.16em",
+            duration: 1,
+          },
+          0.22,
+        )
+        .from(
+          ".quote-capability strong",
+          {
+            scale: 0.72,
+            opacity: 0,
+            duration: 0.95,
+            ease: "back.out(1.7)",
+          },
+          0.18,
         )
         .from(
           ".intro footer",
