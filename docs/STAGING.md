@@ -4,6 +4,8 @@
 
 - `main` is production and is automatically deployed by Cloudflare.
 - `staging` is the shared review branch.
+- The shared preview is
+  `https://staging.viral-asia-landing-page.pages.dev`.
 - Feature branches may also use Cloudflare branch previews.
 - Non-production Cloudflare branch builds automatically receive:
   - `noindex, nofollow`

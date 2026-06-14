@@ -7,11 +7,11 @@ The current production site is automatically deployed by Cloudflare from the
 
 ## Environments
 
-| Environment | Git branch       | Purpose                                   |
-| ----------- | ---------------- | ----------------------------------------- |
-| Production  | `main`           | Live site at `viralasia.co`               |
-| Staging     | `staging`        | Review and test changes before production |
-| Local       | Any local branch | Development on your machine               |
+| Environment | Git branch       | Purpose                                               |
+| ----------- | ---------------- | ----------------------------------------------------- |
+| Production  | `main`           | Live site at `viralasia.co`                           |
+| Staging     | `staging`        | Review at `staging.viral-asia-landing-page.pages.dev` |
+| Local       | Any local branch | Development on your machine                           |
 
 Cloudflare Pages exposes `CF_PAGES_BRANCH` during builds. Any Cloudflare branch
 preview other than `main` automatically receives `noindex, nofollow`, a
