@@ -329,11 +329,29 @@ const partners = [
       data-mobile-menu
     >
       <div class="mobile-menu-panel">
-        <a href="#work">Work</a>
-        <a href="#services">Services</a>
-        <a href="#proof">Proof</a>
-        <a href="/blog">Blog</a>
-        <a class="va-button" href={whatsappHref}>Enquire Now</a>
+        <div class="mobile-menu-top">
+          <span>Viral Asia</span>
+          <span>TikTok affiliate partner</span>
+        </div>
+        <a href="#work">
+          <span class="mobile-link-main">Work</span>
+          <span class="mobile-link-note">Campaign proof</span>
+        </a>
+        <a href="#services">
+          <span class="mobile-link-main">Services</span>
+          <span class="mobile-link-note">What we do</span>
+        </a>
+        <a href="#proof">
+          <span class="mobile-link-main">Proof</span>
+          <span class="mobile-link-note">Results</span>
+        </a>
+        <a href="/blog">
+          <span class="mobile-link-main">Blog</span>
+          <span class="mobile-link-note">Writing</span>
+        </a>
+        <a class="va-button mobile-menu-cta" href={whatsappHref}>
+          Enquire Now
+        </a>
       </div>
     </div>
 
@@ -376,10 +394,11 @@ const partners = [
 
     <section class="va-section intro reveal">
       <blockquote>
+        <span class="intro-quote-mark" aria-hidden="true">&ldquo;</span>
         <p>
-          &ldquo;From platforms, for businesses: we know what drives engagement
-          and how to make your brand stand out through strategic TikTok
-          partnerships.&rdquo;
+          <span>From the platforms,</span>
+          <span>for the brands.</span>
+          <span>We turn native attention into business demand.</span>
         </p>
         <footer>
           <strong>Toby Cai</strong>
@@ -793,7 +812,14 @@ const partners = [
     display: block;
     visibility: hidden;
     opacity: 0;
-    padding: 5.8rem 0.5rem 0;
+    padding: 5.7rem 0.5rem 0;
+    background:
+      radial-gradient(
+        circle at 78% 10%,
+        rgba(116, 84, 255, 0.18),
+        transparent 32%
+      ),
+      linear-gradient(180deg, rgba(5, 5, 8, 0.18), rgba(5, 5, 8, 0.7));
     pointer-events: none;
   }
 
@@ -803,46 +829,108 @@ const partners = [
 
   .mobile-menu-panel {
     display: grid;
-    gap: 0.5rem;
+    overflow: hidden;
     width: min(100%, 460px);
     margin: 0 auto;
-    padding: 0.75rem;
-    border: 1px solid var(--line);
-    border-radius: 28px;
-    background: rgba(12, 10, 17, 0.94);
-    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+    padding: 0.7rem;
+    border: 2px solid rgba(249, 242, 217, 0.88);
+    border-radius: 31px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 32%),
+      rgba(9, 8, 13, 0.96);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 34px 90px rgba(0, 0, 0, 0.52);
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
   }
 
-  .mobile-menu-panel a {
+  .mobile-menu-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 58px;
-    padding: 0 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.055);
-    color: var(--ink);
-    font-size: 1.2rem;
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    text-decoration: none;
-  }
-
-  .mobile-menu-panel a:not(.va-button)::after {
-    content: "Open";
-    color: var(--muted);
-    font-size: 0.74rem;
+    gap: 1rem;
+    padding: 0.65rem 0.72rem 0.85rem;
+    color: #f8f1d7;
+    font-size: 0.76rem;
     font-weight: 900;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .mobile-menu-panel .va-button {
+  .mobile-menu-top span:last-child {
+    max-width: 13ch;
+    color: rgba(248, 241, 215, 0.56);
+    font-size: 0.64rem;
+    line-height: 1.05;
+    text-align: right;
+  }
+
+  .mobile-menu-panel a {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 74px;
+    padding: 0.95rem 0.75rem 0.85rem;
+    border-top: 1px solid rgba(249, 242, 217, 0.16);
+    color: var(--ink);
+    letter-spacing: -0.04em;
+    text-decoration: none;
+    transition:
+      color 180ms ease,
+      padding 180ms ease,
+      background 180ms ease;
+  }
+
+  .mobile-menu-panel a:not(.mobile-menu-cta):hover {
+    padding-left: 1.05rem;
+    background: rgba(248, 241, 215, 0.045);
+    color: #f8f1d7;
+  }
+
+  .mobile-menu-panel a:not(.mobile-menu-cta):hover .mobile-link-note {
+    color: #f8f1d7;
+    transform: translateX(-0.15rem);
+  }
+
+  .mobile-link-main {
+    display: block;
+    color: #f3efff;
+    font-size: clamp(2rem, 11vw, 3.4rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.08em;
+  }
+
+  .mobile-link-note {
+    align-self: center;
+    color: rgba(248, 241, 215, 0.52);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.04em;
+    text-align: right;
+    text-transform: uppercase;
+    transition:
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .mobile-menu-panel .mobile-menu-cta {
+    display: inline-flex;
+    grid-template-columns: none;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
     width: 100%;
-    margin-top: 0.35rem;
+    margin-top: 0.7rem;
+    border-color: rgba(248, 241, 215, 0.72);
+    background: #f8f1d7;
+    color: #09080c;
+    font-size: 1rem;
+    box-shadow: none;
   }
 
   .va-button {
@@ -1041,44 +1129,73 @@ const partners = [
 
   .intro {
     padding-top: 0;
+    scroll-margin-top: 6rem;
   }
 
   .intro blockquote {
+    position: relative;
     margin: 0;
+    padding: clamp(2rem, 5vw, 4.4rem) 0 clamp(1.6rem, 4vw, 3rem);
+    border-top: 1px solid rgba(249, 242, 217, 0.2);
+    border-bottom: 1px solid rgba(249, 242, 217, 0.14);
+  }
+
+  .intro-quote-mark {
+    position: absolute;
+    top: clamp(0.35rem, 1.5vw, 1.1rem);
+    left: -0.08em;
+    color: rgba(248, 241, 215, 0.22);
+    font-size: clamp(5.5rem, 12vw, 12rem);
+    font-weight: 900;
+    line-height: 0.8;
+    letter-spacing: -0.1em;
   }
 
   .intro p {
-    max-width: 980px;
+    position: relative;
+    max-width: 1080px;
+    margin: 0;
     color: var(--ink);
-    font-size: clamp(2rem, 6vw, 5.4rem);
-    font-weight: 850;
-    line-height: 0.95;
-    letter-spacing: -0.075em;
+    font-size: clamp(2.5rem, 6.2vw, 6.2rem);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: -0.085em;
+    text-wrap: balance;
+  }
+
+  .intro p span {
+    display: block;
   }
 
   .intro footer {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 0.65rem 1rem;
-    margin-top: clamp(1.3rem, 3vw, 2rem);
+    gap: 1rem;
+    margin-top: clamp(1.5rem, 4vw, 2.6rem);
     color: var(--muted);
+  }
+
+  .intro footer::before {
+    content: "";
+    width: clamp(2.8rem, 7vw, 5.2rem);
+    height: 2px;
+    border-radius: 999px;
+    background: #f8f1d7;
+    opacity: 0.78;
   }
 
   .intro footer strong {
     color: var(--ink);
-    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-size: clamp(1rem, 2vw, 1.28rem);
     font-weight: 900;
     letter-spacing: -0.04em;
   }
 
   .intro footer span {
-    padding: 0.45rem 0.75rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.055);
-    font-size: 0.86rem;
-    font-weight: 800;
+    color: rgba(247, 245, 255, 0.48);
+    font-size: 0.88rem;
+    font-weight: 850;
+    letter-spacing: -0.01em;
   }
 
   .section-title {
@@ -1655,6 +1772,44 @@ const partners = [
 
     .mobile-menu-panel a {
       min-height: 54px;
+    }
+
+    .intro blockquote {
+      padding-top: 3.6rem;
+    }
+
+    .intro-quote-mark {
+      top: 0.7rem;
+      left: -0.02em;
+      font-size: 6.8rem;
+    }
+
+    .intro p {
+      font-size: clamp(2.05rem, 10.2vw, 3rem);
+      line-height: 0.98;
+      letter-spacing: -0.075em;
+    }
+
+    .intro footer {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      align-items: center;
+      gap: 0.18rem 0.85rem;
+    }
+
+    .intro footer::before {
+      grid-row: 1 / span 2;
+      width: 100%;
+    }
+
+    .intro footer strong,
+    .intro footer span {
+      grid-column: 2;
+    }
+
+    .intro footer span {
+      max-width: none;
+      line-height: 1.25;
     }
 
     .viral-row,
