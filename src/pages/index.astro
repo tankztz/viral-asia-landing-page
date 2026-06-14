@@ -645,6 +645,7 @@ const partners = [
       ),
       linear-gradient(180deg, #08070b 0%, #110d19 48%, #08070b 100%);
     color: var(--ink);
+    touch-action: pan-y pinch-zoom;
     font-family:
       ui-sans-serif,
       system-ui,
@@ -700,6 +701,7 @@ const partners = [
   .account-card,
   .viral-card,
   .video-strip a {
+    touch-action: manipulation;
     transition:
       transform 180ms ease,
       border-color 180ms ease,
@@ -2018,6 +2020,28 @@ const partners = [
     .result-card,
     .testimonial-card {
       border-radius: 22px;
+    }
+  }
+
+  @media (any-pointer: coarse) {
+    .hero-cta-wrap:hover .hero-cta-tip {
+      opacity: 0;
+      transform: translate(-50%, 0.45rem) scale(0.98);
+    }
+
+    .hero-cta-wrap:focus-within .hero-cta-tip {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+  }
+
+  @media (max-width: 560px) and (any-pointer: coarse) {
+    .hero-cta-wrap:hover .hero-cta-tip {
+      transform: translateY(0.45rem) scale(0.98);
+    }
+
+    .hero-cta-wrap:focus-within .hero-cta-tip {
+      transform: translateY(0) scale(1);
     }
   }
 </style>
