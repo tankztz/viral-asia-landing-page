@@ -375,10 +375,17 @@ const partners = [
     </section>
 
     <section class="va-section intro reveal">
-      <p>
-        From platforms, for businesses: we know what drives engagement and how
-        to make your brand stand out through strategic TikTok partnerships.
-      </p>
+      <blockquote>
+        <p>
+          &ldquo;From platforms, for businesses: we know what drives engagement
+          and how to make your brand stand out through strategic TikTok
+          partnerships.&rdquo;
+        </p>
+        <footer>
+          <strong>Toby Cai</strong>
+          <span>CEO and Founder of Viralasia</span>
+        </footer>
+      </blockquote>
     </section>
 
     <section class="va-section portfolio" id="work">
@@ -700,55 +707,83 @@ const partners = [
   .nav-menu-button {
     display: none;
     align-items: center;
-    gap: 0.7rem;
-    min-height: 44px;
-    padding: 0.34rem 0.42rem 0.34rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    gap: 0.72rem;
+    min-height: 38px;
+    padding: 0.34rem 0.85rem 0.34rem 0.95rem;
+    border: 2px solid rgba(249, 242, 217, 0.92);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--ink);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent),
+      rgba(8, 8, 9, 0.78);
+    color: #f8f1d7;
     font: inherit;
-    font-size: 0.9rem;
-    font-weight: 850;
+    font-size: 0.82rem;
+    font-weight: 800;
     letter-spacing: -0.02em;
     cursor: pointer;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 10px 30px rgba(0, 0, 0, 0.24);
   }
 
   .nav-menu-button i {
     position: relative;
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--accent);
+    display: block;
+    width: 31px;
+    height: 18px;
+    background: linear-gradient(#f8f1d7, #f8f1d7) center / 31px 2px no-repeat;
   }
 
   .nav-menu-button i::before,
   .nav-menu-button i::after {
     content: "";
     position: absolute;
-    width: 14px;
+    left: 0;
+    width: 31px;
     height: 2px;
     border-radius: 999px;
-    background: white;
-    transition: transform 180ms ease;
+    background: #f8f1d7;
+    transition:
+      transform 180ms ease,
+      background 180ms ease;
   }
 
   .nav-menu-button i::before {
-    transform: translateY(-4px);
+    top: 1px;
   }
 
   .nav-menu-button i::after {
-    transform: translateY(4px);
+    top: 15px;
+  }
+
+  .nav-menu-button:hover {
+    transform: translateY(-1px);
+    border-color: #fff8dc;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
+      rgba(18, 16, 24, 0.86);
+  }
+
+  .nav-menu-button[aria-expanded="true"] {
+    background: #f8f1d7;
+    color: #09080c;
+    border-color: #f8f1d7;
+  }
+
+  .nav-menu-button[aria-expanded="true"] i {
+    background: none;
   }
 
   .nav-menu-button[aria-expanded="true"] i::before {
+    top: 8px;
     transform: rotate(45deg);
+    background: #09080c;
   }
 
   .nav-menu-button[aria-expanded="true"] i::after {
+    top: 8px;
     transform: rotate(-45deg);
+    background: #09080c;
   }
 
   .va-site .mobile-menu {
@@ -1008,6 +1043,10 @@ const partners = [
     padding-top: 0;
   }
 
+  .intro blockquote {
+    margin: 0;
+  }
+
   .intro p {
     max-width: 980px;
     color: var(--ink);
@@ -1015,6 +1054,31 @@ const partners = [
     font-weight: 850;
     line-height: 0.95;
     letter-spacing: -0.075em;
+  }
+
+  .intro footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1rem;
+    margin-top: clamp(1.3rem, 3vw, 2rem);
+    color: var(--muted);
+  }
+
+  .intro footer strong {
+    color: var(--ink);
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+  }
+
+  .intro footer span {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055);
+    font-size: 0.86rem;
+    font-weight: 800;
   }
 
   .section-title {
@@ -1550,8 +1614,13 @@ const partners = [
       align-items: stretch;
     }
 
+    h1 {
+      font-size: clamp(4rem, 19vw, 6.25rem);
+      line-height: 0.9;
+    }
+
     .hero-lede {
-      margin-top: 1rem;
+      margin-top: 2rem;
     }
 
     .hero-actions .va-button {
