@@ -1,36 +1,1370 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Header from "../components/Header.astro";
-import ClientsSection from "../components/ClientsSection.astro";
-import Posts from "../components/Posts.astro";
-import Offers from "../components/Offers.astro";
-import Testimonials from "../components/Testimonials.astro";
-import TestimonialSlider from "../components/TestimonialSlider.astro";
-import Footer from "../components/Footer.astro";
-import Accounts from "../components/Accounts.astro";
-import TikTokAffiliate from "../components/TikTokAffiliate.astro";
+
+const whatsappHref =
+  "https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service";
+
+const accounts = [
+  {
+    name: "SGDaily",
+    description: "Daily updates on Singapore life",
+    image: "/company/SGDaily.png",
+    href: "https://www.instagram.com/thesgdaily/reels/",
+  },
+  {
+    name: "SGHomez",
+    description: "Singapore homes and property market",
+    image: "/company/SGHomez.png",
+    href: "https://www.instagram.com/thesghomez/reels/",
+  },
+  {
+    name: "Hype Hub",
+    description: "Asian culture",
+    image: "/company/hypehub.png",
+    href: "https://www.tiktok.com/@hypehub88",
+  },
+];
+
+const services = [
+  {
+    title: "Vertical video production",
+    image: "/images/ad_posting.png",
+    body: "Platform-native short videos shaped for TikTok, Instagram, Xiaohongshu and local Singapore attention spans.",
+  },
+  {
+    title: "Horizontal video production",
+    image: "/images/tahsh.png",
+    body: "Longer-form edits for YouTube, property tours, explainers and polished brand storytelling.",
+  },
+  {
+    title: "Managing your social media",
+    image: "/images/smm.png",
+    body: "Content calendars, posting rhythm and audience feedback loops handled as one growth system.",
+  },
+  {
+    title: "Influencer marketing",
+    image: "/images/influencer.png",
+    body: "Creator partnerships matched to the audience, the platform and the conversion target.",
+  },
+  {
+    title: "In house models",
+    image: "/images/models.jpg",
+    body: "Fast access to on-camera talent for agile product, food, lifestyle and local business shoots.",
+  },
+];
+
+const portfolioGroups = [
+  {
+    title: "Food",
+    body: "Restaurants, buffets, late-night cravings and local dining stories.",
+    images: [
+      "/viral-posts/food/26yrfishball.png",
+      "/viral-posts/food/containercafe.png",
+      "/viral-posts/food/loklok.png",
+      "/viral-posts/food/pigtrotter.png",
+    ],
+  },
+  {
+    title: "Things to do",
+    body: "Attractions, rituals, tattoos, events and local culture moments.",
+    images: [
+      "/viral-posts/things_to_do/Screenshot 2024-10-11 at 10.15.19 PM.png",
+      "/viral-posts/things_to_do/ritual_team.png",
+      "/viral-posts/things_to_do/tattoo.png",
+      "/viral-posts/things_to_do/Screenshot 2024-10-11 at 10.28.32 PM.png",
+    ],
+  },
+  {
+    title: "Property",
+    body: "Home renovation, property tours and bilingual content for serious buying decisions.",
+    images: [
+      "/viral-posts/property/Screenshot 2024-10-11 at 10.39.04 PM.png",
+      "/viral-posts/property/Screenshot 2024-10-11 at 10.39.19 PM.png",
+      "/viral-posts/property/Screenshot_1.png",
+      "/viral-posts/horizontal/shophouse160.jpg",
+    ],
+  },
+];
+
+const videoLinks = [
+  {
+    image: "/viral-posts/horizontal/59JCT.jpg",
+    href: "https://www.youtube.com/watch?v=-fMmrm7shjY",
+  },
+  {
+    image: "/viral-posts/horizontal/bali.png",
+    href: "https://www.youtube.com/watch?v=FQXLzUmQsLM",
+  },
+  {
+    image: "/viral-posts/horizontal/intan.png",
+    href: "https://www.youtube.com/watch?v=jtkM3z5l3xc",
+  },
+  {
+    image: "/viral-posts/horizontal/shophouse160.jpg",
+    href: "https://www.youtube.com/watch?v=nbXoNcELyyI",
+  },
+];
+
+const results = [
+  {
+    company: "Social Chamber",
+    metric: "5X",
+    label: "month on month revenue growth after our vertical video release",
+    image: "/images/socialchamber.png",
+  },
+  {
+    company: "Stayr Pte Ltd",
+    metric: "Top 3",
+    label:
+      "in iOS most downloaded chart after our social media management within 1st month",
+    image: "/images/stayr.png",
+  },
+  {
+    company: "Stayr Pte Ltd",
+    metric: "100X",
+    label: "revenue boost in a year with 51% more sales per month",
+    image: "/images/stayr2.png",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "The feature they created for 87 Just Thai captured the essence of our restaurant and resonated with our customers.",
+    signature: "Eric Tan",
+    position: "Director, 87 Just Thai Pte Ltd",
+    logo: "/logos/3. 87 Just Thai.jpg",
+  },
+  {
+    quote:
+      "Viral Asia helped us build meaningful connections with potential partners and clients.",
+    signature: "Christel Goh",
+    position: "Director, GROW PUBLIC RELATIONS PTE LTD",
+    logo: "/logos/16. Grow Public Relations.png",
+  },
+  {
+    quote:
+      "They created insightful, targeted content that communicated the value of our software business.",
+    signature: "Yoeven D. Khemlani",
+    position: "CEO, JIGSAWSTACK PTE LTD",
+    logo: "/logos/17. Jigsawstack.jpg",
+  },
+  {
+    quote:
+      "Their team has a sharp understanding of market trends and knows how to create content that drives results.",
+    signature: "Tianze Zhao",
+    position: "Director, NURTURE STUDIO PTE LTD",
+    logo: "/logos/12. Nurture Studio.jpg",
+  },
+  {
+    quote:
+      "Their strategic approach to content creation and social media management increased our brand visibility.",
+    signature: "Shebella Beauty",
+    position: "Beauty and Cosmetics",
+    logo: "/logos/9. Shebella.jpeg",
+  },
+  {
+    quote:
+      "Their attention to detail and strategic approach made a significant impact on our marketing efforts.",
+    signature: "Travis Tay",
+    position: "Director, The Social Chamber",
+    logo: "/logos/1. The Social Chamber.png",
+  },
+];
+
+const partners = [
+  ["stayr.png", "Stayr"],
+  ["ibis.png", "Ibis"],
+  ["klook.png", "Klook"],
+  ["tiktok.png", "TikTok"],
+  ["subway.png", "Subway"],
+  ["crosscoop.png", "Cross Coop"],
+  ["spinelli.png", "Spinelli"],
+  ["mox.png", "MOX"],
+  ["socialchamber.jpeg", "Social Chamber"],
+  ["stsignature.png", "ST Signature"],
+  ["oriential_food.jpg", "Oriental Food"],
+  ["furama.png", "Furama"],
+  ["distrii.png", "Distrii"],
+  ["wardieres.png", "Wardieres"],
+  ["hotelg.png", "Hotel G"],
+  ["Ah Gong KKM.jpg", "Ah Gong KKM"],
+  ["Babies Bliss.jpeg", "Babies Bliss"],
+  ["Bachi Bachi Restaurant.jpeg", "Bachi Bachi Restaurant"],
+  ["baofachachaanteng 1.jpeg", "Bao Fa Cha Cha Anteng"],
+  ["Basil King 1.jpeg", "Basil King"],
+  ["Cheeky Signatures Restaurant.jpeg", "Cheeky Signatures"],
+  ["Creamie Sippies.png.webp", "Creamie Sippies"],
+  ["DMC Karting.png", "DMC Karting"],
+  ["Dong Smokes.png", "Dong Smokes"],
+  ["Evan_s Kitchen.jpeg", "Evan's Kitchen"],
+  ["Fat Fish Restaurant.jpeg", "Fat Fish Restaurant"],
+  ["Fook Kin Restaurant.png", "Fook Kin Restaurant"],
+  ["Huang Lao Dou.jpeg", "Huang Lao Dou"],
+  ["iDrink.png", "iDrink"],
+  ["Joomak Restaurant.png", "Joomak Restaurant"],
+  ["Just Thai 1.jpeg", "Just Thai"],
+  ["JWC Cafe.png", "JWC Cafe"],
+  ["Jyu Yae Bistro.jpeg", "Jyu Yae Bistro"],
+  ["Keebs Project.jpeg", "Keebs Project"],
+  ["Kimrobinson.jpg", "Kim Robinson"],
+  ["Laifaba Restaurant 1.jpeg", "Laifaba Restaurant"],
+  ["LFG Content Co.png.webp", "LFG Content Co"],
+  ["Longjing Restaurant.jpeg", "Longjing Restaurant"],
+  ["Maxi Home 1.jpeg", "Maxi Home"],
+  ["Meet 4 Meat.jpg", "Meet 4 Meat"],
+  ["Mega Furniture.webp", "Mega Furniture"],
+  ["Micasa Kitchen & Bar 1.webp.png", "Micasa Kitchen and Bar"],
+  ["Mode Aesthetics 1.jpg.avif", "Mode Aesthetics"],
+  ["Nan Yang Dao 1.png", "Nan Yang Dao"],
+  ["Nana Dolly Cafe.jpeg", "Nana Dolly Cafe"],
+  ["OH!SOME 1.jpeg", "OH!SOME"],
+  ["Ola Home.jpeg", "Ola Home"],
+  ["Oriental Food Restaurant.png", "Oriental Food"],
+  ["Origanics SG.png", "Origanics SG"],
+  ["Owen_s Restaurant.jpg", "Owen's Restaurant"],
+  ["Pacific Kopi.jpeg", "Pacific Kopi"],
+  ["Padi Kopitiam.png", "Padi Kopitiam"],
+  ["Palates & Bagels.png", "Palates and Bagels"],
+  ["Pancakes & Friends Cafe.png", "Pancakes and Friends"],
+  ["Porcelain Hotel 1.png", "Porcelain Hotel"],
+  ["Principle Cafe.jpeg", "Principle Cafe"],
+  ["Rage Foods.png", "Rage Foods"],
+  ["Restaurant Aisyah.png", "Restaurant Aisyah"],
+  ["ROKU Sake Bar.png", "ROKU Sake Bar"],
+  ["San Dai Fishball.png", "San Dai Fishball"],
+  ["San Dai Yong Tau Foo.png", "San Dai Yong Tau Foo"],
+  ["Silk Tea 1.jpg", "Silk Tea"],
+  ["Singapore Card Show.jpeg", "Singapore Card Show"],
+  ["Singapore Comic Con 1.png.webp", "Singapore Comic Con"],
+  ["Style Palate.png", "Style Palate"],
+  ["Sweedy.png", "Sweedy"],
+  ["Tash Tish Tosh.png", "Tash Tish Tosh"],
+  ["Temper Restaurant.png", "Temper Restaurant"],
+  ["Toppen Shopping Centre 1.png", "Toppen Shopping Centre"],
+  ["TOPTABLE 1.webp", "TOPTABLE"],
+  ["WATCHSKINS.png", "WATCHSKINS"],
+  ["West Mall 1.png", "West Mall"],
+  ["Wong Fu Fu.jpeg", "Wong Fu Fu"],
+  ["Wu Da Lang Hotpot.jpeg", "Wu Da Lang Hotpot"],
+  ["Yoru Omakase.jpeg", "Yoru Omakase"],
+  ["Yu Chun Curry Fish.jpeg", "Yu Chun Curry Fish"],
+];
 ---
 
 <Layout title="Viral Asia - TikTok Affiliate Marketing Partner">
-  <main>
-    <Header
-      callToAction="Go VIRAL Today!"
-      buttonText="Enquire Now"
-      companyName="Viral Asia"
-    />
+  <main class="va-site" data-va-root>
+    <nav class="va-nav" aria-label="Primary navigation">
+      <a class="va-brand" href="/" aria-label="Viral Asia home">
+        <img src="/company/ViralAsia.png" alt="Viral Asia" />
+        <span>Viral Asia</span>
+      </a>
+      <div class="va-nav-links">
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#proof">Proof</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <a class="va-button va-button-small" href={whatsappHref}>Enquire Now</a>
+    </nav>
 
-    <TikTokAffiliate />
-    <Posts linkText="/bio" />
-    <Accounts linkText="/bio" />
-    <Offers />
-    <Testimonials />
-    <TestimonialSlider />
+    <section class="hero va-section">
+      <div class="hero-copy">
+        <p class="va-kicker reveal">TikTok Affiliate Partner</p>
+        <h1 aria-label="Go viral today">
+          <span class="hero-word">Go</span>
+          <span class="hero-word hero-word-outline">VIRAL</span>
+          <span class="hero-word">Today</span>
+        </h1>
+        <p class="hero-lede">
+          Strategic social content for Singapore brands that need attention to
+          turn into demand.
+        </p>
+        <div class="hero-actions">
+          <a class="va-button" href={whatsappHref}>Enquire Now</a>
+          <a class="va-button va-button-secondary" href="#work">See the work</a>
+        </div>
+      </div>
 
-    <ClientsSection
-      title="Our Viral Partners"
-      subTitle="Experience the reliability chosen by industry giants."
-    />
+      <div class="hero-stage reveal" aria-label="Viral Asia visual proof">
+        <div class="phone-card phone-card-main">
+          <img
+            src="/viral-posts/food/26yrfishball.png"
+            alt="Food campaign example"
+          />
+        </div>
+        <div class="phone-card phone-card-offset">
+          <img
+            src="/viral-posts/property/Screenshot_1.png"
+            alt="Property campaign example"
+          />
+        </div>
+        <div class="hero-orbit">
+          <img src="/images/tiktok-logo.gif" alt="TikTok logo" />
+        </div>
+      </div>
+    </section>
 
-    <Footer callToAction="Get in Touch Today" />
+    <section class="va-section intro reveal">
+      <p>
+        From platforms, for businesses: we know what drives engagement and how
+        to make your brand stand out through strategic TikTok partnerships.
+      </p>
+    </section>
+
+    <section class="va-section portfolio" id="work">
+      <div class="section-title reveal">
+        <p class="va-kicker">Our Viral Posts</p>
+        <h2>Content built for the Singapore feed.</h2>
+        <p>
+          Food, things to do, lifestyle, dating, property and bilingual videos
+          designed for where attention actually lives.
+        </p>
+      </div>
+
+      <div class="portfolio-grid">
+        {
+          portfolioGroups.map((group, groupIndex) => (
+            <article
+              class={`portfolio-card portfolio-card-${groupIndex + 1} reveal`}
+            >
+              <div>
+                <h3>{group.title}</h3>
+                <p>{group.body}</p>
+              </div>
+              <div class="portfolio-images">
+                {group.images.map((image, index) => (
+                  <img
+                    src={image}
+                    alt={`${group.title} campaign ${index + 1}`}
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="video-strip reveal" aria-label="Horizontal video examples">
+        {
+          videoLinks.map((video, index) => (
+            <a href={video.href} target="_blank" rel="noopener noreferrer">
+              <img
+                src={video.image}
+                alt={`Horizontal video example ${index + 1}`}
+                loading="lazy"
+              />
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="va-section accounts reveal">
+      <div class="section-title section-title-compact">
+        <h2>Our owned channels make the strategy real.</h2>
+        <p>
+          As a home grown company, we understand the local social media
+          landscape and how Singapore audiences actually behave.
+        </p>
+      </div>
+      <div class="account-grid">
+        {
+          accounts.map((account) => (
+            <a
+              class="account-card"
+              href={account.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={account.image} alt={account.name} loading="lazy" />
+              <span>{account.name}</span>
+              <p>{account.description}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="va-section services" id="services">
+      <div class="section-title reveal">
+        <p class="va-kicker">What we offer</p>
+        <h2>Five levers. One attention system.</h2>
+      </div>
+      <div class="service-grid">
+        {
+          services.map((service, index) => (
+            <article class={`service-card service-card-${index + 1} reveal`}>
+              <div
+                class="service-media"
+                style={`background-image: url('${service.image}')`}
+              />
+              <div>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{service.title}</h3>
+                <p>{service.body}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="va-section proof" id="proof">
+      <div class="section-title reveal">
+        <p class="va-kicker">Before and After</p>
+        <h2>Proof that attention can move business.</h2>
+      </div>
+      <div class="result-grid">
+        {
+          results.map((result) => (
+            <article class="result-card reveal">
+              <img
+                src={result.image}
+                alt={`${result.company} result`}
+                loading="lazy"
+              />
+              <strong>{result.metric}</strong>
+              <p>{result.label}</p>
+              <span>{result.company}</span>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="va-section testimonials">
+      <div class="testimonial-stack">
+        {
+          testimonials.map((testimonial) => (
+            <article class="testimonial-card reveal">
+              <img
+                src={testimonial.logo}
+                alt={`${testimonial.signature} company logo`}
+                loading="lazy"
+              />
+              <blockquote>{testimonial.quote}</blockquote>
+              <p>{testimonial.signature}</p>
+              <span>{testimonial.position}</span>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="logo-marquee va-section" aria-label="Our Viral Partners">
+      <div class="section-title reveal">
+        <p class="va-kicker">Our Viral Partners</p>
+        <h2>Experience the reliability chosen by industry giants.</h2>
+      </div>
+      <div class="marquee-track" aria-hidden="true">
+        {
+          [...partners, ...partners].map(([image, name]) => (
+            <div class="partner-logo">
+              <img src={`/logos/${image}`} alt={name} loading="lazy" />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <footer class="va-footer">
+      <div>
+        <h2>Get in Touch Today</h2>
+        <a class="va-button" href={whatsappHref}>Enquire Now</a>
+      </div>
+      <address>
+        <span>11 mosque street #02-01</span>
+        <a href="mailto:hello@viralasia.co">hello@viralasia.co</a>
+        <a href="tel:+6590906912">(+65) 9090 6912</a>
+      </address>
+      <p>© 2025 VIRALASIA PTE LTD. ALL RIGHTS RESERVED.</p>
+    </footer>
   </main>
 </Layout>
+
+<style>
+  :global(body) {
+    overflow-x: hidden;
+  }
+
+  .va-site {
+    --bg: #08070b;
+    --surface: #121018;
+    --surface-2: #1b1724;
+    --ink: #f7f5ff;
+    --muted: #b9b3c9;
+    --line: rgba(247, 245, 255, 0.14);
+    --accent: #7452ff;
+    --accent-2: #b8a8ff;
+    --radius: 28px;
+    min-height: 100dvh;
+    background:
+      radial-gradient(
+        circle at 78% 8%,
+        rgba(116, 82, 255, 0.3),
+        transparent 30rem
+      ),
+      radial-gradient(
+        circle at 10% 22%,
+        rgba(255, 255, 255, 0.08),
+        transparent 22rem
+      ),
+      linear-gradient(180deg, #08070b 0%, #110d19 48%, #08070b 100%);
+    color: var(--ink);
+    font-family:
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+  }
+
+  .va-site::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 72%);
+  }
+
+  .va-site > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .va-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    width: min(1180px, calc(100% - 2rem));
+    height: 72px;
+    margin: 0 auto;
+    padding: 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(8, 7, 11, 0.76);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+
+  .va-brand,
+  .va-nav-links,
+  .va-button,
+  .account-card,
+  .video-strip a {
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease;
+  }
+
+  .va-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .va-brand img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .va-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .va-nav-links a {
+    padding: 0.58rem 0.85rem;
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .va-nav-links a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--ink);
+  }
+
+  .va-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 52px;
+    padding: 0 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: var(--accent);
+    color: white;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .va-button:hover {
+    transform: translateY(-2px);
+    background: #8466ff;
+  }
+
+  .va-button:active,
+  .account-card:active,
+  .video-strip a:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  .va-button-small {
+    justify-self: end;
+    min-height: 44px;
+    padding-inline: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .va-button-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--ink);
+  }
+
+  .va-section {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(4rem, 8vw, 8rem) 0;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+    align-items: start;
+    gap: clamp(2rem, 6vw, 5rem);
+    min-height: calc(100dvh - 72px);
+    padding-top: clamp(3rem, 6vh, 4.5rem);
+    padding-bottom: clamp(3rem, 6vh, 4.5rem);
+  }
+
+  .va-kicker {
+    margin: 0 0 1rem;
+    color: var(--accent-2);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    display: grid;
+    gap: 0.08em;
+    margin: 0;
+    font-size: clamp(4.2rem, 7.6vw, 6.85rem);
+    line-height: 0.86;
+    letter-spacing: -0.075em;
+    text-transform: uppercase;
+  }
+
+  .hero-word {
+    display: block;
+  }
+
+  .hero-word-outline {
+    color: transparent;
+    -webkit-text-stroke: clamp(1px, 0.035em, 5px) var(--accent);
+  }
+
+  .hero-lede {
+    max-width: 34rem;
+    margin: 1rem 0 0;
+    color: var(--muted);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    line-height: 1.45;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.4rem;
+  }
+
+  .hero-stage {
+    position: relative;
+    min-height: min(560px, 68vh);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background:
+      radial-gradient(
+        circle at 40% 20%,
+        rgba(116, 82, 255, 0.45),
+        transparent 18rem
+      ),
+      linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.12),
+        rgba(255, 255, 255, 0.02)
+      );
+    overflow: hidden;
+  }
+
+  .hero-stage::before {
+    content: "TikTok Affiliate Partner";
+    position: absolute;
+    right: -3rem;
+    bottom: 2.2rem;
+    color: rgba(255, 255, 255, 0.08);
+    font-size: clamp(2.4rem, 7vw, 7rem);
+    font-weight: 900;
+    letter-spacing: -0.08em;
+    line-height: 0.85;
+    text-transform: uppercase;
+  }
+
+  .phone-card {
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 32px;
+    background: var(--surface);
+    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.45);
+  }
+
+  .phone-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .phone-card-main {
+    top: 8%;
+    left: 10%;
+    width: 46%;
+    height: 72%;
+    transform: rotate(-5deg);
+  }
+
+  .phone-card-offset {
+    right: 8%;
+    bottom: 9%;
+    width: 42%;
+    height: 52%;
+    transform: rotate(6deg);
+  }
+
+  .hero-orbit {
+    position: absolute;
+    right: 16%;
+    top: 12%;
+    display: grid;
+    place-items: center;
+    width: 9rem;
+    height: 9rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    background: rgba(8, 7, 11, 0.82);
+  }
+
+  .hero-orbit img {
+    width: 58%;
+  }
+
+  .intro {
+    padding-top: 0;
+  }
+
+  .intro p {
+    max-width: 980px;
+    color: var(--ink);
+    font-size: clamp(2rem, 6vw, 5.4rem);
+    font-weight: 850;
+    line-height: 0.95;
+    letter-spacing: -0.075em;
+  }
+
+  .section-title {
+    max-width: 780px;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .section-title h2 {
+    margin: 0;
+    font-size: clamp(2.6rem, 6vw, 5.8rem);
+    line-height: 0.92;
+    letter-spacing: -0.075em;
+  }
+
+  .section-title p:not(.va-kicker) {
+    max-width: 42rem;
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 1.06rem;
+    line-height: 1.6;
+  }
+
+  .section-title-compact {
+    margin-bottom: 0;
+  }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1rem;
+  }
+
+  .portfolio-card {
+    display: grid;
+    gap: 1.5rem;
+    min-height: 430px;
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.055);
+    overflow: hidden;
+  }
+
+  .portfolio-card-1 {
+    grid-row: span 2;
+  }
+
+  .portfolio-card h3,
+  .service-card h3 {
+    margin: 0;
+    font-size: clamp(1.9rem, 4vw, 3.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+  }
+
+  .portfolio-card p,
+  .service-card p,
+  .result-card p,
+  .account-card p {
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .portfolio-images {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    align-items: end;
+  }
+
+  .portfolio-images img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 22px;
+    object-fit: cover;
+  }
+
+  .portfolio-images img:nth-child(2),
+  .portfolio-images img:nth-child(3) {
+    transform: translateY(1.5rem);
+  }
+
+  .video-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .video-strip a {
+    display: block;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .video-strip a:hover {
+    transform: translateY(-4px);
+    border-color: rgba(116, 82, 255, 0.8);
+  }
+
+  .video-strip img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .accounts {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    align-items: end;
+    gap: clamp(2rem, 5vw, 4rem);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .account-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .account-card {
+    min-height: 230px;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.06);
+    text-decoration: none;
+  }
+
+  .account-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(116, 82, 255, 0.75);
+  }
+
+  .account-card img {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: white;
+  }
+
+  .account-card span {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 850;
+    letter-spacing: -0.05em;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .service-card {
+    display: grid;
+    grid-column: span 3;
+    min-height: 460px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .service-card-3,
+  .service-card-4,
+  .service-card-5 {
+    grid-column: span 2;
+  }
+
+  .service-media {
+    min-height: 240px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #201935;
+  }
+
+  .service-card > div:last-child {
+    padding: 1.5rem;
+  }
+
+  .service-card span {
+    display: block;
+    margin-bottom: 0.8rem;
+    color: var(--accent-2);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr 1fr;
+    gap: 1rem;
+  }
+
+  .result-card {
+    display: grid;
+    min-height: 470px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .result-card:nth-child(2) {
+    transform: translateY(3rem);
+  }
+
+  .result-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .result-card strong {
+    display: block;
+    padding: 1.2rem 1.2rem 0;
+    color: var(--accent-2);
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.9;
+    letter-spacing: -0.08em;
+  }
+
+  .result-card p,
+  .result-card span {
+    padding-inline: 1.2rem;
+  }
+
+  .result-card span {
+    padding-bottom: 1.2rem;
+    color: var(--ink);
+    font-weight: 800;
+  }
+
+  .testimonial-stack {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .testimonial-card {
+    padding: 1.35rem;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  .testimonial-card img {
+    width: 96px;
+    height: 56px;
+    margin-bottom: 1.5rem;
+    object-fit: contain;
+    filter: saturate(0.85);
+  }
+
+  .testimonial-card blockquote {
+    margin: 0 0 1.2rem;
+    color: var(--ink);
+    font-size: 1.05rem;
+    line-height: 1.45;
+  }
+
+  .testimonial-card p {
+    margin-bottom: 0.2rem;
+    font-weight: 850;
+  }
+
+  .testimonial-card span {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .logo-marquee {
+    width: 100%;
+    max-width: none;
+    overflow: hidden;
+    padding-inline: 0;
+  }
+
+  .logo-marquee .section-title {
+    width: min(1180px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    gap: 1rem;
+    animation: logo-marquee 54s linear infinite;
+  }
+
+  .partner-logo {
+    display: grid;
+    place-items: center;
+    width: 164px;
+    height: 112px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .partner-logo img {
+    width: 76%;
+    height: 70%;
+    object-fit: contain;
+  }
+
+  .va-footer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 6rem) 0 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .va-footer h2 {
+    max-width: 720px;
+    margin: 0 0 1.5rem;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: -0.08em;
+  }
+
+  .va-footer address {
+    display: grid;
+    gap: 0.7rem;
+    align-content: start;
+    color: var(--muted);
+    font-style: normal;
+  }
+
+  .va-footer address a {
+    text-decoration: none;
+  }
+
+  .va-footer > p {
+    grid-column: 1 / -1;
+    color: rgba(247, 245, 255, 0.42);
+    font-size: 0.82rem;
+  }
+
+  @keyframes logo-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .va-nav {
+      grid-template-columns: 1fr auto;
+      height: auto;
+      border-radius: 24px;
+    }
+
+    .va-nav-links {
+      display: none;
+    }
+
+    .hero,
+    .portfolio-grid,
+    .accounts,
+    .result-grid,
+    .va-footer {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      min-height: auto;
+      padding-top: 3rem;
+    }
+
+    h1 {
+      font-size: clamp(4.3rem, 22vw, 7rem);
+    }
+
+    .hero-stage {
+      min-height: 460px;
+    }
+
+    .portfolio-card-1 {
+      grid-row: auto;
+    }
+
+    .video-strip,
+    .account-grid,
+    .testimonial-stack {
+      grid-template-columns: 1fr;
+    }
+
+    .service-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .service-card,
+    .service-card-3,
+    .service-card-4,
+    .service-card-5 {
+      grid-column: auto;
+    }
+
+    .result-card:nth-child(2) {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .va-section {
+      width: min(100% - 1rem, 1180px);
+      padding-block: 4rem;
+    }
+
+    .va-nav {
+      width: min(100% - 1rem, 1180px);
+      top: 0.5rem;
+    }
+
+    .va-brand span {
+      display: none;
+    }
+
+    .va-button-small {
+      min-height: 42px;
+      padding-inline: 0.85rem;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero-actions .va-button {
+      width: 100%;
+    }
+
+    .hero-stage {
+      min-height: 380px;
+      border-radius: 24px;
+    }
+
+    .phone-card-main {
+      left: 6%;
+      width: 56%;
+      height: 68%;
+    }
+
+    .phone-card-offset {
+      right: 5%;
+      width: 48%;
+      height: 46%;
+    }
+
+    .hero-orbit {
+      width: 6.8rem;
+      height: 6.8rem;
+    }
+
+    .portfolio-images {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .portfolio-card,
+    .service-card,
+    .result-card,
+    .testimonial-card {
+      border-radius: 22px;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (!reduceMotion) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-word", {
+        yPercent: 110,
+        opacity: 0,
+        duration: 1.05,
+        stagger: 0.08,
+        ease: "power4.out",
+      });
+
+      gsap.to(".phone-card-main", {
+        y: -28,
+        rotate: -2,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      gsap.to(".phone-card-offset", {
+        y: 36,
+        rotate: 2,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      gsap.utils.toArray<HTMLElement>(".reveal").forEach((element) => {
+        gsap.from(element, {
+          y: 42,
+          opacity: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: element,
+            start: "top 82%",
+            once: true,
+          },
+        });
+      });
+    });
+
+    document.addEventListener("astro:before-swap", () => ctx.revert(), {
+      once: true,
+    });
+  }
+</script>
