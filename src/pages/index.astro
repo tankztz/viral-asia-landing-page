@@ -1298,10 +1298,11 @@ const partners = [
   .quote-capability strong {
     display: block;
     color: var(--accent-2);
-    font-size: clamp(4.4rem, 10vw, 10.2rem);
-    font-weight: 950;
-    line-height: 0.78;
-    letter-spacing: -0.115em;
+    font-size: clamp(4.2rem, 8.8vw, 8.9rem);
+    font-weight: 850;
+    line-height: 0.9;
+    letter-spacing: -0.055em;
+    font-kerning: normal;
     text-shadow: 0 20px 90px rgba(116, 82, 255, 0.34);
     will-change: transform, opacity;
   }
@@ -1321,12 +1322,14 @@ const partners = [
 
   .quote-value {
     display: block;
-    max-width: 1060px;
+    max-width: 980px;
     color: var(--ink);
-    font-size: clamp(3rem, 6.6vw, 6.8rem);
-    font-weight: 900;
-    line-height: 0.88;
-    letter-spacing: -0.095em;
+    font-size: clamp(3rem, 5.9vw, 6rem);
+    font-weight: 820;
+    line-height: 0.97;
+    letter-spacing: -0.05em;
+    word-spacing: 0.02em;
+    font-kerning: normal;
   }
 
   .quote-method {
@@ -2001,9 +2004,9 @@ const partners = [
 
     .quote-capability strong {
       margin-top: 0.12em;
-      font-size: clamp(3.25rem, 15.6vw, 4.4rem);
-      line-height: 0.8;
-      letter-spacing: -0.12em;
+      font-size: clamp(3.1rem, 14.4vw, 4.05rem);
+      line-height: 0.92;
+      letter-spacing: -0.05em;
     }
 
     .quote-outcome {
@@ -2015,9 +2018,10 @@ const partners = [
     }
 
     .quote-value {
-      font-size: clamp(2.55rem, 12.7vw, 3.8rem);
-      line-height: 0.9;
-      letter-spacing: -0.095em;
+      font-size: clamp(2.35rem, 11.5vw, 3.45rem);
+      line-height: 0.99;
+      letter-spacing: -0.045em;
+      word-spacing: 0.03em;
     }
 
     .quote-method {
@@ -2225,8 +2229,9 @@ const partners = [
         .from(
           ".quote-value",
           {
-            letterSpacing: "-0.16em",
-            duration: 1,
+            yPercent: 18,
+            opacity: 0,
+            duration: 0.82,
           },
           0.22,
         )
