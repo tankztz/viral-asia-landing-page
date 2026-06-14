@@ -729,12 +729,12 @@ const partners = [
     gap: 0.72rem;
     min-height: 38px;
     padding: 0.34rem 0.85rem 0.34rem 0.95rem;
-    border: 2px solid rgba(249, 242, 217, 0.92);
+    border: 2px solid rgba(184, 168, 255, 0.86);
     border-radius: 999px;
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent),
       rgba(8, 8, 9, 0.78);
-    color: #f8f1d7;
+    color: var(--ink);
     font: inherit;
     font-size: 0.82rem;
     font-weight: 800;
@@ -742,7 +742,7 @@ const partners = [
     cursor: pointer;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 10px 30px rgba(0, 0, 0, 0.24);
+      0 10px 32px rgba(116, 82, 255, 0.22);
   }
 
   .nav-menu-button i {
@@ -750,7 +750,8 @@ const partners = [
     display: block;
     width: 31px;
     height: 18px;
-    background: linear-gradient(#f8f1d7, #f8f1d7) center / 31px 2px no-repeat;
+    background: linear-gradient(var(--accent-2), var(--accent-2)) center / 31px
+      2px no-repeat;
   }
 
   .nav-menu-button i::before,
@@ -761,7 +762,7 @@ const partners = [
     width: 31px;
     height: 2px;
     border-radius: 999px;
-    background: #f8f1d7;
+    background: var(--accent-2);
     transition:
       transform 180ms ease,
       background 180ms ease;
@@ -777,16 +778,16 @@ const partners = [
 
   .nav-menu-button:hover {
     transform: translateY(-1px);
-    border-color: #fff8dc;
+    border-color: rgba(184, 168, 255, 1);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
-      rgba(18, 16, 24, 0.86);
+      rgba(24, 18, 42, 0.88);
   }
 
   .nav-menu-button[aria-expanded="true"] {
-    background: #f8f1d7;
-    color: #09080c;
-    border-color: #f8f1d7;
+    background: var(--accent);
+    color: white;
+    border-color: rgba(184, 168, 255, 0.95);
   }
 
   .nav-menu-button[aria-expanded="true"] i {
@@ -796,13 +797,13 @@ const partners = [
   .nav-menu-button[aria-expanded="true"] i::before {
     top: 8px;
     transform: rotate(45deg);
-    background: #09080c;
+    background: white;
   }
 
   .nav-menu-button[aria-expanded="true"] i::after {
     top: 8px;
     transform: rotate(-45deg);
-    background: #09080c;
+    background: white;
   }
 
   .va-site .mobile-menu {
@@ -833,14 +834,14 @@ const partners = [
     width: min(100%, 460px);
     margin: 0 auto;
     padding: 0.7rem;
-    border: 2px solid rgba(249, 242, 217, 0.88);
+    border: 2px solid rgba(184, 168, 255, 0.7);
     border-radius: 31px;
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 32%),
       rgba(9, 8, 13, 0.96);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      0 34px 90px rgba(0, 0, 0, 0.52);
+      0 34px 90px rgba(23, 12, 60, 0.58);
     backdrop-filter: blur(22px);
     -webkit-backdrop-filter: blur(22px);
   }
@@ -851,7 +852,7 @@ const partners = [
     justify-content: space-between;
     gap: 1rem;
     padding: 0.65rem 0.72rem 0.85rem;
-    color: #f8f1d7;
+    color: var(--accent-2);
     font-size: 0.76rem;
     font-weight: 900;
     letter-spacing: 0.08em;
@@ -860,7 +861,7 @@ const partners = [
 
   .mobile-menu-top span:last-child {
     max-width: 13ch;
-    color: rgba(248, 241, 215, 0.56);
+    color: rgba(184, 168, 255, 0.58);
     font-size: 0.64rem;
     line-height: 1.05;
     text-align: right;
@@ -875,7 +876,7 @@ const partners = [
     gap: 1rem;
     min-height: 74px;
     padding: 0.95rem 0.75rem 0.85rem;
-    border-top: 1px solid rgba(249, 242, 217, 0.16);
+    border-top: 1px solid rgba(184, 168, 255, 0.2);
     color: var(--ink);
     letter-spacing: -0.04em;
     text-decoration: none;
@@ -887,18 +888,18 @@ const partners = [
 
   .mobile-menu-panel a:not(.mobile-menu-cta):hover {
     padding-left: 1.05rem;
-    background: rgba(248, 241, 215, 0.045);
-    color: #f8f1d7;
+    background: rgba(116, 82, 255, 0.11);
+    color: var(--accent-2);
   }
 
   .mobile-menu-panel a:not(.mobile-menu-cta):hover .mobile-link-note {
-    color: #f8f1d7;
+    color: var(--accent-2);
     transform: translateX(-0.15rem);
   }
 
   .mobile-link-main {
     display: block;
-    color: #f3efff;
+    color: var(--ink);
     font-size: clamp(2rem, 11vw, 3.4rem);
     font-weight: 900;
     line-height: 0.9;
@@ -907,7 +908,7 @@ const partners = [
 
   .mobile-link-note {
     align-self: center;
-    color: rgba(248, 241, 215, 0.52);
+    color: rgba(184, 168, 255, 0.58);
     font-size: 0.72rem;
     font-weight: 850;
     letter-spacing: 0.04em;
@@ -926,9 +927,9 @@ const partners = [
     min-height: 54px;
     width: 100%;
     margin-top: 0.7rem;
-    border-color: rgba(248, 241, 215, 0.72);
-    background: #f8f1d7;
-    color: #09080c;
+    border-color: rgba(184, 168, 255, 0.62);
+    background: var(--accent);
+    color: white;
     font-size: 1rem;
     box-shadow: none;
   }
