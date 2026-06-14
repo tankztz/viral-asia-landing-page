@@ -53,35 +53,71 @@ const services = [
   },
 ];
 
-const portfolioGroups = [
+const viralRows = [
   {
     title: "Food",
-    body: "Restaurants, buffets, late-night cravings and local dining stories.",
-    images: [
-      "/viral-posts/food/26yrfishball.png",
-      "/viral-posts/food/containercafe.png",
-      "/viral-posts/food/loklok.png",
-      "/viral-posts/food/pigtrotter.png",
+    body: "Restaurants, buffets, late-night cravings and local food stories.",
+    direction: "left",
+    items: [
+      ["26yrfishball.png", "846K", "SG Daily hawker video"],
+      ["Screenshot 2024-10-11 at 10.05.56 PM.png", "302K", "Food campaign"],
+      ["Screenshot 2024-10-11 at 10.06.08 PM.png", "218K", "Dining campaign"],
+      ["Screenshot 2024-10-11 at 10.08.17 PM.png", "184K", "Restaurant reel"],
+      ["bistro.png", "129K", "Bistro campaign"],
+      ["containercafe.png", "276K", "Container cafe video"],
+      ["loklok.png", "411K", "Lok lok buffet video"],
+      ["pigtrotter.png", "508K", "Pork trotter video"],
     ],
   },
   {
     title: "Things to do",
     body: "Attractions, rituals, tattoos, events and local culture moments.",
-    images: [
-      "/viral-posts/things_to_do/Screenshot 2024-10-11 at 10.15.19 PM.png",
-      "/viral-posts/things_to_do/ritual_team.png",
-      "/viral-posts/things_to_do/tattoo.png",
-      "/viral-posts/things_to_do/Screenshot 2024-10-11 at 10.28.32 PM.png",
+    direction: "right",
+    items: [
+      ["IMG_8299.PNG", "192K", "Event video"],
+      [
+        "Screenshot 2024-10-11 at 10.15.19 PM.png",
+        "244K",
+        "Things to do video",
+      ],
+      ["Screenshot 2024-10-11 at 10.15.35 PM.png", "151K", "Attraction video"],
+      [
+        "Screenshot 2024-10-11 at 10.17.11 PM.png",
+        "338K",
+        "Lifestyle campaign",
+      ],
+      [
+        "Screenshot 2024-10-11 at 10.18.24 PM.png",
+        "167K",
+        "Local culture video",
+      ],
+      ["Screenshot 2024-10-11 at 10.18.36 PM.png", "221K", "Experience reel"],
+      [
+        "Screenshot 2024-10-11 at 10.28.21 PM.png",
+        "146K",
+        "Singapore activity",
+      ],
+      ["Screenshot 2024-10-11 at 10.28.32 PM.png", "354K", "Attraction reel"],
+      ["ritual_team.png", "289K", "Ritual campaign"],
+      ["tattoo.png", "173K", "Tattoo studio video"],
     ],
   },
   {
     title: "Property",
-    body: "Home renovation, property tours and bilingual content for serious buying decisions.",
-    images: [
-      "/viral-posts/property/Screenshot 2024-10-11 at 10.39.04 PM.png",
-      "/viral-posts/property/Screenshot 2024-10-11 at 10.39.19 PM.png",
-      "/viral-posts/property/Screenshot_1.png",
-      "/viral-posts/horizontal/shophouse160.jpg",
+    body: "Renovation, tours and bilingual content for serious buying decisions.",
+    direction: "left",
+    items: [
+      ["Screenshot 2024-10-11 at 10.39.04 PM.png", "96K", "Property video"],
+      ["Screenshot 2024-10-11 at 10.39.19 PM.png", "121K", "Condo loss video"],
+      ["Screenshot 2024-10-11 at 10.39.48 PM.png", "88K", "Home tour video"],
+      ["Screenshot 2024-10-11 at 10.41.01 PM.png", "107K", "Renovation video"],
+      [
+        "Screenshot 2024-10-11 at 10.41.13 PM.png",
+        "134K",
+        "Property explainer",
+      ],
+      ["Screenshot_1.png", "212K", "SGHomez campaign"],
+      ["Screenshot_2.png", "176K", "Property campaign"],
     ],
   },
 ];
@@ -90,18 +126,22 @@ const videoLinks = [
   {
     image: "/viral-posts/horizontal/59JCT.jpg",
     href: "https://www.youtube.com/watch?v=-fMmrm7shjY",
+    title: "59 JCT property feature",
   },
   {
     image: "/viral-posts/horizontal/bali.png",
     href: "https://www.youtube.com/watch?v=FQXLzUmQsLM",
+    title: "Bali lifestyle feature",
   },
   {
     image: "/viral-posts/horizontal/intan.png",
     href: "https://www.youtube.com/watch?v=jtkM3z5l3xc",
+    title: "Intan feature",
   },
   {
     image: "/viral-posts/horizontal/shophouse160.jpg",
     href: "https://www.youtube.com/watch?v=nbXoNcELyyI",
+    title: "Shophouse property feature",
   },
 ];
 
@@ -265,8 +305,37 @@ const partners = [
         <a href="#proof">Proof</a>
         <a href="/blog">Blog</a>
       </div>
-      <a class="va-button va-button-small" href={whatsappHref}>Enquire Now</a>
+      <div class="va-nav-actions">
+        <a class="va-button va-button-small va-nav-cta" href={whatsappHref}>
+          Enquire Now
+        </a>
+        <button
+          class="nav-menu-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          data-menu-button
+        >
+          <span>Menu</span>
+          <i aria-hidden="true"></i>
+        </button>
+      </div>
     </nav>
+
+    <div
+      class="mobile-menu"
+      id="mobile-menu"
+      aria-hidden="true"
+      data-mobile-menu
+    >
+      <div class="mobile-menu-panel">
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#proof">Proof</a>
+        <a href="/blog">Blog</a>
+        <a class="va-button" href={whatsappHref}>Enquire Now</a>
+      </div>
+    </div>
 
     <section class="hero va-section">
       <div class="hero-copy">
@@ -322,24 +391,30 @@ const partners = [
         </p>
       </div>
 
-      <div class="portfolio-grid">
+      <div class="viral-reel-wall reveal">
         {
-          portfolioGroups.map((group, groupIndex) => (
-            <article
-              class={`portfolio-card portfolio-card-${groupIndex + 1} reveal`}
-            >
-              <div>
-                <h3>{group.title}</h3>
-                <p>{group.body}</p>
+          viralRows.map((row) => (
+            <article class="viral-row">
+              <div class="viral-row-copy">
+                <h3>{row.title}</h3>
+                <p>{row.body}</p>
               </div>
-              <div class="portfolio-images">
-                {group.images.map((image, index) => (
-                  <img
-                    src={image}
-                    alt={`${group.title} campaign ${index + 1}`}
-                    loading="lazy"
-                  />
-                ))}
+              <div class="viral-carousel" data-direction={row.direction}>
+                <div class="viral-track">
+                  {[...row.items, ...row.items].map(([image, count, alt]) => (
+                    <figure class="viral-card">
+                      <img
+                        src={`/viral-posts/${row.title === "Things to do" ? "things_to_do" : row.title.toLowerCase()}/${image}`}
+                        alt={alt}
+                        loading="lazy"
+                      />
+                      <figcaption>
+                        <span>{count}</span>
+                        <small>views</small>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
               </div>
             </article>
           ))
@@ -350,11 +425,8 @@ const partners = [
         {
           videoLinks.map((video, index) => (
             <a href={video.href} target="_blank" rel="noopener noreferrer">
-              <img
-                src={video.image}
-                alt={`Horizontal video example ${index + 1}`}
-                loading="lazy"
-              />
+              <img src={video.image} alt={video.title} loading="lazy" />
+              <span>Watch {String(index + 1).padStart(2, "0")}</span>
             </a>
           ))
         }
@@ -460,7 +532,7 @@ const partners = [
       </div>
       <div class="marquee-track" aria-hidden="true">
         {
-          [...partners, ...partners].map(([image, name]) => (
+          partners.map(([image, name]) => (
             <div class="partner-logo">
               <img src={`/logos/${image}`} alt={name} loading="lazy" />
             </div>
@@ -487,6 +559,11 @@ const partners = [
 <style>
   :global(body) {
     overflow-x: hidden;
+  }
+
+  :global(html.menu-open),
+  :global(html.menu-open body) {
+    overflow: hidden;
   }
 
   .va-site {
@@ -541,7 +618,7 @@ const partners = [
     z-index: 1;
   }
 
-  .va-nav {
+  .va-site .va-nav {
     position: sticky;
     top: 0;
     z-index: 20;
@@ -562,8 +639,11 @@ const partners = [
 
   .va-brand,
   .va-nav-links,
+  .nav-menu-button,
+  .mobile-menu-panel a,
   .va-button,
   .account-card,
+  .viral-card,
   .video-strip a {
     transition:
       transform 180ms ease,
@@ -610,6 +690,126 @@ const partners = [
     color: var(--ink);
   }
 
+  .va-nav-actions {
+    display: inline-flex;
+    justify-self: end;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-menu-button {
+    display: none;
+    align-items: center;
+    gap: 0.7rem;
+    min-height: 44px;
+    padding: 0.34rem 0.42rem 0.34rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 850;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+  }
+
+  .nav-menu-button i {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .nav-menu-button i::before,
+  .nav-menu-button i::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    border-radius: 999px;
+    background: white;
+    transition: transform 180ms ease;
+  }
+
+  .nav-menu-button i::before {
+    transform: translateY(-4px);
+  }
+
+  .nav-menu-button i::after {
+    transform: translateY(4px);
+  }
+
+  .nav-menu-button[aria-expanded="true"] i::before {
+    transform: rotate(45deg);
+  }
+
+  .nav-menu-button[aria-expanded="true"] i::after {
+    transform: rotate(-45deg);
+  }
+
+  .va-site .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    padding: 5.8rem 0.5rem 0;
+    pointer-events: none;
+  }
+
+  .mobile-menu[aria-hidden="false"] {
+    pointer-events: auto;
+  }
+
+  .mobile-menu-panel {
+    display: grid;
+    gap: 0.5rem;
+    width: min(100%, 460px);
+    margin: 0 auto;
+    padding: 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    background: rgba(12, 10, 17, 0.94);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+
+  .mobile-menu-panel a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 58px;
+    padding: 0 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.055);
+    color: var(--ink);
+    font-size: 1.2rem;
+    font-weight: 850;
+    letter-spacing: -0.04em;
+    text-decoration: none;
+  }
+
+  .mobile-menu-panel a:not(.va-button)::after {
+    content: "Open";
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-panel .va-button {
+    width: 100%;
+    margin-top: 0.35rem;
+  }
+
   .va-button {
     display: inline-flex;
     align-items: center;
@@ -634,6 +834,8 @@ const partners = [
 
   .va-button:active,
   .account-card:active,
+  .nav-menu-button:active,
+  .viral-card:active,
   .video-strip a:active {
     transform: translateY(1px) scale(0.99);
   }
@@ -654,6 +856,12 @@ const partners = [
     width: min(1180px, calc(100% - 2rem));
     margin: 0 auto;
     padding: clamp(4rem, 8vw, 8rem) 0;
+  }
+
+  .portfolio,
+  .services,
+  .proof {
+    scroll-margin-top: 6rem;
   }
 
   .hero {
@@ -703,7 +911,7 @@ const partners = [
 
   .hero-lede {
     max-width: 34rem;
-    margin: 1rem 0 0;
+    margin: 1.8rem 0 0;
     color: var(--muted);
     font-size: clamp(1.05rem, 2vw, 1.3rem);
     line-height: 1.45;
@@ -833,28 +1041,27 @@ const partners = [
     margin-bottom: 0;
   }
 
-  .portfolio-grid {
+  .viral-reel-wall {
     display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
     gap: 1rem;
   }
 
-  .portfolio-card {
+  .viral-row {
     display: grid;
-    gap: 1.5rem;
-    min-height: 430px;
-    padding: clamp(1rem, 3vw, 2rem);
+    grid-template-columns: 220px minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    min-height: 260px;
+    padding: 1rem;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.055);
+    background:
+      linear-gradient(90deg, rgba(116, 82, 255, 0.12), transparent 55%),
+      rgba(255, 255, 255, 0.045);
     overflow: hidden;
   }
 
-  .portfolio-card-1 {
-    grid-row: span 2;
-  }
-
-  .portfolio-card h3,
+  .viral-row-copy h3,
   .service-card h3 {
     margin: 0;
     font-size: clamp(1.9rem, 4vw, 3.5rem);
@@ -862,7 +1069,7 @@ const partners = [
     letter-spacing: -0.06em;
   }
 
-  .portfolio-card p,
+  .viral-row-copy p,
   .service-card p,
   .result-card p,
   .account-card p {
@@ -870,23 +1077,76 @@ const partners = [
     line-height: 1.55;
   }
 
-  .portfolio-images {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.7rem;
-    align-items: end;
+  .viral-carousel {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding-block: 0.35rem;
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      black 7%,
+      black 93%,
+      transparent
+    );
   }
 
-  .portfolio-images img {
+  .viral-track {
+    display: flex;
+    width: max-content;
+    gap: 0.8rem;
+    animation: viral-scroll 44s linear infinite;
+  }
+
+  .viral-carousel[data-direction="right"] .viral-track {
+    animation-direction: reverse;
+  }
+
+  .viral-carousel:hover .viral-track {
+    animation-play-state: paused;
+  }
+
+  .viral-card {
+    position: relative;
+    flex: 0 0 170px;
+    width: 170px;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    background: #050408;
+  }
+
+  .viral-card img {
+    display: block;
     width: 100%;
     aspect-ratio: 3 / 4;
-    border-radius: 22px;
-    object-fit: cover;
+    object-fit: contain;
   }
 
-  .portfolio-images img:nth-child(2),
-  .portfolio-images img:nth-child(3) {
-    transform: translateY(1.5rem);
+  .viral-card figcaption {
+    position: absolute;
+    left: 0.55rem;
+    bottom: 0.5rem;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    padding: 0.3rem 0.46rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.58);
+    color: white;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .viral-card figcaption small {
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0;
   }
 
   .video-strip {
@@ -897,11 +1157,14 @@ const partners = [
   }
 
   .video-strip a {
-    display: block;
+    display: grid;
+    gap: 0.75rem;
     overflow: hidden;
+    padding: 0.65rem;
     border: 1px solid var(--line);
     border-radius: 24px;
     background: rgba(255, 255, 255, 0.06);
+    text-decoration: none;
   }
 
   .video-strip a:hover {
@@ -913,6 +1176,15 @@ const partners = [
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
+    border-radius: 16px;
+  }
+
+  .video-strip span {
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .accounts {
@@ -1090,8 +1362,7 @@ const partners = [
   .logo-marquee {
     width: 100%;
     max-width: none;
-    overflow: hidden;
-    padding-inline: 0;
+    padding-inline: 1rem;
   }
 
   .logo-marquee .section-title {
@@ -1101,9 +1372,13 @@ const partners = [
 
   .marquee-track {
     display: flex;
-    width: max-content;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
-    animation: logo-marquee 54s linear infinite;
+    width: min(1180px, 100%);
+    max-height: 386px;
+    margin: 0 auto;
+    overflow: hidden;
   }
 
   .partner-logo {
@@ -1158,7 +1433,7 @@ const partners = [
     font-size: 0.82rem;
   }
 
-  @keyframes logo-marquee {
+  @keyframes viral-scroll {
     from {
       transform: translateX(0);
     }
@@ -1168,7 +1443,7 @@ const partners = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .marquee-track {
+    .viral-track {
       animation: none;
     }
 
@@ -1183,18 +1458,23 @@ const partners = [
   }
 
   @media (max-width: 900px) {
-    .va-nav {
+    .va-site .va-nav {
       grid-template-columns: 1fr auto;
       height: auto;
       border-radius: 24px;
     }
 
-    .va-nav-links {
+    .va-nav-links,
+    .va-nav-cta {
       display: none;
     }
 
+    .nav-menu-button {
+      display: inline-flex;
+    }
+
     .hero,
-    .portfolio-grid,
+    .viral-row,
     .accounts,
     .result-grid,
     .va-footer {
@@ -1214,8 +1494,13 @@ const partners = [
       min-height: 460px;
     }
 
-    .portfolio-card-1 {
-      grid-row: auto;
+    .viral-row {
+      align-items: start;
+    }
+
+    .viral-card {
+      flex-basis: 150px;
+      width: 150px;
     }
 
     .video-strip,
@@ -1246,7 +1531,7 @@ const partners = [
       padding-block: 4rem;
     }
 
-    .va-nav {
+    .va-site .va-nav {
       width: min(100% - 1rem, 1180px);
       top: 0.5rem;
     }
@@ -1263,6 +1548,10 @@ const partners = [
     .hero-actions {
       flex-direction: column;
       align-items: stretch;
+    }
+
+    .hero-lede {
+      margin-top: 1rem;
     }
 
     .hero-actions .va-button {
@@ -1291,11 +1580,15 @@ const partners = [
       height: 6.8rem;
     }
 
-    .portfolio-images {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .va-site .mobile-menu {
+      padding-top: 5.2rem;
     }
 
-    .portfolio-card,
+    .mobile-menu-panel a {
+      min-height: 54px;
+    }
+
+    .viral-row,
     .service-card,
     .result-card,
     .testimonial-card {
@@ -1311,6 +1604,70 @@ const partners = [
   const reduceMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
+
+  const menuButton =
+    document.querySelector<HTMLButtonElement>("[data-menu-button]");
+  const mobileMenu = document.querySelector<HTMLElement>("[data-mobile-menu]");
+  const mobilePanel =
+    mobileMenu?.querySelector<HTMLElement>(".mobile-menu-panel");
+  const mobileLinks = mobileMenu
+    ? gsap.utils.toArray<HTMLAnchorElement>(".mobile-menu-panel a")
+    : [];
+  let menuOpen = false;
+
+  const menuTl =
+    menuButton && mobileMenu && mobilePanel
+      ? gsap
+          .timeline({
+            paused: true,
+            defaults: { ease: "power3.out" },
+          })
+          .to(mobileMenu, { autoAlpha: 1, duration: 0.18 }, 0)
+          .fromTo(
+            mobilePanel,
+            { y: -16, scale: 0.98 },
+            { y: 0, scale: 1, duration: 0.36 },
+            0,
+          )
+          .fromTo(
+            mobileLinks,
+            { y: 14, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.28, stagger: 0.045 },
+            0.08,
+          )
+      : null;
+
+  function setMenu(open: boolean) {
+    if (!menuButton || !mobileMenu || !menuTl) return;
+
+    menuOpen = open;
+    menuButton.setAttribute("aria-expanded", String(open));
+    mobileMenu.setAttribute("aria-hidden", String(!open));
+    document.documentElement.classList.toggle("menu-open", open);
+
+    if (reduceMotion) {
+      menuTl.progress(open ? 1 : 0).pause();
+      return;
+    }
+
+    open ? menuTl.play() : menuTl.reverse();
+  }
+
+  const handleMenuClick = () => setMenu(!menuOpen);
+  const handleMenuBackdrop = (event: MouseEvent) => {
+    if (event.target === mobileMenu) setMenu(false);
+  };
+  const handleMenuKeydown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") setMenu(false);
+  };
+  const handleMenuLinkClick = () => setMenu(false);
+
+  menuButton?.addEventListener("click", handleMenuClick);
+  mobileMenu?.addEventListener("click", handleMenuBackdrop);
+  document.addEventListener("keydown", handleMenuKeydown);
+  mobileLinks.forEach((link) =>
+    link.addEventListener("click", handleMenuLinkClick),
+  );
 
   if (!reduceMotion) {
     gsap.registerPlugin(ScrollTrigger);
@@ -1367,4 +1724,19 @@ const partners = [
       once: true,
     });
   }
+
+  document.addEventListener(
+    "astro:before-swap",
+    () => {
+      setMenu(false);
+      menuButton?.removeEventListener("click", handleMenuClick);
+      mobileMenu?.removeEventListener("click", handleMenuBackdrop);
+      document.removeEventListener("keydown", handleMenuKeydown);
+      mobileLinks.forEach((link) =>
+        link.removeEventListener("click", handleMenuLinkClick),
+      );
+      menuTl?.kill();
+    },
+    { once: true },
+  );
 </script>
