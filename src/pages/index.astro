@@ -417,17 +417,18 @@ const partners = [
       <blockquote>
         <span class="intro-quote-mark" aria-hidden="true">&ldquo;</span>
         <p class="intro-quote-copy">
-          <span class="quote-line quote-line-small">From the platforms,</span>
-          <span class="quote-line quote-line-mid">for the brands.</span>
-          <span class="quote-line quote-line-hot">High-heat attention.</span>
-          <span class="quote-line quote-line-convert">
-            Conversion-ready demand.
+          <span class="quote-line quote-line-1">From platforms,</span>
+          <span class="quote-line quote-line-2">for businesses:</span>
+          <span class="quote-line quote-line-3">
+            we know what drives engagement
+          </span>
+          <span class="quote-line quote-line-4">
+            and how to make your brand stand out
+          </span>
+          <span class="quote-line quote-line-5">
+            through strategic TikTok partnerships.
           </span>
         </p>
-        <div class="quote-proof" aria-label="Viral Asia conversion focus">
-          <span>Native to the feed</span>
-          <span>Built for WhatsApp enquiries</span>
-        </div>
         <footer>
           <strong>Toby Cai</strong>
           <span>CEO and Founder of Viralasia</span>
@@ -1271,54 +1272,46 @@ const partners = [
     will-change: transform, opacity;
   }
 
-  .quote-line-small {
-    color: rgba(247, 245, 255, 0.58);
-    font-size: clamp(1.45rem, 3.4vw, 3.35rem);
-    line-height: 0.98;
+  .quote-line-1 {
+    color: rgba(247, 245, 255, 0.48);
+    font-size: clamp(1.35rem, 2.8vw, 2.8rem);
+    font-weight: 650;
+    line-height: 1;
+    letter-spacing: -0.055em;
+  }
+
+  .quote-line-2 {
+    color: rgba(247, 245, 255, 0.62);
+    font-size: clamp(1.8rem, 3.7vw, 3.8rem);
+    font-weight: 720;
+    line-height: 0.96;
     letter-spacing: -0.065em;
   }
 
-  .quote-line-mid {
-    color: rgba(247, 245, 255, 0.82);
-    font-size: clamp(2.3rem, 5.4vw, 5.25rem);
+  .quote-line-3 {
+    margin-top: clamp(0.6rem, 1.3vw, 1rem);
+    color: rgba(247, 245, 255, 0.76);
+    font-size: clamp(2.25rem, 4.7vw, 4.8rem);
+    font-weight: 790;
     line-height: 0.92;
-    letter-spacing: -0.08em;
+    letter-spacing: -0.075em;
   }
 
-  .quote-line-hot {
-    margin-top: clamp(0.65rem, 1.4vw, 1.1rem);
+  .quote-line-4 {
     color: var(--ink);
-    font-size: clamp(2.85rem, 7vw, 7.2rem);
-    line-height: 0.84;
-    letter-spacing: -0.09em;
+    font-size: clamp(2.65rem, 5.7vw, 5.9rem);
+    font-weight: 860;
+    line-height: 0.88;
+    letter-spacing: -0.085em;
   }
 
-  .quote-line-convert {
+  .quote-line-5 {
     color: var(--accent-2);
-    font-size: clamp(3rem, 7.6vw, 7.8rem);
-    line-height: 0.84;
+    font-size: clamp(2.9rem, 6.4vw, 6.7rem);
+    font-weight: 950;
+    line-height: 0.86;
     letter-spacing: -0.095em;
-    text-shadow: 0 20px 80px rgba(116, 82, 255, 0.28);
-  }
-
-  .quote-proof {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    margin-top: clamp(1.1rem, 2.4vw, 1.8rem);
-  }
-
-  .quote-proof span {
-    padding: 0.48rem 0.68rem;
-    border: 1px solid rgba(184, 168, 255, 0.28);
-    border-radius: 999px;
-    background: rgba(116, 82, 255, 0.11);
-    color: rgba(247, 245, 255, 0.74);
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    will-change: transform, opacity;
+    text-shadow: 0 20px 80px rgba(116, 82, 255, 0.24);
   }
 
   .intro footer {
@@ -1966,31 +1959,31 @@ const partners = [
       font-size: 6.8rem;
     }
 
-    .quote-line-small {
-      font-size: clamp(1.35rem, 7vw, 2.25rem);
+    .quote-line-1 {
+      font-size: clamp(1.15rem, 5.8vw, 1.8rem);
       line-height: 1;
     }
 
-    .quote-line-mid {
-      font-size: clamp(2rem, 10vw, 3.1rem);
-      line-height: 0.95;
+    .quote-line-2 {
+      font-size: clamp(1.55rem, 7.8vw, 2.35rem);
+      line-height: 0.98;
     }
 
-    .quote-line-hot,
-    .quote-line-convert {
-      font-size: clamp(2.45rem, 12.8vw, 4rem);
+    .quote-line-3 {
+      margin-top: 0.65rem;
+      font-size: clamp(1.9rem, 9.6vw, 2.9rem);
+      line-height: 0.94;
+    }
+
+    .quote-line-4 {
+      font-size: clamp(2.15rem, 10.8vw, 3.3rem);
+      line-height: 0.92;
+    }
+
+    .quote-line-5 {
+      font-size: clamp(2.35rem, 11.8vw, 3.65rem);
       line-height: 0.9;
       letter-spacing: -0.085em;
-    }
-
-    .quote-proof {
-      gap: 0.45rem;
-      margin-top: 1rem;
-    }
-
-    .quote-proof span {
-      font-size: 0.66rem;
-      letter-spacing: 0.04em;
     }
 
     .intro footer {
@@ -2170,7 +2163,6 @@ const partners = [
       });
 
       const quoteLines = gsap.utils.toArray<HTMLElement>(".quote-line");
-      const quoteProof = gsap.utils.toArray<HTMLElement>(".quote-proof span");
       gsap
         .timeline({
           scrollTrigger: {
@@ -2183,23 +2175,13 @@ const partners = [
         .from(
           quoteLines,
           {
-            yPercent: 82,
+            yPercent: (index) => 45 + index * 10,
             opacity: 0,
-            scale: (index) => (index > 1 ? 0.96 : 1),
-            duration: 0.92,
-            stagger: 0.075,
+            scale: (index) => 1 - index * 0.012,
+            duration: 0.88,
+            stagger: 0.085,
           },
           0,
-        )
-        .from(
-          quoteProof,
-          {
-            y: 14,
-            opacity: 0,
-            duration: 0.46,
-            stagger: 0.06,
-          },
-          0.38,
         )
         .from(
           ".intro footer",
@@ -2208,7 +2190,7 @@ const partners = [
             opacity: 0,
             duration: 0.52,
           },
-          0.5,
+          0.62,
         );
     });
 
