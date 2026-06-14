@@ -126,22 +126,22 @@ const videoLinks = [
   {
     image: "/viral-posts/horizontal/59JCT.jpg",
     href: "https://www.youtube.com/watch?v=-fMmrm7shjY",
-    title: "59 JCT property feature",
+    title: "59 JCT property hook",
   },
   {
     image: "/viral-posts/horizontal/bali.png",
     href: "https://www.youtube.com/watch?v=FQXLzUmQsLM",
-    title: "Bali lifestyle feature",
+    title: "Bali travel pull",
   },
   {
     image: "/viral-posts/horizontal/intan.png",
     href: "https://www.youtube.com/watch?v=jtkM3z5l3xc",
-    title: "Intan feature",
+    title: "Intan heritage story",
   },
   {
     image: "/viral-posts/horizontal/shophouse160.jpg",
     href: "https://www.youtube.com/watch?v=nbXoNcELyyI",
-    title: "Shophouse property feature",
+    title: "Shophouse tour, sharpened",
   },
 ];
 
@@ -368,7 +368,28 @@ const partners = [
           turn into demand.
         </p>
         <div class="hero-actions">
-          <a class="va-button" href={whatsappHref}>Enquire Now</a>
+          <span class="hero-cta-wrap">
+            <a
+              class="va-button hero-primary-cta"
+              href={whatsappHref}
+              aria-describedby="hero-cta-tip"
+            >
+              Enquire Now
+            </a>
+            <span class="hero-cta-tip" id="hero-cta-tip" role="tooltip">
+              <span class="whatsapp-mark" aria-hidden="true">
+                <img
+                  src="https://cdn.simpleicons.org/whatsapp/ffffff"
+                  alt=""
+                  loading="lazy"
+                />
+              </span>
+              <span>
+                Get free social media suggestions with our specialist on
+                WhatsApp.
+              </span>
+            </span>
+          </span>
           <a class="va-button va-button-secondary" href="#work">See the work</a>
         </div>
       </div>
@@ -395,11 +416,18 @@ const partners = [
     <section class="va-section intro reveal">
       <blockquote>
         <span class="intro-quote-mark" aria-hidden="true">&ldquo;</span>
-        <p>
-          <span>From the platforms,</span>
-          <span>for the brands.</span>
-          <span>We turn native attention into business demand.</span>
+        <p class="intro-quote-copy">
+          <span class="quote-line quote-line-small">From the platforms,</span>
+          <span class="quote-line quote-line-mid">for the brands.</span>
+          <span class="quote-line quote-line-hot">High-heat attention.</span>
+          <span class="quote-line quote-line-convert">
+            Conversion-ready demand.
+          </span>
         </p>
+        <div class="quote-proof" aria-label="Viral Asia conversion focus">
+          <span>Native to the feed</span>
+          <span>Built for WhatsApp enquiries</span>
+        </div>
         <footer>
           <strong>Toby Cai</strong>
           <span>CEO and Founder of Viralasia</span>
@@ -452,7 +480,8 @@ const partners = [
           videoLinks.map((video, index) => (
             <a href={video.href} target="_blank" rel="noopener noreferrer">
               <img src={video.image} alt={video.title} loading="lazy" />
-              <span>Watch {String(index + 1).padStart(2, "0")}</span>
+              <span>Watch video</span>
+              <strong>{video.title}</strong>
             </a>
           ))
         }
@@ -1050,6 +1079,78 @@ const partners = [
     margin-top: 1.4rem;
   }
 
+  .hero-cta-wrap {
+    position: relative;
+    display: inline-flex;
+    width: fit-content;
+  }
+
+  .hero-cta-tip {
+    position: absolute;
+    bottom: calc(100% + 0.8rem);
+    left: 50%;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 0.68rem;
+    width: min(19rem, calc(100vw - 2rem));
+    padding: 0.72rem 0.82rem 0.72rem 0.72rem;
+    border: 1px solid rgba(184, 168, 255, 0.46);
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.075), transparent),
+      rgba(16, 12, 30, 0.96);
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 760;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 22px 54px rgba(17, 9, 46, 0.5);
+    transform: translate(-50%, 0.45rem) scale(0.98);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .hero-cta-tip::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -0.42rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-right: 1px solid rgba(184, 168, 255, 0.46);
+    border-bottom: 1px solid rgba(184, 168, 255, 0.46);
+    background: rgba(16, 12, 30, 0.96);
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .hero-cta-wrap:hover .hero-cta-tip,
+  .hero-cta-wrap:focus-within .hero-cta-tip {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+
+  .whatsapp-mark {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 50%;
+    background: #25d366;
+    box-shadow: 0 10px 24px rgba(37, 211, 102, 0.25);
+  }
+
+  .whatsapp-mark img {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
   .hero-stage {
     position: relative;
     min-height: min(560px, 68vh);
@@ -1154,20 +1255,68 @@ const partners = [
     letter-spacing: -0.1em;
   }
 
-  .intro p {
+  .intro-quote-copy {
     position: relative;
     max-width: 1080px;
     margin: 0;
     color: var(--ink);
-    font-size: clamp(2.5rem, 6.2vw, 6.2rem);
     font-weight: 900;
-    line-height: 0.88;
-    letter-spacing: -0.085em;
     text-wrap: balance;
   }
 
-  .intro p span {
+  .quote-line {
     display: block;
+    will-change: transform, opacity;
+  }
+
+  .quote-line-small {
+    color: rgba(247, 245, 255, 0.58);
+    font-size: clamp(1.45rem, 3.4vw, 3.35rem);
+    line-height: 0.98;
+    letter-spacing: -0.065em;
+  }
+
+  .quote-line-mid {
+    color: rgba(247, 245, 255, 0.82);
+    font-size: clamp(2.3rem, 5.4vw, 5.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.08em;
+  }
+
+  .quote-line-hot {
+    margin-top: clamp(0.65rem, 1.4vw, 1.1rem);
+    color: var(--ink);
+    font-size: clamp(2.85rem, 7vw, 7.2rem);
+    line-height: 0.84;
+    letter-spacing: -0.09em;
+  }
+
+  .quote-line-convert {
+    color: var(--accent-2);
+    font-size: clamp(3rem, 7.6vw, 7.8rem);
+    line-height: 0.84;
+    letter-spacing: -0.095em;
+    text-shadow: 0 20px 80px rgba(116, 82, 255, 0.28);
+  }
+
+  .quote-proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: clamp(1.1rem, 2.4vw, 1.8rem);
+  }
+
+  .quote-proof span {
+    padding: 0.48rem 0.68rem;
+    border: 1px solid rgba(184, 168, 255, 0.28);
+    border-radius: 999px;
+    background: rgba(116, 82, 255, 0.11);
+    color: rgba(247, 245, 255, 0.74);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    will-change: transform, opacity;
   }
 
   .intro footer {
@@ -1364,11 +1513,19 @@ const partners = [
   }
 
   .video-strip span {
-    color: var(--muted);
+    color: var(--accent-2);
     font-size: 0.82rem;
     font-weight: 900;
     letter-spacing: 0.12em;
     text-transform: uppercase;
+  }
+
+  .video-strip strong {
+    color: var(--ink);
+    font-size: clamp(1rem, 1.6vw, 1.18rem);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
   }
 
   .accounts {
@@ -1734,6 +1891,26 @@ const partners = [
       align-items: stretch;
     }
 
+    .hero-cta-wrap,
+    .hero-primary-cta {
+      width: 100%;
+    }
+
+    .hero-cta-tip {
+      left: 0;
+      width: 100%;
+      transform: translateY(0.45rem) scale(0.98);
+    }
+
+    .hero-cta-tip::after {
+      left: 50%;
+    }
+
+    .hero-cta-wrap:hover .hero-cta-tip,
+    .hero-cta-wrap:focus-within .hero-cta-tip {
+      transform: translateY(0) scale(1);
+    }
+
     h1 {
       font-size: clamp(4rem, 19vw, 6.25rem);
       line-height: 0.9;
@@ -1787,10 +1964,31 @@ const partners = [
       font-size: 6.8rem;
     }
 
-    .intro p {
-      font-size: clamp(2.05rem, 10.2vw, 3rem);
-      line-height: 0.98;
-      letter-spacing: -0.075em;
+    .quote-line-small {
+      font-size: clamp(1.35rem, 7vw, 2.25rem);
+      line-height: 1;
+    }
+
+    .quote-line-mid {
+      font-size: clamp(2rem, 10vw, 3.1rem);
+      line-height: 0.95;
+    }
+
+    .quote-line-hot,
+    .quote-line-convert {
+      font-size: clamp(2.45rem, 12.8vw, 4rem);
+      line-height: 0.9;
+      letter-spacing: -0.085em;
+    }
+
+    .quote-proof {
+      gap: 0.45rem;
+      margin-top: 1rem;
+    }
+
+    .quote-proof span {
+      font-size: 0.66rem;
+      letter-spacing: 0.04em;
     }
 
     .intro footer {
@@ -1946,6 +2144,48 @@ const partners = [
           },
         });
       });
+
+      const quoteLines = gsap.utils.toArray<HTMLElement>(".quote-line");
+      const quoteProof = gsap.utils.toArray<HTMLElement>(".quote-proof span");
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: ".intro",
+            start: "top 70%",
+            once: true,
+          },
+          defaults: { ease: "power4.out" },
+        })
+        .from(
+          quoteLines,
+          {
+            yPercent: 82,
+            opacity: 0,
+            scale: (index) => (index > 1 ? 0.96 : 1),
+            duration: 0.92,
+            stagger: 0.075,
+          },
+          0,
+        )
+        .from(
+          quoteProof,
+          {
+            y: 14,
+            opacity: 0,
+            duration: 0.46,
+            stagger: 0.06,
+          },
+          0.38,
+        )
+        .from(
+          ".intro footer",
+          {
+            y: 16,
+            opacity: 0,
+            duration: 0.52,
+          },
+          0.5,
+        );
     });
 
     document.addEventListener("astro:before-swap", () => ctx.revert(), {
