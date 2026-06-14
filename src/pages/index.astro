@@ -824,14 +824,15 @@ const partners = [
     pointer-events: none;
   }
 
-  .mobile-menu[aria-hidden="false"] {
+  .va-site .mobile-menu[aria-hidden="false"] {
     pointer-events: auto;
   }
 
   .mobile-menu-panel {
+    box-sizing: border-box;
     display: grid;
     overflow: hidden;
-    width: min(100%, 460px);
+    width: min(calc(100vw - 1rem), 460px);
     margin: 0 auto;
     padding: 0.7rem;
     border: 2px solid rgba(184, 168, 255, 0.7);
@@ -868,6 +869,7 @@ const partners = [
   }
 
   .mobile-menu-panel a {
+    box-sizing: border-box;
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -1868,6 +1870,7 @@ const partners = [
     menuOpen = open;
     menuButton.setAttribute("aria-expanded", String(open));
     mobileMenu.setAttribute("aria-hidden", String(!open));
+    mobileMenu.style.pointerEvents = open ? "auto" : "none";
     document.documentElement.classList.toggle("menu-open", open);
 
     if (reduceMotion) {
