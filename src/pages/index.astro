@@ -232,7 +232,7 @@ const partners = [
   ["Babies Bliss.jpeg", "Babies Bliss"],
   ["Bachi Bachi Restaurant.jpeg", "Bachi Bachi Restaurant"],
   ["baofachachaanteng 1.jpeg", "Bao Fa Cha Cha Anteng"],
-  ["Basil King 1.jpeg", "Basil King"],
+  ["Basil King 2.jpeg", "Basil King"],
   ["Cheeky Signatures Restaurant.jpeg", "Cheeky Signatures"],
   ["Creamie Sippies.png.webp", "Creamie Sippies"],
   ["DMC Karting.png", "DMC Karting"],
@@ -592,7 +592,7 @@ const partners = [
       <div class="marquee-track" aria-hidden="true">
         {
           partners.map(([image, name]) => (
-            <div class="partner-logo">
+            <div class="partner-logo" data-partner={name}>
               <img src={`/logos/${image}`} alt={name} loading="lazy" />
             </div>
           ))
@@ -1761,6 +1761,13 @@ const partners = [
     width: 76%;
     height: 70%;
     object-fit: contain;
+  }
+
+  .partner-logo[data-partner="Basil King"] img,
+  .partner-logo[data-partner="Temper Restaurant"] img {
+    width: 62%;
+    height: 62%;
+    border-radius: 10px;
   }
 
   .va-footer {
