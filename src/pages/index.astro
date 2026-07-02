@@ -1801,6 +1801,141 @@ const partners = [
     font-size: 0.82rem;
   }
 
+  :global(html.staging-preview) .va-site {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f6f4ff;
+    --ink: #171421;
+    --muted: #625b71;
+    --line: rgba(23, 20, 33, 0.12);
+    --accent: #5a3fd7;
+    --accent-2: #6d5ce7;
+    background:
+      radial-gradient(
+        circle at 78% 8%,
+        rgba(90, 63, 215, 0.16),
+        transparent 30rem
+      ),
+      radial-gradient(
+        circle at 10% 22%,
+        rgba(250, 204, 21, 0.11),
+        transparent 22rem
+      ),
+      linear-gradient(180deg, #ffffff 0%, #faf9ff 48%, #ffffff 100%);
+  }
+
+  :global(html.staging-preview) .va-site::before {
+    opacity: 1;
+    background-image:
+      linear-gradient(rgba(90, 63, 215, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 63, 215, 0.045) 1px, transparent 1px);
+  }
+
+  :global(html.staging-preview) .va-site .va-nav,
+  :global(html.staging-preview) .mobile-menu-panel {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 60px rgba(23, 20, 33, 0.08);
+  }
+
+  :global(html.staging-preview) .va-nav-links,
+  :global(html.staging-preview) .va-button-secondary,
+  :global(html.staging-preview) .video-strip a,
+  :global(html.staging-preview) .account-card,
+  :global(html.staging-preview) .result-card,
+  :global(html.staging-preview) .testimonial-card {
+    background: rgba(90, 63, 215, 0.06);
+  }
+
+  :global(html.staging-preview) .va-nav-links a:hover {
+    background: rgba(90, 63, 215, 0.1);
+  }
+
+  :global(html.staging-preview) .nav-menu-button {
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--ink);
+    box-shadow: 0 10px 32px rgba(90, 63, 215, 0.16);
+  }
+
+  :global(html.staging-preview) .va-site .mobile-menu {
+    background:
+      radial-gradient(
+        circle at 78% 10%,
+        rgba(90, 63, 215, 0.14),
+        transparent 32%
+      ),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.78));
+  }
+
+  :global(html.staging-preview) .mobile-menu-top span:last-child,
+  :global(html.staging-preview) .mobile-link-note {
+    color: rgba(109, 92, 231, 0.66);
+  }
+
+  :global(html.staging-preview) .hero-cta-tip {
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--ink);
+    box-shadow: 0 22px 54px rgba(23, 20, 33, 0.12);
+  }
+
+  :global(html.staging-preview) .hero-cta-tip::after {
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  :global(html.staging-preview) .hero-stage {
+    background:
+      radial-gradient(
+        circle at 40% 20%,
+        rgba(90, 63, 215, 0.2),
+        transparent 18rem
+      ),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(246, 244, 255, 0.9));
+    box-shadow: 0 28px 90px rgba(23, 20, 33, 0.08);
+  }
+
+  :global(html.staging-preview) .hero-stage::before {
+    color: rgba(90, 63, 215, 0.09);
+  }
+
+  :global(html.staging-preview) .phone-card {
+    background: #ffffff;
+    box-shadow: 0 32px 90px rgba(23, 20, 33, 0.18);
+  }
+
+  :global(html.staging-preview) .hero-orbit {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  :global(html.staging-preview) .intro blockquote {
+    border-color: rgba(23, 20, 33, 0.12);
+  }
+
+  :global(html.staging-preview) .intro-quote-mark {
+    color: rgba(90, 63, 215, 0.12);
+  }
+
+  :global(html.staging-preview) .quote-context,
+  :global(html.staging-preview) .quote-capability,
+  :global(html.staging-preview) .quote-outcome-lead,
+  :global(html.staging-preview) .quote-method,
+  :global(html.staging-preview) .intro footer span,
+  :global(html.staging-preview) .va-footer > p {
+    color: rgba(23, 20, 33, 0.56);
+  }
+
+  :global(html.staging-preview) .quote-method strong {
+    color: var(--accent-2);
+  }
+
+  :global(html.staging-preview) .viral-row {
+    background:
+      linear-gradient(90deg, rgba(90, 63, 215, 0.08), transparent 55%),
+      rgba(255, 255, 255, 0.78);
+  }
+
+  :global(html.staging-preview) .service-media {
+    background-color: #f1eefc;
+  }
+
   @keyframes viral-scroll {
     from {
       transform: translateX(0);
@@ -1895,12 +2030,12 @@ const partners = [
 
   @media (max-width: 560px) {
     .va-section {
-      width: min(100% - 1rem, 1180px);
+      width: min(calc(100% - 1rem), 1180px);
       padding-block: 4rem;
     }
 
     .va-site .va-nav {
-      width: min(100% - 1rem, 1180px);
+      width: min(calc(100% - 1rem), 1180px);
       top: 0.5rem;
     }
 
@@ -1911,6 +2046,11 @@ const partners = [
     .va-button-small {
       min-height: 42px;
       padding-inline: 0.85rem;
+    }
+
+    .nav-menu-button {
+      gap: 0.55rem;
+      padding-inline: 0.72rem;
     }
 
     .hero-actions {
