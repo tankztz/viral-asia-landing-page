@@ -290,6 +290,13 @@ const partners = [
   ["Yoru Omakase.jpeg", "Yoru Omakase"],
   ["Yu Chun Curry Fish.jpeg", "Yu Chun Curry Fish"],
 ];
+
+const partnerItemsPerRow = Math.ceil(partners.length / 3);
+const partnerRows = [
+  partners.slice(0, partnerItemsPerRow),
+  partners.slice(partnerItemsPerRow, partnerItemsPerRow * 2),
+  partners.slice(partnerItemsPerRow * 2),
+];
 ---
 
 <Layout title="Viral Asia - TikTok Affiliate Marketing Partner">
@@ -589,11 +596,20 @@ const partners = [
         <p class="va-kicker">Our Viral Partners</p>
         <h2>Experience the reliability chosen by industry giants.</h2>
       </div>
-      <div class="marquee-track" aria-hidden="true">
+      <div class="partner-marquee" aria-hidden="true">
         {
-          partners.map(([image, name]) => (
-            <div class="partner-logo" data-partner={name}>
-              <img src={`/logos/${image}`} alt={name} loading="lazy" />
+          partnerRows.map((row, index) => (
+            <div
+              class="partner-row"
+              data-direction={index === 1 ? "right" : "left"}
+            >
+              <div class="partner-track">
+                {row.concat(row).map(([image, name]) => (
+                  <div class="partner-logo" data-partner={name}>
+                    <img src={`/logos/${image}`} alt={name} loading="lazy" />
+                  </div>
+                ))}
+              </div>
             </div>
           ))
         }
@@ -1738,17 +1754,44 @@ const partners = [
     margin-inline: auto;
   }
 
-  .marquee-track {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  .partner-marquee {
+    display: grid;
     gap: 1rem;
     width: min(1180px, 100%);
     margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .partner-row {
+    overflow: hidden;
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+
+  .partner-track {
+    display: flex;
+    width: max-content;
+    gap: 1rem;
+    animation: partner-scroll 64s linear infinite;
+    will-change: transform;
+  }
+
+  .partner-row[data-direction="right"] .partner-track {
+    animation-direction: reverse;
+  }
+
+  .partner-row:hover .partner-track {
+    animation-play-state: paused;
   }
 
   .partner-logo {
     display: grid;
+    flex: 0 0 164px;
     place-items: center;
     width: 164px;
     height: 112px;
@@ -1955,6 +1998,15 @@ const partners = [
       drop-shadow(0 3px 8px rgba(0, 0, 0, 0.28));
   }
 
+  @keyframes partner-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
   @keyframes viral-scroll {
     from {
       transform: translateX(0);
@@ -1965,6 +2017,7 @@ const partners = [
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .partner-track,
     .viral-track {
       animation: none;
     }
