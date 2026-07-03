@@ -1,15 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import {
-  beforeAfter,
   heroVideos,
   navItems,
-  operatedAccounts,
   partners,
   services,
   stats,
   testimonials,
   whatsappHref,
+  workCards,
 } from "../data/viralSite";
 ---
 
@@ -99,29 +98,23 @@ import {
     </section>
 
     <section class="work" id="work">
-      <h2>Our <span>operated accounts</span> and creator platform</h2>
-      <div class="account-grid">
+      <h2>Recent <span>viral work</span> that broke the internet</h2>
+      <div class="work-grid">
         {
-          operatedAccounts.map((account) => (
-            <article class="account-card">
-              <div class="account-logo">
-                <img
-                  src={account.image}
-                  alt={`${account.title} logo`}
-                  loading="lazy"
-                />
+          workCards.map(([image, title, account, views]) => (
+            <article class="work-card">
+              <div class="work-image">
+                <img src={image} alt={title} loading="lazy" />
+                <span class="play play-large" aria-hidden="true" />
+                <strong>{views}</strong>
               </div>
-              <span>{account.platform}</span>
-              <h3>{account.title}</h3>
-              <p>{account.handle}</p>
-              <a href={account.href} target="_blank" rel="noopener noreferrer">
-                Open account
-              </a>
+              <h3>{title}</h3>
+              <p>{account}</p>
             </article>
           ))
         }
       </div>
-      <a class="cta cta-wide" href="/work">View all work</a>
+      <a class="cta cta-wide" href="/work">View more of our work</a>
     </section>
 
     <section class="why" id="about">
@@ -163,65 +156,34 @@ import {
 
       <div class="quotes">
         <h2>What our clients say</h2>
-        <div class="testimonial-carousel" aria-label="Client testimonials">
-          <div class="testimonial-track">
-            {
-              testimonials.map((testimonial) => (
-                <blockquote class="testimonial-slide">
-                  <img
-                    src={testimonial.logo}
-                    alt={`${testimonial.name} brand logo`}
-                    loading="lazy"
-                  />
-                  <p>{testimonial.quote}</p>
-                  <cite>
-                    {testimonial.name}
-                    <span>{testimonial.role}</span>
-                  </cite>
-                </blockquote>
-              ))
-            }
-          </div>
-        </div>
+        {
+          testimonials.slice(0, 2).map((testimonial) => (
+            <blockquote>
+              <p>{testimonial.quote}</p>
+              <cite>
+                {testimonial.name}
+                <span>{testimonial.role}</span>
+              </cite>
+            </blockquote>
+          ))
+        }
         <a class="cta cta-small" href="/clients">More testimonials</a>
       </div>
     </section>
 
-    <section class="before-after">
-      <h2>Before and After</h2>
-      <div class="before-after-grid">
-        {
-          beforeAfter.map((item) => (
-            <article>
-              <img src={item.image} alt={item.partner} loading="lazy" />
-              <div>
-                <p>{item.quote}</p>
-                <strong>{item.partner}</strong>
-              </div>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
     <section class="services" id="services">
-      <h2>What we offer</h2>
-      <p>We offer a wide range of services to help your business grow.</p>
+      <h2>Our services</h2>
       <div class="service-grid">
         {
           services.map((service) => (
             <article>
+              <span class="service-icon" aria-hidden="true" />
               <h3>{service.title}</h3>
-              <img src={service.image} alt={service.title} loading="lazy" />
               <p>{service.body}</p>
             </article>
           ))
         }
       </div>
-      <a class="cta cta-wide" href={whatsappHref}>
-        Contact us for surprising discount
-        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
-      </a>
     </section>
 
     <section class="offer">
@@ -678,70 +640,30 @@ import {
     line-height: 1;
   }
 
-  .account-grid {
+  .work-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 0.75rem;
     margin-top: 0.8rem;
     text-align: left;
   }
 
-  .account-card {
-    display: grid;
-    min-height: 12.5rem;
-    padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    border-radius: 6px;
-    background: linear-gradient(135deg, #181818, #080808);
+  .work-image {
+    aspect-ratio: 9 / 12.6;
+  }
+
+  .work-card h3 {
+    margin-top: 0.55rem;
     color: white;
-  }
-
-  .account-logo {
-    display: grid;
-    place-items: center;
-    width: 4.2rem;
-    height: 4.2rem;
-    margin-bottom: 1rem;
-    overflow: hidden;
-    border-radius: 10px;
-    background: #22145a;
-  }
-
-  .account-logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .account-card span {
-    color: var(--yellow);
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 0.72rem;
-    font-weight: 900;
-    text-transform: uppercase;
-  }
-
-  .account-card h3 {
-    margin-top: 0.35rem;
-    color: white;
-    font-size: 1.45rem;
+    font-size: 0.95rem;
     line-height: 1;
   }
 
-  .account-card p {
+  .work-card p {
     margin-top: 0.3rem;
     color: #cfcfcf;
     font-size: 0.8rem;
     line-height: 1.2;
-  }
-
-  .account-card a {
-    align-self: end;
-    margin-top: 1rem;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 900;
-    text-transform: uppercase;
   }
 
   .why {
@@ -814,31 +736,6 @@ import {
     line-height: 0.95;
   }
 
-  .quotes,
-  .testimonial-carousel,
-  .testimonial-track,
-  .testimonial-slide {
-    min-width: 0;
-  }
-
-  .testimonial-carousel {
-    overflow: hidden;
-  }
-
-  .testimonial-track {
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    padding-bottom: 0.35rem;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: thin;
-  }
-
-  .testimonial-slide {
-    flex: 0 0 92%;
-    scroll-snap-align: start;
-  }
-
   blockquote {
     margin: 0.8rem 0 0;
     padding: 0.75rem;
@@ -850,15 +747,6 @@ import {
     color: white;
     font-size: 0.84rem;
     line-height: 1.35;
-  }
-
-  blockquote img {
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: 0.75rem;
-    border-radius: 8px;
-    object-fit: contain;
-    background: white;
   }
 
   cite {
@@ -887,60 +775,6 @@ import {
     text-align: center;
   }
 
-  .before-after {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0.9rem 1.5rem 1.15rem;
-    border-top: 2px solid rgba(233, 21, 21, 0.9);
-    text-align: center;
-  }
-
-  .before-after h2 {
-    font-size: clamp(1.8rem, 3vw, 2.8rem);
-  }
-
-  .before-after-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-    margin-top: 0.85rem;
-    text-align: left;
-  }
-
-  .before-after article {
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    border-radius: 6px;
-    background: #111;
-  }
-
-  .before-after img {
-    width: 100%;
-    height: 11rem;
-    object-fit: cover;
-    object-position: top;
-  }
-
-  .before-after div {
-    padding: 0.9rem;
-    background: var(--red);
-  }
-
-  .before-after p {
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 900;
-    line-height: 1.25;
-  }
-
-  .before-after strong {
-    display: block;
-    margin-top: 0.75rem;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 0.78rem;
-  }
-
   .service-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -952,37 +786,28 @@ import {
 
   .service-grid article {
     display: grid;
-    gap: 0.65rem;
-    align-content: start;
-    overflow: hidden;
-    border: 2px solid #050505;
-    border-radius: 6px;
-    background: white;
-    padding: 0.8rem;
+    grid-template-columns: 2.2rem 1fr;
+    column-gap: 0.65rem;
+  }
+
+  .service-icon {
+    grid-row: span 2;
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #111;
+    border-radius: 50%;
   }
 
   .service-grid h3 {
-    font-size: 1rem;
+    font-size: 0.9rem;
     line-height: 0.95;
   }
 
-  .service-grid img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-
   .service-grid p {
+    margin-top: 0.35rem;
     color: #111;
     font-size: 0.75rem;
     line-height: 1.25;
-  }
-
-  .services > p {
-    margin-top: 0.35rem;
-    color: #111;
-    font-size: 0.95rem;
   }
 
   .offer {
@@ -1137,10 +962,9 @@ import {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .account-grid,
     .logo-grid,
     .service-grid,
-    .before-after-grid {
+    .work-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -1192,46 +1016,36 @@ import {
       height: auto;
     }
 
-    .hero-stat {
-      position: static;
-      width: auto;
-      margin: 1rem 0 0;
-      padding: 0.75rem;
-      background: rgba(0, 0, 0, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 6px;
-    }
-
-    .hero-stat strong {
-      font-size: clamp(2.8rem, 16vw, 3.6rem);
-    }
-
-    .hero-stat span {
-      font-size: clamp(1.25rem, 7vw, 1.75rem);
-    }
-
     .stats-bar,
-    .account-grid,
     .logo-grid,
     .service-grid,
-    .before-after-grid {
+    .work-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .work h2,
-    .services h2,
-    .before-after h2 {
+    .services h2 {
       font-size: 1.7rem;
       text-align: left;
     }
 
-    .account-card {
-      min-height: 11rem;
-      padding: 0.8rem;
+    .hero-stat {
+      position: absolute;
+      inset: 34% 3% auto auto;
+      width: min(19rem, 78%);
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
     }
 
-    .service-grid article {
-      padding: 0.65rem;
+    .hero-stat strong {
+      font-size: clamp(3rem, 15vw, 3.8rem);
+    }
+
+    .hero-stat span {
+      font-size: clamp(1.15rem, 5.7vw, 1.5rem);
     }
 
     .footer {

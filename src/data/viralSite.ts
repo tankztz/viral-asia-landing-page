@@ -35,6 +35,40 @@ export const heroVideos = [
   ["/viral-posts/food/pigtrotter.png", "2.1M", "Food guide"],
 ] as const;
 
+export const workCards = [
+  [
+    "/viral-posts/food/26yrfishball.png",
+    "Hawker food campaign",
+    "@ SGDaily",
+    "12.3M",
+  ],
+  [
+    "/viral-posts/food/Screenshot 2024-10-11 at 10.05.56 PM.png",
+    "Pizza promotion",
+    "@ Fast casual chain",
+    "8.7M",
+  ],
+  [
+    "/viral-posts/things_to_do/IMG_8299.PNG",
+    "Event launch reel",
+    "@ Local attraction",
+    "7.1M",
+  ],
+  ["/viral-posts/food/loklok.png", "Late-night buffet", "@ F&B brand", "6.3M"],
+  [
+    "/viral-posts/things_to_do/ritual_team.png",
+    "Lifestyle experience",
+    "@ Ritual team",
+    "5.4M",
+  ],
+  [
+    "/viral-posts/property/Screenshot_1.png",
+    "Property explainer",
+    "@ SGHomez",
+    "4.6M",
+  ],
+] as const;
+
 export const operatedAccounts = [
   {
     title: "SGDaily",
