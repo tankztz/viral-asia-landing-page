@@ -1,14 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import {
+  beforeAfter,
   heroVideos,
   navItems,
+  operatedAccounts,
   partners,
   services,
   stats,
   testimonials,
   whatsappHref,
-  workCards,
 } from "../data/viralSite";
 ---
 
@@ -21,7 +22,10 @@ import {
       <nav aria-label="Primary navigation">
         {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
       </nav>
-      <a class="cta cta-top" href={whatsappHref}>Get free consultation</a>
+      <a class="cta cta-top" href={whatsappHref}>
+        Get free consultation
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
     </header>
 
     <section class="hero">
@@ -41,7 +45,10 @@ import {
           <li>Singapore homegrown team</li>
           <li>Full-service campaigns</li>
         </ul>
-        <a class="cta cta-main" href={whatsappHref}>Get free consultation</a>
+        <a class="cta cta-main" href={whatsappHref}>
+          Get free consultation
+          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+        </a>
       </div>
 
       <div class="hero-board" aria-label="Viral video examples">
@@ -85,27 +92,36 @@ import {
           </div>
         ))
       }
-      <a class="cta cta-small" href={whatsappHref}>Talk to us now</a>
+      <a class="cta cta-small" href={whatsappHref}>
+        Talk to us now
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
     </section>
 
     <section class="work" id="work">
-      <h2>Recent <span>viral work</span> that broke the internet</h2>
-      <div class="work-grid">
+      <h2>Our <span>operated accounts</span> and creator platform</h2>
+      <div class="account-grid">
         {
-          workCards.map(([image, title, account, views]) => (
-            <article class="work-card">
-              <div class="work-image">
-                <img src={image} alt={title} loading="lazy" />
-                <span class="play play-large" aria-hidden="true" />
-                <strong>{views}</strong>
+          operatedAccounts.map((account) => (
+            <article class="account-card">
+              <div class="account-logo">
+                <img
+                  src={account.image}
+                  alt={`${account.title} logo`}
+                  loading="lazy"
+                />
               </div>
-              <h3>{title}</h3>
-              <p>{account}</p>
+              <span>{account.platform}</span>
+              <h3>{account.title}</h3>
+              <p>{account.handle}</p>
+              <a href={account.href} target="_blank" rel="noopener noreferrer">
+                Open account
+              </a>
             </article>
           ))
         }
       </div>
-      <a class="cta cta-wide" href="/work">View more of our work</a>
+      <a class="cta cta-wide" href="/work">View all work</a>
     </section>
 
     <section class="why" id="about">
@@ -147,34 +163,65 @@ import {
 
       <div class="quotes">
         <h2>What our clients say</h2>
-        {
-          testimonials.slice(0, 2).map(([quote, name, role]) => (
-            <blockquote>
-              <p>{quote}</p>
-              <cite>
-                {name}
-                <span>{role}</span>
-              </cite>
-            </blockquote>
-          ))
-        }
+        <div class="testimonial-carousel" aria-label="Client testimonials">
+          <div class="testimonial-track">
+            {
+              testimonials.map((testimonial) => (
+                <blockquote class="testimonial-slide">
+                  <img
+                    src={testimonial.logo}
+                    alt={`${testimonial.name} brand logo`}
+                    loading="lazy"
+                  />
+                  <p>{testimonial.quote}</p>
+                  <cite>
+                    {testimonial.name}
+                    <span>{testimonial.role}</span>
+                  </cite>
+                </blockquote>
+              ))
+            }
+          </div>
+        </div>
         <a class="cta cta-small" href="/clients">More testimonials</a>
       </div>
     </section>
 
-    <section class="services" id="services">
-      <h2>Our services</h2>
-      <div class="service-grid">
+    <section class="before-after">
+      <h2>Before and After</h2>
+      <div class="before-after-grid">
         {
-          services.map(([title, body]) => (
+          beforeAfter.map((item) => (
             <article>
-              <span class="service-icon" aria-hidden="true" />
-              <h3>{title}</h3>
-              <p>{body}</p>
+              <img src={item.image} alt={item.partner} loading="lazy" />
+              <div>
+                <p>{item.quote}</p>
+                <strong>{item.partner}</strong>
+              </div>
             </article>
           ))
         }
       </div>
+    </section>
+
+    <section class="services" id="services">
+      <h2>What we offer</h2>
+      <p>We offer a wide range of services to help your business grow.</p>
+      <div class="service-grid">
+        {
+          services.map((service) => (
+            <article>
+              <h3>{service.title}</h3>
+              <img src={service.image} alt={service.title} loading="lazy" />
+              <p>{service.body}</p>
+            </article>
+          ))
+        }
+      </div>
+      <a class="cta cta-wide" href={whatsappHref}>
+        Contact us for surprising discount
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
     </section>
 
     <section class="offer">
@@ -188,23 +235,27 @@ import {
         <span><strong>23</strong>Mins</span>
         <span><strong>45</strong>Secs</span>
       </div>
-      <a class="cta cta-main" href={whatsappHref}>Claim your discount</a>
+      <a class="cta cta-discount" href={whatsappHref}>
+        Claim your discount
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
     </section>
 
     <footer class="footer" id="contact">
       <div class="footer-cta">
         <h2>Ready to make your brand go viral?</h2>
         <p>Let's plan the next campaign.</p>
-        <a class="cta cta-main" href={whatsappHref}>Get free consultation</a>
-        <small>Or call us: +65 9090 6912</small>
+        <a class="cta cta-main" href={whatsappHref}>
+          Get free consultation
+          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+        </a>
+        <small>Or call us: (+65) 9090 6912</small>
       </div>
       <div>
-        <h3>Our office</h3>
-        <p>
-          Viral Asia Pte. Ltd.<br />71 Ayer Rajah Crescent #02-12/13<br
-          />Singapore 139951
-        </p>
-        <p>Mon - Fri: 9AM - 6PM<br />Sat: 9AM - 1PM</p>
+        <h3>Mailing Address</h3>
+        <p>11 mosque street #02-01</p>
+        <h3>Email Address</h3>
+        <p>hello@viralasia.co</p>
       </div>
       <div>
         <h3>Follow us</h3>
@@ -222,7 +273,7 @@ import {
           href={whatsappHref}
           aria-label="Chat with Viral Asia on WhatsApp"
         >
-          <span>WA</span>
+          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
         </a>
       </div>
     </footer>
@@ -259,7 +310,8 @@ import {
   .landing li,
   .landing small,
   .landing cite,
-  .landing a {
+  .landing a,
+  .landing blockquote {
     font-family: Arial, Helvetica, sans-serif;
     text-transform: none;
   }
@@ -303,6 +355,7 @@ import {
     letter-spacing: 0.02em;
     text-decoration: none;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .cta {
@@ -335,10 +388,17 @@ import {
     transform: translateY(1px);
   }
 
+  .cta img {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    filter: invert(1);
+  }
+
   .cta-main,
   .cta-top {
-    background: var(--yellow);
-    color: #050505;
+    background: var(--red);
+    color: white;
   }
 
   .cta-wide {
@@ -349,6 +409,15 @@ import {
   .cta-small {
     min-height: 2.2rem;
     padding-inline: 1rem;
+  }
+
+  .cta-discount {
+    background: var(--yellow);
+    color: #050505;
+  }
+
+  .cta-discount img {
+    filter: none;
   }
 
   .hero {
@@ -609,30 +678,70 @@ import {
     line-height: 1;
   }
 
-  .work-grid {
+  .account-grid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.75rem;
     margin-top: 0.8rem;
     text-align: left;
   }
 
-  .work-image {
-    aspect-ratio: 9 / 12.6;
+  .account-card {
+    display: grid;
+    min-height: 12.5rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 6px;
+    background: linear-gradient(135deg, #181818, #080808);
+    color: white;
   }
 
-  .work-card h3 {
-    margin-top: 0.55rem;
+  .account-logo {
+    display: grid;
+    place-items: center;
+    width: 4.2rem;
+    height: 4.2rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #22145a;
+  }
+
+  .account-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .account-card span {
+    color: var(--yellow);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .account-card h3 {
+    margin-top: 0.35rem;
     color: white;
-    font-size: 0.95rem;
+    font-size: 1.45rem;
     line-height: 1;
   }
 
-  .work-card p {
+  .account-card p {
     margin-top: 0.3rem;
     color: #cfcfcf;
     font-size: 0.8rem;
     line-height: 1.2;
+  }
+
+  .account-card a {
+    align-self: end;
+    margin-top: 1rem;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
   }
 
   .why {
@@ -705,6 +814,31 @@ import {
     line-height: 0.95;
   }
 
+  .quotes,
+  .testimonial-carousel,
+  .testimonial-track,
+  .testimonial-slide {
+    min-width: 0;
+  }
+
+  .testimonial-carousel {
+    overflow: hidden;
+  }
+
+  .testimonial-track {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .testimonial-slide {
+    flex: 0 0 92%;
+    scroll-snap-align: start;
+  }
+
   blockquote {
     margin: 0.8rem 0 0;
     padding: 0.75rem;
@@ -716,6 +850,15 @@ import {
     color: white;
     font-size: 0.84rem;
     line-height: 1.35;
+  }
+
+  blockquote img {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    object-fit: contain;
+    background: white;
   }
 
   cite {
@@ -744,6 +887,60 @@ import {
     text-align: center;
   }
 
+  .before-after {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem 1.15rem;
+    border-top: 2px solid rgba(233, 21, 21, 0.9);
+    text-align: center;
+  }
+
+  .before-after h2 {
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+  }
+
+  .before-after-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 0.85rem;
+    text-align: left;
+  }
+
+  .before-after article {
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 6px;
+    background: #111;
+  }
+
+  .before-after img {
+    width: 100%;
+    height: 11rem;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .before-after div {
+    padding: 0.9rem;
+    background: var(--red);
+  }
+
+  .before-after p {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 900;
+    line-height: 1.25;
+  }
+
+  .before-after strong {
+    display: block;
+    margin-top: 0.75rem;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.78rem;
+  }
+
   .service-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -755,28 +952,37 @@ import {
 
   .service-grid article {
     display: grid;
-    grid-template-columns: 2.2rem 1fr;
-    column-gap: 0.65rem;
-  }
-
-  .service-icon {
-    grid-row: span 2;
-    width: 2rem;
-    height: 2rem;
-    border: 2px solid #111;
-    border-radius: 50%;
+    gap: 0.65rem;
+    align-content: start;
+    overflow: hidden;
+    border: 2px solid #050505;
+    border-radius: 6px;
+    background: white;
+    padding: 0.8rem;
   }
 
   .service-grid h3 {
-    font-size: 0.9rem;
+    font-size: 1rem;
     line-height: 0.95;
   }
 
+  .service-grid img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
   .service-grid p {
-    margin-top: 0.35rem;
     color: #111;
     font-size: 0.75rem;
     line-height: 1.25;
+  }
+
+  .services > p {
+    margin-top: 0.35rem;
+    color: #111;
+    font-size: 0.95rem;
   }
 
   .offer {
@@ -890,16 +1096,15 @@ import {
   }
 
   .qr span {
-    display: grid;
-    place-items: center;
-    width: 3.1rem;
-    height: 3.1rem;
+    display: none;
+  }
+
+  .qr img {
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0.65rem;
     border-radius: 50%;
     background: #25d366;
-    font:
-      900 1rem/1 Arial,
-      Helvetica,
-      sans-serif;
   }
 
   @media (max-width: 760px) {
@@ -932,9 +1137,10 @@ import {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .work-grid,
+    .account-grid,
     .logo-grid,
-    .service-grid {
+    .service-grid,
+    .before-after-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -955,7 +1161,17 @@ import {
       width: 100%;
       overflow-x: auto;
       justify-content: flex-start;
+      gap: 0.65rem;
       padding-bottom: 0.25rem;
+      scrollbar-width: none;
+    }
+
+    .topbar nav a {
+      font-size: 0.66rem;
+    }
+
+    .topbar nav::-webkit-scrollbar {
+      display: none;
     }
 
     .cta-top {
@@ -963,8 +1179,8 @@ import {
     }
 
     h1 {
-      max-width: 8ch;
-      font-size: 4.4rem;
+      max-width: 100%;
+      font-size: clamp(3rem, 14vw, 4.1rem);
     }
 
     .hero-copy p {
@@ -973,27 +1189,49 @@ import {
 
     .video-mosaic {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      height: auto;
     }
 
     .hero-stat {
       position: static;
       width: auto;
-      margin-top: 0.8rem;
+      margin: 1rem 0 0;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 6px;
     }
 
     .hero-stat strong {
-      font-size: 4rem;
+      font-size: clamp(2.8rem, 16vw, 3.6rem);
     }
 
     .hero-stat span {
-      font-size: 2rem;
+      font-size: clamp(1.25rem, 7vw, 1.75rem);
     }
 
     .stats-bar,
-    .work-grid,
+    .account-grid,
     .logo-grid,
-    .service-grid {
+    .service-grid,
+    .before-after-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .work h2,
+    .services h2,
+    .before-after h2 {
+      font-size: 1.7rem;
+      text-align: left;
+    }
+
+    .account-card {
+      min-height: 11rem;
+      padding: 0.8rem;
+    }
+
+    .service-grid article {
+      padding: 0.65rem;
     }
 
     .footer {

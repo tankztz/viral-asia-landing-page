@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import {
+  allClientLogos,
   navItems,
   pageContent,
   testimonials,
@@ -26,7 +27,10 @@ const { content } = Astro.props;
       <nav aria-label="Primary navigation">
         {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
       </nav>
-      <a class="cta" href={whatsappHref}>Get free consultation</a>
+      <a class="cta" href={whatsappHref}>
+        Get free consultation
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
     </header>
 
     <section class="page-hero">
@@ -35,29 +39,55 @@ const { content } = Astro.props;
       <span>{content.intro}</span>
     </section>
 
-    <section class="content-grid">
-      {
-        content.items.map(([title, body, meta]) => (
-          <article>
-            <h2>{title}</h2>
-            <p>{body}</p>
-            {meta && <strong>{meta}</strong>}
-          </article>
-        ))
-      }
-    </section>
+    {
+      content.title === "Clients" ? (
+        <section class="client-logo-section">
+          <div class="client-logo-grid">
+            {allClientLogos.map(([image, name]) => (
+              <div class="client-logo-card">
+                <img src={`/logos/${image}`} alt={name} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section class="content-grid">
+          {content.items.map(([title, body, meta]) => (
+            <article>
+              <h2>{title}</h2>
+              <p>{body}</p>
+              {meta &&
+                (String(meta).startsWith("http") ||
+                String(meta).startsWith("mailto:") ||
+                String(meta).startsWith("tel:") ? (
+                  <a class="article-link" href={meta}>
+                    Open link
+                  </a>
+                ) : (
+                  <strong>{meta}</strong>
+                ))}
+            </article>
+          ))}
+        </section>
+      )
+    }
 
     {
       content.title === "Clients" && (
         <section class="testimonial-grid">
           <h2>More testimonials</h2>
           <div>
-            {testimonials.map(([quote, name, role]) => (
+            {testimonials.map((testimonial) => (
               <blockquote>
-                <p>{quote}</p>
+                <img
+                  src={testimonial.logo}
+                  alt={`${testimonial.name} brand logo`}
+                  loading="lazy"
+                />
+                <p>{testimonial.quote}</p>
                 <cite>
-                  {name}
-                  <span>{role}</span>
+                  {testimonial.name}
+                  <span>{testimonial.role}</span>
                 </cite>
               </blockquote>
             ))}
@@ -137,6 +167,7 @@ const { content } = Astro.props;
     font-weight: 900;
     text-decoration: none;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .cta {
@@ -144,15 +175,22 @@ const { content } = Astro.props;
     justify-content: center;
     min-height: 2.5rem;
     border-radius: 4px;
-    background: var(--yellow);
+    background: var(--red);
     box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
-    color: #050505;
+    color: white;
     font-size: 0.82rem;
     font-weight: 900;
     padding: 0.65rem 1.2rem;
     text-decoration: none;
     text-transform: uppercase;
     white-space: nowrap;
+  }
+
+  .cta img {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    filter: invert(1);
   }
 
   .page-hero {
@@ -224,6 +262,43 @@ const { content } = Astro.props;
     font-size: 1.6rem;
   }
 
+  .article-link {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: var(--yellow);
+    font-size: 0.86rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .client-logo-section {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-top: 2px solid var(--red);
+  }
+
+  .client-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .client-logo-card {
+    display: grid;
+    place-items: center;
+    min-height: 5.6rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background: white;
+  }
+
+  .client-logo-card img {
+    width: 100%;
+    max-height: 3.7rem;
+    object-fit: contain;
+  }
+
   .testimonial-grid {
     max-width: 1180px;
     margin: 0 auto;
@@ -253,6 +328,15 @@ const { content } = Astro.props;
     line-height: 1.35;
   }
 
+  blockquote img {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    object-fit: contain;
+    background: white;
+  }
+
   cite {
     display: block;
     margin-top: 0.9rem;
@@ -277,6 +361,43 @@ const { content } = Astro.props;
     nav {
       justify-content: flex-start;
       overflow-x: auto;
+      gap: 0.65rem;
+      scrollbar-width: none;
+    }
+
+    nav a {
+      font-size: 0.66rem;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .client-logo-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .topbar nav {
+      width: 100%;
+    }
+
+    .topbar .cta {
+      width: 100%;
+    }
+
+    h1 {
+      font-size: clamp(3.3rem, 18vw, 5rem);
+    }
+
+    .client-logo-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
