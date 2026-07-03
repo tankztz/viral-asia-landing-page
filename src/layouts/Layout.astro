@@ -1,5 +1,5 @@
 ---
-import { isProduction, siteEnvironment } from "../config/environment";
+import { isProduction } from "../config/environment";
 
 interface Props {
   title: string;
@@ -9,7 +9,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class:list={[!isProduction && "staging-preview"]}>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -23,32 +23,10 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    {
-      !isProduction && (
-        <aside class="staging-banner" role="status">
-          Staging preview: {siteEnvironment}
-        </aside>
-      )
-    }
     <slot />
   </body>
 </html>
 <style is:global>
-  .staging-banner {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 0.5rem 1rem;
-    background: #facc15;
-    color: #18181b;
-    font:
-      700 0.75rem/1.25 system-ui,
-      sans-serif;
-    letter-spacing: 0.08em;
-    text-align: center;
-    text-transform: uppercase;
-  }
-
   :root {
     color-scheme: dark;
     font-family:
@@ -74,12 +52,6 @@ const { title } = Astro.props;
     touch-action: pan-y pinch-zoom;
   }
 
-  html.staging-preview {
-    color-scheme: light;
-    background: #ffffff;
-    color: #171421;
-  }
-
   body {
     margin: 0;
     min-width: 320px;
@@ -88,11 +60,6 @@ const { title } = Astro.props;
     text-rendering: optimizeLegibility;
     touch-action: pan-y pinch-zoom;
     -webkit-font-smoothing: antialiased;
-  }
-
-  html.staging-preview body {
-    background: #ffffff;
-    color: #171421;
   }
 
   img {

@@ -1,0 +1,282 @@
+---
+import Layout from "../layouts/Layout.astro";
+import {
+  navItems,
+  pageContent,
+  testimonials,
+  whatsappHref,
+} from "../data/viralSite";
+
+export function getStaticPaths() {
+  return Object.keys(pageContent).map((page) => ({
+    params: { page },
+    props: { content: pageContent[page as keyof typeof pageContent] },
+  }));
+}
+
+const { content } = Astro.props;
+---
+
+<Layout title={`${content.title} - Viral Asia`}>
+  <main class="subpage">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Viral Asia home"
+        ><span>Viral</span> Asia</a
+      >
+      <nav aria-label="Primary navigation">
+        {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+      </nav>
+      <a class="cta" href={whatsappHref}>Get free consultation</a>
+    </header>
+
+    <section class="page-hero">
+      <p>Viral Asia</p>
+      <h1>{content.title}</h1>
+      <span>{content.intro}</span>
+    </section>
+
+    <section class="content-grid">
+      {
+        content.items.map(([title, body, meta]) => (
+          <article>
+            <h2>{title}</h2>
+            <p>{body}</p>
+            {meta && <strong>{meta}</strong>}
+          </article>
+        ))
+      }
+    </section>
+
+    {
+      content.title === "Clients" && (
+        <section class="testimonial-grid">
+          <h2>More testimonials</h2>
+          <div>
+            {testimonials.map(([quote, name, role]) => (
+              <blockquote>
+                <p>{quote}</p>
+                <cite>
+                  {name}
+                  <span>{role}</span>
+                </cite>
+              </blockquote>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </main>
+</Layout>
+
+<style>
+  :global(body) {
+    background: #050505;
+  }
+
+  .subpage {
+    --red: #e91515;
+    --yellow: #ffe100;
+    --line: rgba(255, 255, 255, 0.18);
+    min-height: 100dvh;
+    background:
+      radial-gradient(
+        circle at 50% 0,
+        rgba(233, 21, 21, 0.22),
+        transparent 28rem
+      ),
+      #050505;
+    color: white;
+    font-family:
+      Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+    text-transform: uppercase;
+  }
+
+  .subpage p,
+  .subpage span,
+  .subpage a,
+  .subpage cite {
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: none;
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: 180px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+  }
+
+  .brand {
+    color: white;
+    font:
+      900 1.9rem/0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      sans-serif;
+    text-decoration: none;
+  }
+
+  .brand span,
+  .page-hero p,
+  .content-grid strong {
+    color: var(--red);
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.9rem, 2.2vw, 2rem);
+  }
+
+  nav a {
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .cta {
+    display: inline-flex;
+    justify-content: center;
+    min-height: 2.5rem;
+    border-radius: 4px;
+    background: var(--yellow);
+    box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
+    color: #050505;
+    font-size: 0.82rem;
+    font-weight: 900;
+    padding: 0.65rem 1.2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .page-hero {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(3rem, 8vw, 7rem) 1.5rem 2rem;
+  }
+
+  .page-hero p {
+    margin: 0 0 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    max-width: 9ch;
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: 0.82;
+  }
+
+  .page-hero span {
+    display: block;
+    max-width: 46rem;
+    margin-top: 1.2rem;
+    color: #efefef;
+    font-size: clamp(1.1rem, 2.4vw, 1.55rem);
+    line-height: 1.2;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    border-top: 2px solid var(--red);
+  }
+
+  article,
+  blockquote {
+    min-height: 11rem;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #1b1b1b, #080808);
+    border: 1px solid var(--line);
+  }
+
+  article h2 {
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    line-height: 0.95;
+  }
+
+  article p {
+    margin-top: 0.8rem;
+    color: #e7e7e7;
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  article strong {
+    display: block;
+    margin-top: 1rem;
+    font-size: 1.6rem;
+  }
+
+  .testimonial-grid {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 3rem;
+  }
+
+  .testimonial-grid h2 {
+    color: var(--yellow);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+  }
+
+  .testimonial-grid > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  blockquote {
+    margin: 0;
+    border-left: 0.45rem solid var(--yellow);
+  }
+
+  blockquote p {
+    color: white;
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  cite {
+    display: block;
+    margin-top: 0.9rem;
+    color: white;
+    font-size: 0.78rem;
+    font-style: normal;
+    font-weight: 800;
+  }
+
+  cite span {
+    display: block;
+    color: #c8c8c8;
+  }
+
+  @media (max-width: 880px) {
+    .topbar,
+    .content-grid,
+    .testimonial-grid > div {
+      grid-template-columns: 1fr;
+    }
+
+    nav {
+      justify-content: flex-start;
+      overflow-x: auto;
+    }
+  }
+</style>

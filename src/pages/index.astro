@@ -1,2490 +1,1012 @@
 ---
 import Layout from "../layouts/Layout.astro";
-
-const whatsappHref =
-  "https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service";
-
-const accounts = [
-  {
-    name: "SGDaily",
-    description: "Daily updates on Singapore life",
-    image: "/company/SGDaily.png",
-    href: "https://www.instagram.com/thesgdaily/reels/",
-  },
-  {
-    name: "SGHomez",
-    description: "Singapore homes and property market",
-    image: "/company/SGHomez.png",
-    href: "https://www.instagram.com/thesghomez/reels/",
-  },
-  {
-    name: "Hype Hub",
-    description: "Asian culture",
-    image: "/company/hypehub.png",
-    href: "https://www.tiktok.com/@hypehub88",
-  },
-];
-
-const services = [
-  {
-    title: "Vertical video production",
-    image: "/images/ad_posting.png",
-    body: "Platform-native short videos shaped for TikTok, Instagram, Xiaohongshu and local Singapore attention spans.",
-  },
-  {
-    title: "Horizontal video production",
-    image: "/images/tahsh.png",
-    body: "Longer-form edits for YouTube, property tours, explainers and polished brand storytelling.",
-  },
-  {
-    title: "Managing your social media",
-    image: "/images/smm.png",
-    body: "Content calendars, posting rhythm and audience feedback loops handled as one growth system.",
-  },
-  {
-    title: "Influencer marketing",
-    image: "/images/influencer.png",
-    body: "Creator partnerships matched to the audience, the platform and the conversion target.",
-  },
-  {
-    title: "In house models",
-    image: "/images/models.jpg",
-    body: "Fast access to on-camera talent for agile product, food, lifestyle and local business shoots.",
-  },
-];
-
-const viralRows = [
-  {
-    title: "Food",
-    body: "Restaurants, buffets, late-night cravings and local food stories.",
-    direction: "left",
-    items: [
-      ["26yrfishball.png", "846K", "SG Daily hawker video"],
-      ["Screenshot 2024-10-11 at 10.05.56 PM.png", "302K", "Food campaign"],
-      ["Screenshot 2024-10-11 at 10.06.08 PM.png", "218K", "Dining campaign"],
-      ["Screenshot 2024-10-11 at 10.08.17 PM.png", "184K", "Restaurant reel"],
-      ["bistro.png", "129K", "Bistro campaign"],
-      ["containercafe.png", "276K", "Container cafe video"],
-      ["loklok.png", "411K", "Lok lok buffet video"],
-      ["pigtrotter.png", "508K", "Pork trotter video"],
-    ],
-  },
-  {
-    title: "Things to do",
-    body: "Attractions, rituals, tattoos, events and local culture moments.",
-    direction: "right",
-    items: [
-      ["IMG_8299.PNG", "192K", "Event video"],
-      [
-        "Screenshot 2024-10-11 at 10.15.19 PM.png",
-        "244K",
-        "Things to do video",
-      ],
-      ["Screenshot 2024-10-11 at 10.15.35 PM.png", "151K", "Attraction video"],
-      [
-        "Screenshot 2024-10-11 at 10.17.11 PM.png",
-        "338K",
-        "Lifestyle campaign",
-      ],
-      [
-        "Screenshot 2024-10-11 at 10.18.24 PM.png",
-        "167K",
-        "Local culture video",
-      ],
-      ["Screenshot 2024-10-11 at 10.18.36 PM.png", "221K", "Experience reel"],
-      [
-        "Screenshot 2024-10-11 at 10.28.21 PM.png",
-        "146K",
-        "Singapore activity",
-      ],
-      ["Screenshot 2024-10-11 at 10.28.32 PM.png", "354K", "Attraction reel"],
-      ["ritual_team.png", "289K", "Ritual campaign"],
-      ["tattoo.png", "173K", "Tattoo studio video"],
-    ],
-  },
-  {
-    title: "Property",
-    body: "Renovation, tours and bilingual content for serious buying decisions.",
-    direction: "left",
-    items: [
-      ["Screenshot 2024-10-11 at 10.39.04 PM.png", "96K", "Property video"],
-      ["Screenshot 2024-10-11 at 10.39.19 PM.png", "121K", "Condo loss video"],
-      ["Screenshot 2024-10-11 at 10.39.48 PM.png", "88K", "Home tour video"],
-      ["Screenshot 2024-10-11 at 10.41.01 PM.png", "107K", "Renovation video"],
-      [
-        "Screenshot 2024-10-11 at 10.41.13 PM.png",
-        "134K",
-        "Property explainer",
-      ],
-      ["Screenshot_1.png", "212K", "SGHomez campaign"],
-      ["Screenshot_2.png", "176K", "Property campaign"],
-    ],
-  },
-];
-
-const videoLinks = [
-  {
-    image: "/viral-posts/horizontal/59JCT.jpg",
-    href: "https://www.youtube.com/watch?v=-fMmrm7shjY",
-    title: "59 JCT property hook",
-  },
-  {
-    image: "/viral-posts/horizontal/bali.png",
-    href: "https://www.youtube.com/watch?v=FQXLzUmQsLM",
-    title: "Bali travel pull",
-  },
-  {
-    image: "/viral-posts/horizontal/intan.png",
-    href: "https://www.youtube.com/watch?v=jtkM3z5l3xc",
-    title: "Intan heritage story",
-  },
-  {
-    image: "/viral-posts/horizontal/shophouse160.jpg",
-    href: "https://www.youtube.com/watch?v=nbXoNcELyyI",
-    title: "Shophouse tour, sharpened",
-  },
-];
-
-const results = [
-  {
-    company: "Social Chamber",
-    metric: "5X",
-    label: "month on month revenue growth after our vertical video release",
-    image: "/images/socialchamber.png",
-  },
-  {
-    company: "Stayr Pte Ltd",
-    metric: "Top 3",
-    label:
-      "in iOS most downloaded chart after our social media management within 1st month",
-    image: "/images/stayr.png",
-  },
-  {
-    company: "Stayr Pte Ltd",
-    metric: "100X",
-    label: "revenue boost in a year with 51% more sales per month",
-    image: "/images/stayr2.png",
-  },
-];
-
-const testimonials = [
-  {
-    quote:
-      "The feature they created for 87 Just Thai captured the essence of our restaurant and resonated with our customers.",
-    signature: "Eric Tan",
-    position: "Director, 87 Just Thai Pte Ltd",
-    logo: "/logos/3. 87 Just Thai.jpg",
-  },
-  {
-    quote:
-      "Viral Asia helped us build meaningful connections with potential partners and clients.",
-    signature: "Christel Goh",
-    position: "Director, GROW PUBLIC RELATIONS PTE LTD",
-    logo: "/logos/16. Grow Public Relations.png",
-  },
-  {
-    quote:
-      "They created insightful, targeted content that communicated the value of our software business.",
-    signature: "Yoeven D. Khemlani",
-    position: "CEO, JIGSAWSTACK PTE LTD",
-    logo: "/logos/17. Jigsawstack.jpg",
-  },
-  {
-    quote:
-      "Their team has a sharp understanding of market trends and knows how to create content that drives results.",
-    signature: "Tianze Zhao",
-    position: "Director, NURTURE STUDIO PTE LTD",
-    logo: "/logos/12. Nurture Studio.jpg",
-  },
-  {
-    quote:
-      "Their strategic approach to content creation and social media management increased our brand visibility.",
-    signature: "Shebella Beauty",
-    position: "Beauty and Cosmetics",
-    logo: "/logos/9. Shebella.jpeg",
-  },
-  {
-    quote:
-      "Their attention to detail and strategic approach made a significant impact on our marketing efforts.",
-    signature: "Travis Tay",
-    position: "Director, The Social Chamber",
-    logo: "/logos/1. The Social Chamber.png",
-  },
-];
-
-const partners = [
-  ["stayr.png", "Stayr"],
-  ["ibis.png", "Ibis"],
-  ["klook.png", "Klook"],
-  ["tiktok.png", "TikTok"],
-  ["subway.png", "Subway"],
-  ["crosscoop.png", "Cross Coop"],
-  ["spinelli.png", "Spinelli"],
-  ["mox.png", "MOX"],
-  ["socialchamber.jpeg", "Social Chamber"],
-  ["stsignature.png", "ST Signature"],
-  ["oriential_food.jpg", "Oriental Food"],
-  ["furama.png", "Furama"],
-  ["distrii.png", "Distrii"],
-  ["wardieres.png", "Wardieres"],
-  ["hotelg.png", "Hotel G"],
-  ["Ah Gong KKM.jpg", "Ah Gong KKM"],
-  ["Babies Bliss.jpeg", "Babies Bliss"],
-  ["Bachi Bachi Restaurant.jpeg", "Bachi Bachi Restaurant"],
-  ["baofachachaanteng 1.jpeg", "Bao Fa Cha Cha Anteng"],
-  ["Basil King 2.jpeg", "Basil King"],
-  ["Cheeky Signatures Restaurant.jpeg", "Cheeky Signatures"],
-  ["Creamie Sippies.png.webp", "Creamie Sippies"],
-  ["DMC Karting.png", "DMC Karting"],
-  ["Dong Smokes.png", "Dong Smokes"],
-  ["Evan_s Kitchen.jpeg", "Evan's Kitchen"],
-  ["Fat Fish Restaurant.jpeg", "Fat Fish Restaurant"],
-  ["Fook Kin Restaurant.png", "Fook Kin Restaurant"],
-  ["Huang Lao Dou.jpeg", "Huang Lao Dou"],
-  ["iDrink.png", "iDrink"],
-  ["Joomak Restaurant.png", "Joomak Restaurant"],
-  ["Just Thai 1.jpeg", "Just Thai"],
-  ["JWC Cafe.png", "JWC Cafe"],
-  ["Jyu Yae Bistro.jpeg", "Jyu Yae Bistro"],
-  ["Keebs Project.jpeg", "Keebs Project"],
-  ["Kimrobinson.jpg", "Kim Robinson"],
-  ["Laifaba Restaurant 1.jpeg", "Laifaba Restaurant"],
-  ["LFG Content Co.png.webp", "LFG Content Co"],
-  ["Longjing Restaurant.jpeg", "Longjing Restaurant"],
-  ["Maxi Home 1.jpeg", "Maxi Home"],
-  ["Meet 4 Meat.jpg", "Meet 4 Meat"],
-  ["Mega Furniture.webp", "Mega Furniture"],
-  ["Micasa Kitchen & Bar 1.webp.png", "Micasa Kitchen and Bar"],
-  ["Mode Aesthetics 1.jpg.avif", "Mode Aesthetics"],
-  ["Nan Yang Dao 1.png", "Nan Yang Dao"],
-  ["Nana Dolly Cafe.jpeg", "Nana Dolly Cafe"],
-  ["OH!SOME 1.jpeg", "OH!SOME"],
-  ["Ola Home.jpeg", "Ola Home"],
-  ["Oriental Food Restaurant.png", "Oriental Food"],
-  ["Origanics SG.png", "Origanics SG"],
-  ["Owen_s Restaurant.jpg", "Owen's Restaurant"],
-  ["Pacific Kopi.jpeg", "Pacific Kopi"],
-  ["Padi Kopitiam.png", "Padi Kopitiam"],
-  ["Palates & Bagels.png", "Palates and Bagels"],
-  ["Pancakes & Friends Cafe.png", "Pancakes and Friends"],
-  ["Porcelain Hotel 1.png", "Porcelain Hotel"],
-  ["Principle Cafe.jpeg", "Principle Cafe"],
-  ["Rage Foods.png", "Rage Foods"],
-  ["Restaurant Aisyah.png", "Restaurant Aisyah"],
-  ["ROKU Sake Bar.png", "ROKU Sake Bar"],
-  ["San Dai Fishball.png", "San Dai Fishball"],
-  ["San Dai Yong Tau Foo.png", "San Dai Yong Tau Foo"],
-  ["Silk Tea 1.jpg", "Silk Tea"],
-  ["Singapore Card Show.jpeg", "Singapore Card Show"],
-  ["Singapore Comic Con 1.png.webp", "Singapore Comic Con"],
-  ["Style Palate.png", "Style Palate"],
-  ["Sweedy.png", "Sweedy"],
-  ["Tash Tish Tosh.png", "Tash Tish Tosh"],
-  ["Temper Restaurant.png", "Temper Restaurant"],
-  ["Toppen Shopping Centre 1.png", "Toppen Shopping Centre"],
-  ["TOPTABLE 1.webp", "TOPTABLE"],
-  ["WATCHSKINS.png", "WATCHSKINS"],
-  ["West Mall 1.png", "West Mall"],
-  ["Wong Fu Fu.jpeg", "Wong Fu Fu"],
-  ["Wu Da Lang Hotpot.jpeg", "Wu Da Lang Hotpot"],
-  ["Yoru Omakase.jpeg", "Yoru Omakase"],
-  ["Yu Chun Curry Fish.jpeg", "Yu Chun Curry Fish"],
-];
-
-const partnerItemsPerRow = Math.ceil(partners.length / 3);
-const partnerRows = [
-  partners.slice(0, partnerItemsPerRow),
-  partners.slice(partnerItemsPerRow, partnerItemsPerRow * 2),
-  partners.slice(partnerItemsPerRow * 2),
-];
+import {
+  heroVideos,
+  navItems,
+  partners,
+  services,
+  stats,
+  testimonials,
+  whatsappHref,
+  workCards,
+} from "../data/viralSite";
 ---
 
-<Layout title="Viral Asia - TikTok Affiliate Marketing Partner">
-  <main class="va-site" data-va-root>
-    <nav class="va-nav" aria-label="Primary navigation">
-      <a class="va-brand" href="/" aria-label="Viral Asia home">
-        <img src="/company/ViralAsia.png" alt="Viral Asia" />
-        <span>Viral Asia</span>
+<Layout title="Viral Asia - Singapore Social Media Agency">
+  <main class="landing">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Viral Asia home">
+        <span>Viral</span> Asia
       </a>
-      <div class="va-nav-links">
-        <a href="#work">Work</a>
-        <a href="#services">Services</a>
-        <a href="#proof">Proof</a>
-        <a href="/blog">Blog</a>
-      </div>
-      <div class="va-nav-actions">
-        <a class="va-button va-button-small va-nav-cta" href={whatsappHref}>
-          Enquire Now
-        </a>
-        <button
-          class="nav-menu-button"
-          type="button"
-          aria-expanded="false"
-          aria-controls="mobile-menu"
-          data-menu-button
-        >
-          <span>Menu</span>
-          <i aria-hidden="true"></i>
-        </button>
-      </div>
-    </nav>
+      <nav aria-label="Primary navigation">
+        {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+      </nav>
+      <a class="cta cta-top" href={whatsappHref}>Get free consultation</a>
+    </header>
 
-    <div
-      class="mobile-menu"
-      id="mobile-menu"
-      aria-hidden="true"
-      data-mobile-menu
-    >
-      <div class="mobile-menu-panel">
-        <div class="mobile-menu-top">
-          <span>Viral Asia</span>
-          <span>TikTok affiliate partner</span>
-        </div>
-        <a href="#work">
-          <span class="mobile-link-main">Work</span>
-          <span class="mobile-link-note">Campaign proof</span>
-        </a>
-        <a href="#services">
-          <span class="mobile-link-main">Services</span>
-          <span class="mobile-link-note">What we do</span>
-        </a>
-        <a href="#proof">
-          <span class="mobile-link-main">Proof</span>
-          <span class="mobile-link-note">Results</span>
-        </a>
-        <a href="/blog">
-          <span class="mobile-link-main">Blog</span>
-          <span class="mobile-link-note">Writing</span>
-        </a>
-        <a class="va-button mobile-menu-cta" href={whatsappHref}>
-          Enquire Now
-        </a>
-      </div>
-    </div>
-
-    <section class="hero va-section">
+    <section class="hero">
       <div class="hero-copy">
-        <p class="va-kicker reveal">TikTok Affiliate Partner</p>
-        <h1 aria-label="Go viral today">
-          <span class="hero-word">Go</span>
-          <span class="hero-word hero-word-outline">VIRAL</span>
-          <span class="hero-word">Today</span>
+        <h1>
+          <span class="hero-line">We make</span>
+          <span class="hero-line hero-red">Singapore</span>
+          <span class="hero-line">go viral.</span>
         </h1>
-        <p class="hero-lede">
-          Strategic social content for Singapore brands that need attention to
-          turn into demand.
-        </p>
-        <div class="hero-actions">
-          <span class="hero-cta-wrap">
-            <a
-              class="va-button hero-primary-cta"
-              href={whatsappHref}
-              aria-describedby="hero-cta-tip"
-            >
-              Enquire Now
-            </a>
-            <span class="hero-cta-tip" id="hero-cta-tip" role="tooltip">
-              <span class="whatsapp-mark" aria-hidden="true">
-                <img
-                  src="https://cdn.simpleicons.org/whatsapp/ffffff"
-                  alt=""
-                  loading="lazy"
-                />
-              </span>
-              <span>
-                Get free social media suggestions with our specialist on
-                WhatsApp.
-              </span>
-            </span>
-          </span>
-          <a class="va-button va-button-secondary" href="#work">See the work</a>
-        </div>
-      </div>
-
-      <div class="hero-stage reveal" aria-label="Viral Asia visual proof">
-        <div class="phone-card phone-card-main">
-          <img
-            src="/viral-posts/food/26yrfishball.png"
-            alt="Food campaign example"
-          />
-        </div>
-        <div class="phone-card phone-card-offset">
-          <img
-            src="/viral-posts/property/Screenshot_1.png"
-            alt="Property campaign example"
-          />
-        </div>
-        <div class="hero-orbit">
-          <img src="/images/tiktok-logo.gif" alt="TikTok logo" />
-        </div>
-      </div>
-    </section>
-
-    <section class="va-section intro reveal">
-      <blockquote>
-        <span class="intro-quote-mark" aria-hidden="true">&ldquo;</span>
-        <p class="intro-quote-copy">
-          <span class="quote-line quote-context">
-            <span>From platforms,</span>
-            <span>for businesses:</span>
-          </span>
-          <span class="quote-line quote-capability">
-            we know what drives <strong>engagement</strong>
-          </span>
-          <span class="quote-line quote-outcome">
-            <span class="quote-outcome-lead">and how to</span>
-            <span class="quote-value">make your brand stand out</span>
-          </span>
-          <span class="quote-line quote-method">
-            through <strong>strategic TikTok partnerships.</strong>
-          </span>
-        </p>
-        <footer>
-          <strong>Toby Cai</strong>
-          <span>CEO and Founder of Viralasia</span>
-        </footer>
-      </blockquote>
-    </section>
-
-    <section class="va-section portfolio" id="work">
-      <div class="section-title reveal">
-        <p class="va-kicker">Our Viral Posts</p>
-        <h2>Content built for the Singapore feed.</h2>
         <p>
-          Food, things to do, lifestyle, dating, property and bilingual videos
-          designed for where attention actually lives.
+          Singapore's social media agency for short video, creators and digital
+          campaigns.
         </p>
+        <ul class="checklist" aria-label="Key results">
+          <li>500M+ views generated</li>
+          <li>100+ brands served</li>
+          <li>Singapore homegrown team</li>
+          <li>Full-service campaigns</li>
+        </ul>
+        <a class="cta cta-main" href={whatsappHref}>Get free consultation</a>
       </div>
 
-      <div class="viral-reel-wall reveal">
+      <div class="hero-board" aria-label="Viral video examples">
+        <div class="video-mosaic">
+          {
+            heroVideos.map(([image, views, title]) => (
+              <article class="mini-video">
+                <img src={image} alt={title} loading="eager" />
+                <span class="play" aria-hidden="true" />
+                <strong>{views}</strong>
+              </article>
+            ))
+          }
+        </div>
+        <div class="hero-stat">
+          <strong>500M+</strong>
+          <span>Views generated for our clients</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="brand-strip" aria-label="Trusted clients">
+      <h2>Trusted by 100+ leading brands in Singapore</h2>
+      <div class="logo-grid">
         {
-          viralRows.map((row) => (
-            <article class="viral-row">
-              <div class="viral-row-copy">
-                <h3>{row.title}</h3>
-                <p>{row.body}</p>
+          partners.map(([image, name]) => (
+            <img src={`/logos/${image}`} alt={name} loading="lazy" />
+          ))
+        }
+      </div>
+      <p>and many more</p>
+    </section>
+
+    <section class="stats-bar" aria-label="Viral Asia results">
+      {
+        stats.map(([value, label]) => (
+          <div>
+            <span class="stat-icon" aria-hidden="true" />
+            <strong>{value}</strong>
+            <p>{label}</p>
+          </div>
+        ))
+      }
+      <a class="cta cta-small" href={whatsappHref}>Talk to us now</a>
+    </section>
+
+    <section class="work" id="work">
+      <h2>Recent <span>viral work</span> that broke the internet</h2>
+      <div class="work-grid">
+        {
+          workCards.map(([image, title, account, views]) => (
+            <article class="work-card">
+              <div class="work-image">
+                <img src={image} alt={title} loading="lazy" />
+                <span class="play play-large" aria-hidden="true" />
+                <strong>{views}</strong>
               </div>
-              <div class="viral-carousel" data-direction={row.direction}>
-                <div class="viral-track">
-                  {[...row.items, ...row.items].map(([image, count, alt]) => (
-                    <figure class="viral-card">
-                      <img
-                        src={`/viral-posts/${row.title === "Things to do" ? "things_to_do" : row.title.toLowerCase()}/${image}`}
-                        alt={alt}
-                        loading="lazy"
-                      />
-                      <figcaption>
-                        <span>{count}</span>
-                        <small>views</small>
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-              </div>
+              <h3>{title}</h3>
+              <p>{account}</p>
             </article>
           ))
         }
       </div>
+      <a class="cta cta-wide" href="/work">View more of our work</a>
+    </section>
 
-      <div class="video-strip reveal" aria-label="Horizontal video examples">
+    <section class="why" id="about">
+      <div class="why-list">
+        <h2>Why choose <span>Viral Asia?</span></h2>
+        <ul class="checklist">
+          <li>
+            <strong>Singapore homegrown company</strong><br />We understand
+            local buyers.
+          </li>
+          <li>
+            <strong>Data-driven strategy</strong><br />We do not guess, we test.
+          </li>
+          <li>
+            <strong>Full-service solution</strong><br />From content to
+            advertising.
+          </li>
+          <li>
+            <strong>Fast turnaround time</strong><br />Quick response, quick
+            results.
+          </li>
+          <li>
+            <strong>Proven track record</strong><br />Results speak for
+            themselves.
+          </li>
+        </ul>
+      </div>
+
+      <figure class="team-card">
+        <img
+          src="/images/professional_team.jpg"
+          alt="Viral Asia team planning a campaign"
+        />
+        <figcaption>
+          <strong>We are Singapore homegrown</strong>
+          <span>A local team helping local brands get seen.</span>
+        </figcaption>
+      </figure>
+
+      <div class="quotes">
+        <h2>What our clients say</h2>
         {
-          videoLinks.map((video, index) => (
-            <a href={video.href} target="_blank" rel="noopener noreferrer">
-              <img src={video.image} alt={video.title} loading="lazy" />
-              <span>Watch video</span>
-              <strong>{video.title}</strong>
-            </a>
+          testimonials.slice(0, 2).map(([quote, name, role]) => (
+            <blockquote>
+              <p>{quote}</p>
+              <cite>
+                {name}
+                <span>{role}</span>
+              </cite>
+            </blockquote>
           ))
         }
+        <a class="cta cta-small" href="/clients">More testimonials</a>
       </div>
     </section>
 
-    <section class="va-section accounts reveal">
-      <div class="section-title section-title-compact">
-        <h2>Our owned channels make the strategy real.</h2>
-        <p>
-          As a home grown company, we understand the local social media
-          landscape and how Singapore audiences actually behave.
-        </p>
-      </div>
-      <div class="account-grid">
-        {
-          accounts.map((account) => (
-            <a
-              class="account-card"
-              href={account.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={account.image} alt={account.name} loading="lazy" />
-              <span>{account.name}</span>
-              <p>{account.description}</p>
-            </a>
-          ))
-        }
-      </div>
-    </section>
-
-    <section class="va-section services" id="services">
-      <div class="section-title reveal">
-        <p class="va-kicker">What we offer</p>
-        <h2>Five levers. One attention system.</h2>
-      </div>
+    <section class="services" id="services">
+      <h2>Our services</h2>
       <div class="service-grid">
         {
-          services.map((service, index) => (
-            <article class={`service-card service-card-${index + 1} reveal`}>
-              <div
-                class="service-media"
-                style={`background-image: url('${service.image}')`}
-              />
-              <div>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{service.title}</h3>
-                <p>{service.body}</p>
-              </div>
+          services.map(([title, body]) => (
+            <article>
+              <span class="service-icon" aria-hidden="true" />
+              <h3>{title}</h3>
+              <p>{body}</p>
             </article>
           ))
         }
       </div>
     </section>
 
-    <section class="va-section proof" id="proof">
-      <div class="section-title reveal">
-        <p class="va-kicker">Before and After</p>
-        <h2>Proof that attention can move business.</h2>
-      </div>
-      <div class="result-grid">
-        {
-          results.map((result) => (
-            <article class="result-card reveal">
-              <img
-                src={result.image}
-                alt={`${result.company} result`}
-                loading="lazy"
-              />
-              <strong>{result.metric}</strong>
-              <p>{result.label}</p>
-              <span>{result.company}</span>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    <section class="va-section testimonials">
-      <div class="testimonial-stack">
-        {
-          testimonials.map((testimonial) => (
-            <article class="testimonial-card reveal">
-              <img
-                src={testimonial.logo}
-                alt={`${testimonial.signature} company logo`}
-                loading="lazy"
-              />
-              <blockquote>{testimonial.quote}</blockquote>
-              <p>{testimonial.signature}</p>
-              <span>{testimonial.position}</span>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    <section class="logo-marquee va-section" aria-label="Our Viral Partners">
-      <div class="section-title reveal">
-        <p class="va-kicker">Our Viral Partners</p>
-        <h2>Experience the reliability chosen by industry giants.</h2>
-      </div>
-      <div class="partner-marquee" aria-hidden="true">
-        {
-          partnerRows.map((row, index) => (
-            <div
-              class="partner-row"
-              data-direction={index === 1 ? "right" : "left"}
-            >
-              <div class="partner-track">
-                {row.concat(row).map(([image, name]) => (
-                  <div class="partner-logo" data-partner={name}>
-                    <img src={`/logos/${image}`} alt={name} loading="lazy" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))
-        }
-      </div>
-    </section>
-
-    <footer class="va-footer">
+    <section class="offer">
       <div>
-        <h2>Get in Touch Today</h2>
-        <a class="va-button" href={whatsappHref}>Enquire Now</a>
+        <h2>Limited time offer</h2>
+        <p>Get 20% off your first campaign.</p>
       </div>
-      <address>
-        <span>11 mosque street #02-01</span>
-        <a href="mailto:hello@viralasia.co">hello@viralasia.co</a>
-        <a href="tel:+6590906912">(+65) 9090 6912</a>
-      </address>
-      <p>© 2025 VIRALASIA PTE LTD. ALL RIGHTS RESERVED.</p>
+      <div class="timer" aria-label="Offer countdown example">
+        <span><strong>03</strong>Days</span>
+        <span><strong>14</strong>Hours</span>
+        <span><strong>23</strong>Mins</span>
+        <span><strong>45</strong>Secs</span>
+      </div>
+      <a class="cta cta-main" href={whatsappHref}>Claim your discount</a>
+    </section>
+
+    <footer class="footer" id="contact">
+      <div class="footer-cta">
+        <h2>Ready to make your brand go viral?</h2>
+        <p>Let's plan the next campaign.</p>
+        <a class="cta cta-main" href={whatsappHref}>Get free consultation</a>
+        <small>Or call us: +65 9090 6912</small>
+      </div>
+      <div>
+        <h3>Our office</h3>
+        <p>
+          Viral Asia Pte. Ltd.<br />71 Ayer Rajah Crescent #02-12/13<br
+          />Singapore 139951
+        </p>
+        <p>Mon - Fri: 9AM - 6PM<br />Sat: 9AM - 1PM</p>
+      </div>
+      <div>
+        <h3>Follow us</h3>
+        <p>@viralasia.sg</p>
+        <div class="socials" aria-label="Social links">
+          <a href="https://www.tiktok.com/@viralasia.sg">TikTok</a>
+          <a href="https://www.instagram.com/viralasia.sg/">Instagram</a>
+          <a href="https://www.linkedin.com/company/viral-asia/">LinkedIn</a>
+        </div>
+      </div>
+      <div>
+        <h3>Scan to chat</h3>
+        <a
+          class="qr"
+          href={whatsappHref}
+          aria-label="Chat with Viral Asia on WhatsApp"
+        >
+          <span>WA</span>
+        </a>
+      </div>
     </footer>
   </main>
 </Layout>
 
 <style>
   :global(body) {
-    overflow-x: hidden;
+    background: #050505;
   }
 
-  :global(html.menu-open),
-  :global(html.menu-open body) {
-    overflow: hidden;
-  }
-
-  .va-site {
-    --bg: #08070b;
-    --surface: #121018;
-    --surface-2: #1b1724;
-    --ink: #f7f5ff;
-    --muted: #b9b3c9;
-    --line: rgba(247, 245, 255, 0.14);
-    --accent: #7452ff;
-    --accent-2: #b8a8ff;
-    --radius: 28px;
+  .landing {
+    --red: #e91515;
+    --yellow: #ffe100;
+    --lime: #9cff00;
+    --line: rgba(255, 255, 255, 0.18);
     min-height: 100dvh;
-    background:
-      radial-gradient(
-        circle at 78% 8%,
-        rgba(116, 82, 255, 0.3),
-        transparent 30rem
-      ),
-      radial-gradient(
-        circle at 10% 22%,
-        rgba(255, 255, 255, 0.08),
-        transparent 22rem
-      ),
-      linear-gradient(180deg, #08070b 0%, #110d19 48%, #08070b 100%);
-    color: var(--ink);
-    touch-action: pan-y pinch-zoom;
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
-  }
-
-  .va-site::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.22;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-    background-size: 80px 80px;
-    mask-image: linear-gradient(to bottom, black 0%, transparent 72%);
-  }
-
-  .va-site > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .va-site .va-nav {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 1rem;
-    width: min(1180px, calc(100% - 2rem));
-    height: 72px;
-    margin: 0 auto;
-    padding: 0.7rem;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: rgba(8, 7, 11, 0.76);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-  }
-
-  .va-brand,
-  .va-nav-links,
-  .nav-menu-button,
-  .mobile-menu-panel a,
-  .va-button,
-  .account-card,
-  .viral-card,
-  .video-strip a {
-    touch-action: manipulation;
-    transition:
-      transform 180ms ease,
-      border-color 180ms ease,
-      background 180ms ease;
-  }
-
-  .va-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    min-width: 0;
-    text-decoration: none;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-  }
-
-  .va-brand img {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #fff;
-  }
-
-  .va-nav-links {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .va-nav-links a {
-    padding: 0.58rem 0.85rem;
-    border-radius: 999px;
-    color: var(--muted);
-    font-size: 0.9rem;
-    text-decoration: none;
-  }
-
-  .va-nav-links a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--ink);
-  }
-
-  .va-nav-actions {
-    display: inline-flex;
-    justify-self: end;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .nav-menu-button {
-    display: none;
-    align-items: center;
-    gap: 0.72rem;
-    min-height: 38px;
-    padding: 0.34rem 0.85rem 0.34rem 0.95rem;
-    border: 2px solid rgba(184, 168, 255, 0.86);
-    border-radius: 999px;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent),
-      rgba(8, 8, 9, 0.78);
-    color: var(--ink);
-    font: inherit;
-    font-size: 0.82rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    cursor: pointer;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 10px 32px rgba(116, 82, 255, 0.22);
-  }
-
-  .nav-menu-button i {
-    position: relative;
-    display: block;
-    width: 31px;
-    height: 18px;
-    background: linear-gradient(var(--accent-2), var(--accent-2)) center / 31px
-      2px no-repeat;
-  }
-
-  .nav-menu-button i::before,
-  .nav-menu-button i::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 31px;
-    height: 2px;
-    border-radius: 999px;
-    background: var(--accent-2);
-    transition:
-      transform 180ms ease,
-      background 180ms ease;
-  }
-
-  .nav-menu-button i::before {
-    top: 1px;
-  }
-
-  .nav-menu-button i::after {
-    top: 15px;
-  }
-
-  .nav-menu-button:hover {
-    transform: translateY(-1px);
-    border-color: rgba(184, 168, 255, 1);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent),
-      rgba(24, 18, 42, 0.88);
-  }
-
-  .nav-menu-button[aria-expanded="true"] {
-    background: var(--accent);
-    color: white;
-    border-color: rgba(184, 168, 255, 0.95);
-  }
-
-  .nav-menu-button[aria-expanded="true"] i {
-    background: none;
-  }
-
-  .nav-menu-button[aria-expanded="true"] i::before {
-    top: 8px;
-    transform: rotate(45deg);
-    background: white;
-  }
-
-  .nav-menu-button[aria-expanded="true"] i::after {
-    top: 8px;
-    transform: rotate(-45deg);
-    background: white;
-  }
-
-  .va-site .mobile-menu {
-    position: fixed;
-    inset: 0;
-    z-index: 19;
-    display: block;
-    visibility: hidden;
-    opacity: 0;
-    padding: 5.7rem 0.5rem 0;
-    background:
-      radial-gradient(
-        circle at 78% 10%,
-        rgba(116, 84, 255, 0.18),
-        transparent 32%
-      ),
-      linear-gradient(180deg, rgba(5, 5, 8, 0.18), rgba(5, 5, 8, 0.7));
-    pointer-events: none;
-  }
-
-  .va-site .mobile-menu[aria-hidden="false"] {
-    pointer-events: auto;
-  }
-
-  .mobile-menu-panel {
-    box-sizing: border-box;
-    display: grid;
     overflow: hidden;
-    width: min(calc(100vw - 1rem), 460px);
-    margin: 0 auto;
-    padding: 0.7rem;
-    border: 2px solid rgba(184, 168, 255, 0.7);
-    border-radius: 31px;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 32%),
-      rgba(9, 8, 13, 0.96);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      0 34px 90px rgba(23, 12, 60, 0.58);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-  }
-
-  .mobile-menu-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.65rem 0.72rem 0.85rem;
-    color: var(--accent-2);
-    font-size: 0.76rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
+      radial-gradient(
+        circle at 58% 10%,
+        rgba(233, 21, 21, 0.2),
+        transparent 26rem
+      ),
+      #050505;
+    color: white;
+    font-family:
+      Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
+    letter-spacing: 0;
     text-transform: uppercase;
   }
 
-  .mobile-menu-top span:last-child {
-    max-width: 13ch;
-    color: rgba(184, 168, 255, 0.58);
-    font-size: 0.64rem;
-    line-height: 1.05;
-    text-align: right;
+  .landing p,
+  .landing li,
+  .landing small,
+  .landing cite,
+  .landing a {
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: none;
   }
 
-  .mobile-menu-panel a {
-    box-sizing: border-box;
-    position: relative;
+  .topbar {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    justify-content: space-between;
+    grid-template-columns: 180px 1fr auto;
+    align-items: center;
     gap: 1rem;
-    min-height: 74px;
-    padding: 0.95rem 0.75rem 0.85rem;
-    border-top: 1px solid rgba(184, 168, 255, 0.2);
-    color: var(--ink);
-    letter-spacing: -0.04em;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 0.75rem;
+  }
+
+  .brand {
+    color: white;
+    font:
+      900 1.9rem/0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      sans-serif;
     text-decoration: none;
-    transition:
-      color 180ms ease,
-      padding 180ms ease,
-      background 180ms ease;
+    text-transform: uppercase;
   }
 
-  .mobile-menu-panel a:not(.mobile-menu-cta):hover {
-    padding-left: 1.05rem;
-    background: rgba(116, 82, 255, 0.11);
-    color: var(--accent-2);
+  .brand span,
+  h2 span {
+    color: var(--red);
   }
 
-  .mobile-menu-panel a:not(.mobile-menu-cta):hover .mobile-link-note {
-    color: var(--accent-2);
-    transform: translateX(-0.15rem);
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.9rem, 2.2vw, 2rem);
   }
 
-  .mobile-link-main {
-    display: block;
-    color: var(--ink);
-    font-size: clamp(2rem, 11vw, 3.4rem);
-    font-weight: 900;
-    line-height: 0.9;
-    letter-spacing: -0.08em;
-  }
-
-  .mobile-link-note {
-    align-self: center;
-    color: rgba(184, 168, 255, 0.58);
+  nav a {
+    color: white;
     font-size: 0.72rem;
-    font-weight: 850;
-    letter-spacing: 0.04em;
-    text-align: right;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    background: var(--red);
+    box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 900;
+    padding: 0.65rem 1.2rem;
+    text-decoration: none;
     text-transform: uppercase;
     transition:
-      color 180ms ease,
-      transform 180ms ease;
-  }
-
-  .mobile-menu-panel .mobile-menu-cta {
-    display: inline-flex;
-    grid-template-columns: none;
-    align-items: center;
-    justify-content: center;
-    min-height: 54px;
-    width: 100%;
-    margin-top: 0.7rem;
-    border-color: rgba(184, 168, 255, 0.62);
-    background: var(--accent);
-    color: white;
-    font-size: 1rem;
-    box-shadow: none;
-  }
-
-  .va-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-    min-height: 52px;
-    padding: 0 1.2rem;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    background: var(--accent);
-    color: white;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-decoration: none;
+      transform 180ms ease,
+      filter 180ms ease;
     white-space: nowrap;
   }
 
-  .va-button:hover {
-    transform: translateY(-2px);
-    background: #8466ff;
+  .cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
   }
 
-  .va-button:active,
-  .account-card:active,
-  .nav-menu-button:active,
-  .viral-card:active,
-  .video-strip a:active {
-    transform: translateY(1px) scale(0.99);
+  .cta:active {
+    transform: translateY(1px);
   }
 
-  .va-button-small {
-    justify-self: end;
-    min-height: 44px;
+  .cta-main,
+  .cta-top {
+    background: var(--yellow);
+    color: #050505;
+  }
+
+  .cta-wide {
+    width: min(22rem, 100%);
+    margin: 1.5rem auto 0;
+  }
+
+  .cta-small {
+    min-height: 2.2rem;
     padding-inline: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .va-button-secondary {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--ink);
-  }
-
-  .va-section {
-    width: min(1180px, calc(100% - 2rem));
-    margin: 0 auto;
-    padding: clamp(4rem, 8vw, 8rem) 0;
-  }
-
-  .portfolio,
-  .services,
-  .proof {
-    scroll-margin-top: 6rem;
   }
 
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-    align-items: start;
-    gap: clamp(2rem, 6vw, 5rem);
-    min-height: calc(100dvh - 72px);
-    padding-top: clamp(3rem, 6vh, 4.5rem);
-    padding-bottom: clamp(3rem, 6vh, 4.5rem);
+    grid-template-columns: 0.72fr 1fr;
+    gap: 1.2rem;
+    max-width: 1280px;
+    min-height: 360px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 1.25rem;
   }
 
-  .va-kicker {
-    margin: 0 0 1rem;
-    color: var(--accent-2);
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+  .hero-copy {
+    align-self: center;
+    padding-bottom: 0.5rem;
   }
 
   h1,
   h2,
   h3,
   p {
-    margin-top: 0;
+    margin: 0;
   }
 
   h1 {
-    display: grid;
-    gap: 0.08em;
-    margin: 0;
-    font-size: clamp(4.2rem, 7.6vw, 6.85rem);
-    line-height: 0.86;
-    letter-spacing: -0.075em;
-    text-transform: uppercase;
+    font-size: clamp(3.25rem, 5.8vw, 6.5rem);
+    line-height: 0.84;
+    text-wrap: balance;
+    text-shadow: 0 6px 0 rgba(255, 255, 255, 0.08);
   }
 
-  .hero-word {
+  .hero-line {
     display: block;
   }
 
-  .hero-word-outline {
-    color: transparent;
-    -webkit-text-stroke: clamp(1px, 0.035em, 5px) var(--accent);
+  .hero-red {
+    color: var(--red);
   }
 
-  .hero-lede {
-    max-width: 34rem;
-    margin: 1.8rem 0 0;
-    color: var(--muted);
-    font-size: clamp(1.05rem, 2vw, 1.3rem);
-    line-height: 1.45;
+  .hero-copy p {
+    max-width: 31rem;
+    margin-top: 0.75rem;
+    color: #f5f5f5;
+    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    line-height: 1.1;
+    text-transform: none;
   }
 
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 1.4rem;
+  .checklist {
+    display: grid;
+    gap: 0.28rem;
+    margin: 0.95rem 0 0.9rem;
+    padding: 0;
+    list-style: none;
   }
 
-  .hero-cta-wrap {
+  .checklist li {
     position: relative;
-    display: inline-flex;
-    width: fit-content;
+    padding-left: 1.6rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 800;
   }
 
-  .hero-cta-tip {
-    position: absolute;
-    bottom: calc(100% + 0.8rem);
-    left: 50%;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 0.68rem;
-    width: min(19rem, calc(100vw - 2rem));
-    padding: 0.72rem 0.82rem 0.72rem 0.72rem;
-    border: 1px solid rgba(184, 168, 255, 0.46);
-    border-radius: 20px;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.075), transparent),
-      rgba(16, 12, 30, 0.96);
-    color: var(--ink);
-    font-size: 0.88rem;
-    font-weight: 760;
-    line-height: 1.22;
-    letter-spacing: -0.02em;
-    opacity: 0;
-    pointer-events: none;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      0 22px 54px rgba(17, 9, 46, 0.5);
-    transform: translate(-50%, 0.45rem) scale(0.98);
-    transition:
-      opacity 180ms ease,
-      transform 180ms ease;
-  }
-
-  .hero-cta-tip::after {
+  .checklist li::before {
     content: "";
     position: absolute;
-    left: 50%;
-    bottom: -0.42rem;
-    width: 0.8rem;
-    height: 0.8rem;
-    border-right: 1px solid rgba(184, 168, 255, 0.46);
-    border-bottom: 1px solid rgba(184, 168, 255, 0.46);
-    background: rgba(16, 12, 30, 0.96);
-    transform: translateX(-50%) rotate(45deg);
+    top: 0.12rem;
+    left: 0;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--lime);
+    border-radius: 4px;
+    background: linear-gradient(135deg, transparent 48%, var(--lime) 50%);
   }
 
-  .hero-cta-wrap:hover .hero-cta-tip,
-  .hero-cta-wrap:focus-within .hero-cta-tip {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-
-  .whatsapp-mark {
-    display: inline-grid;
-    flex: 0 0 auto;
-    place-items: center;
-    width: 2.15rem;
-    height: 2.15rem;
-    border-radius: 50%;
-    background: #25d366;
-    box-shadow: 0 10px 24px rgba(37, 211, 102, 0.25);
-  }
-
-  .whatsapp-mark img {
-    width: 1.15rem;
-    height: 1.15rem;
-  }
-
-  .hero-stage {
+  .hero-board {
     position: relative;
-    min-height: min(560px, 68vh);
+    align-self: stretch;
+    min-width: 0;
+  }
+
+  .video-mosaic {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    height: 100%;
+  }
+
+  .mini-video,
+  .work-image {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 6px;
+    background: #111;
+  }
+
+  .mini-video {
+    aspect-ratio: 4 / 5;
+  }
+
+  .mini-video img,
+  .work-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.1) contrast(1.05);
+  }
+
+  .mini-video::after,
+  .work-image::after,
+  .team-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 42%, rgba(0, 0, 0, 0.72));
+    pointer-events: none;
+  }
+
+  .mini-video strong,
+  .work-image strong {
+    position: absolute;
+    bottom: 0.45rem;
+    left: 0.45rem;
+    z-index: 1;
+    font:
+      900 0.95rem/1 Arial,
+      Helvetica,
+      sans-serif;
+  }
+
+  .play {
+    position: absolute;
+    left: 0.45rem;
+    bottom: 1.55rem;
+    z-index: 1;
+    width: 0;
+    height: 0;
+    border-top: 0.45rem solid transparent;
+    border-bottom: 0.45rem solid transparent;
+    border-left: 0.72rem solid white;
+    filter: drop-shadow(0 1px 3px black);
+  }
+
+  .play-large {
+    left: 50%;
+    bottom: 50%;
+    border-top-width: 1rem;
+    border-bottom-width: 1rem;
+    border-left-width: 1.5rem;
+    transform: translate(-40%, 50%);
+  }
+
+  .hero-stat {
+    position: absolute;
+    inset: 33% 9% auto auto;
+    width: min(25rem, 56%);
+    color: var(--yellow);
+    text-shadow: 0 6px 18px black;
+  }
+
+  .hero-stat strong {
+    display: block;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 0.8;
+  }
+
+  .hero-stat span {
+    display: block;
+    color: white;
+    font-size: clamp(1.8rem, 3.4vw, 3.5rem);
+    line-height: 0.9;
+  }
+
+  .brand-strip {
+    background: #f4f4f4;
+    color: #050505;
+    padding: 0.7rem 1.5rem 0.55rem;
+    text-align: center;
+  }
+
+  .brand-strip h2 {
+    font-size: clamp(1.1rem, 2vw, 1.55rem);
+  }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 0.7rem 1.35rem;
+    max-width: 1180px;
+    margin: 0.65rem auto 0.25rem;
+    align-items: center;
+  }
+
+  .logo-grid img {
+    width: 100%;
+    max-height: 1.9rem;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  .brand-strip p {
+    text-align: right;
+    max-width: 1180px;
+    margin: 0 auto;
+    color: #111;
+    font-size: 0.85rem;
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 2px solid rgba(233, 21, 21, 0.9);
+  }
+
+  .stats-bar div {
+    display: grid;
+    grid-template-columns: 3.6rem 1fr;
+    column-gap: 0.75rem;
+    align-items: center;
+  }
+
+  .stat-icon {
+    grid-row: span 2;
+    width: 2.9rem;
+    height: 2.9rem;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background:
-      radial-gradient(
-        circle at 40% 20%,
-        rgba(116, 82, 255, 0.45),
-        transparent 18rem
-      ),
-      linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.12),
-        rgba(255, 255, 255, 0.02)
-      );
+    border-radius: 50%;
+  }
+
+  .stats-bar strong {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    line-height: 0.9;
+  }
+
+  .stats-bar p {
+    color: white;
+    font-size: 0.86rem;
+    line-height: 1.1;
+  }
+
+  .work {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem 1.05rem;
+    text-align: center;
+  }
+
+  .work h2,
+  .services h2 {
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.8rem;
+    text-align: left;
+  }
+
+  .work-image {
+    aspect-ratio: 9 / 12.6;
+  }
+
+  .work-card h3 {
+    margin-top: 0.55rem;
+    color: white;
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .work-card p {
+    margin-top: 0.3rem;
+    color: #cfcfcf;
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .why {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr 0.78fr;
+    gap: 1.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem 1.05rem;
+    border-top: 2px solid rgba(233, 21, 21, 0.9);
+  }
+
+  .why h2,
+  .offer h2,
+  .footer h2 {
+    font-size: clamp(1.7rem, 3.2vw, 2.8rem);
+    line-height: 0.95;
+  }
+
+  .why-list .checklist {
+    margin-top: 1rem;
+  }
+
+  .why-list strong {
+    font-family: Arial, Helvetica, sans-serif;
+    text-transform: none;
+  }
+
+  .team-card {
+    position: relative;
+    min-height: 15.5rem;
+    margin: 0;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 3px;
   }
 
-  .hero-stage::before {
-    content: "TikTok Affiliate Partner";
-    position: absolute;
-    right: -3rem;
-    bottom: 2.2rem;
-    color: rgba(255, 255, 255, 0.08);
-    font-size: clamp(2.4rem, 7vw, 7rem);
-    font-weight: 900;
-    letter-spacing: -0.08em;
-    line-height: 0.85;
-    text-transform: uppercase;
-  }
-
-  .phone-card {
-    position: absolute;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 32px;
-    background: var(--surface);
-    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.45);
-  }
-
-  .phone-card img {
+  .team-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .phone-card-main {
-    top: 8%;
-    left: 10%;
-    width: 46%;
-    height: 72%;
-    transform: rotate(-5deg);
-  }
-
-  .phone-card-offset {
-    right: 8%;
-    bottom: 9%;
-    width: 42%;
-    height: 52%;
-    transform: rotate(6deg);
-  }
-
-  .hero-orbit {
+  .team-card figcaption {
     position: absolute;
-    right: 16%;
-    top: 12%;
-    display: grid;
-    place-items: center;
-    width: 9rem;
-    height: 9rem;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 50%;
-    background: rgba(8, 7, 11, 0.82);
+    inset: auto 1.3rem 1.3rem;
+    z-index: 1;
   }
 
-  .hero-orbit img {
-    width: 58%;
-  }
-
-  .intro {
-    padding-top: 0;
-    scroll-margin-top: 6rem;
-  }
-
-  .intro blockquote {
-    position: relative;
-    margin: 0;
-    padding: clamp(2rem, 5vw, 4.4rem) 0 clamp(1.6rem, 4vw, 3rem);
-    border-top: 1px solid rgba(249, 242, 217, 0.2);
-    border-bottom: 1px solid rgba(249, 242, 217, 0.14);
-  }
-
-  .intro-quote-mark {
-    position: absolute;
-    top: clamp(0.35rem, 1.5vw, 1.1rem);
-    left: -0.08em;
-    color: rgba(248, 241, 215, 0.22);
-    font-size: clamp(5.5rem, 12vw, 12rem);
-    font-weight: 900;
-    line-height: 0.8;
-    letter-spacing: -0.1em;
-  }
-
-  .intro-quote-copy {
-    position: relative;
-    max-width: 1080px;
-    margin: 0;
-    color: var(--ink);
-    font-weight: 900;
-    text-wrap: balance;
-  }
-
-  .quote-line {
+  .team-card strong {
     display: block;
-    will-change: transform, opacity;
+    max-width: 8ch;
+    font-size: clamp(2.3rem, 4vw, 4rem);
+    line-height: 0.88;
   }
 
-  .quote-context {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 0.28em;
-    color: rgba(247, 245, 255, 0.42);
-    font-size: clamp(1.1rem, 1.9vw, 1.75rem);
-    font-weight: 750;
-    line-height: 1.05;
-    letter-spacing: -0.04em;
-  }
-
-  .quote-capability {
-    margin-top: clamp(1rem, 2vw, 1.6rem);
-    color: rgba(247, 245, 255, 0.55);
-    font-size: clamp(1.45rem, 2.5vw, 2.5rem);
-    font-weight: 740;
-    line-height: 1;
-    letter-spacing: -0.055em;
-  }
-
-  .quote-capability strong {
+  .team-card span {
     display: block;
-    color: var(--accent-2);
-    font-size: clamp(4.2rem, 8.8vw, 8.9rem);
-    font-weight: 850;
-    line-height: 0.9;
-    letter-spacing: -0.055em;
-    font-kerning: normal;
-    text-shadow: 0 20px 90px rgba(116, 82, 255, 0.34);
-    will-change: transform, opacity;
+    max-width: 25rem;
+    margin-top: 0.7rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.15;
+    text-transform: none;
   }
 
-  .quote-outcome {
-    margin-top: clamp(2rem, 4.5vw, 3.8rem);
-  }
-
-  .quote-outcome-lead {
-    display: block;
-    color: rgba(247, 245, 255, 0.46);
-    font-size: clamp(1.35rem, 2.5vw, 2.5rem);
-    font-weight: 740;
-    line-height: 1;
-    letter-spacing: -0.055em;
-  }
-
-  .quote-value {
-    display: block;
-    max-width: 980px;
-    color: var(--ink);
-    font-size: clamp(3rem, 5.9vw, 6rem);
-    font-weight: 820;
-    line-height: 0.97;
-    letter-spacing: -0.05em;
-    word-spacing: 0.02em;
-    font-kerning: normal;
-  }
-
-  .quote-method {
-    margin-top: clamp(1.15rem, 2.2vw, 1.8rem);
-    color: rgba(247, 245, 255, 0.38);
-    font-size: clamp(1.25rem, 2.3vw, 2.2rem);
-    font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: -0.05em;
-  }
-
-  .quote-method strong {
-    color: rgba(184, 168, 255, 0.78);
-    font-weight: 850;
-  }
-
-  .intro footer {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: clamp(1.5rem, 4vw, 2.6rem);
-    color: var(--muted);
-  }
-
-  .intro footer::before {
-    content: "";
-    width: clamp(2.8rem, 7vw, 5.2rem);
-    height: 2px;
-    border-radius: 999px;
-    background: #f8f1d7;
-    opacity: 0.78;
-  }
-
-  .intro footer strong {
-    color: var(--ink);
-    font-size: clamp(1rem, 2vw, 1.28rem);
-    font-weight: 900;
-    letter-spacing: -0.04em;
-  }
-
-  .intro footer span {
-    color: rgba(247, 245, 255, 0.48);
-    font-size: 0.88rem;
-    font-weight: 850;
-    letter-spacing: -0.01em;
-  }
-
-  .section-title {
-    max-width: 780px;
-    margin-bottom: clamp(2rem, 5vw, 3.5rem);
-  }
-
-  .section-title h2 {
-    margin: 0;
-    font-size: clamp(2.6rem, 6vw, 5.8rem);
-    line-height: 0.92;
-    letter-spacing: -0.075em;
-  }
-
-  .section-title p:not(.va-kicker) {
-    max-width: 42rem;
-    margin-top: 1rem;
-    color: var(--muted);
-    font-size: 1.06rem;
-    line-height: 1.6;
-  }
-
-  .section-title-compact {
-    margin-bottom: 0;
-  }
-
-  .viral-reel-wall {
-    display: grid;
-    gap: 1rem;
-  }
-
-  .viral-row {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    align-items: center;
-    gap: 1rem;
-    min-height: 260px;
-    padding: 1rem;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background:
-      linear-gradient(90deg, rgba(116, 82, 255, 0.12), transparent 55%),
-      rgba(255, 255, 255, 0.045);
-    overflow: hidden;
-  }
-
-  .viral-row-copy h3,
-  .service-card h3 {
-    margin: 0;
-    font-size: clamp(1.9rem, 4vw, 3.5rem);
+  .quotes h2 {
+    color: var(--yellow);
+    font-size: clamp(1.8rem, 3vw, 2.7rem);
     line-height: 0.95;
-    letter-spacing: -0.06em;
   }
 
-  .viral-row-copy p,
-  .service-card p,
-  .result-card p,
-  .account-card p {
-    color: var(--muted);
-    line-height: 1.55;
+  blockquote {
+    margin: 0.8rem 0 0;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #1b1b1b, #090909);
+    border-left: 0.45rem solid var(--yellow);
   }
 
-  .viral-carousel {
-    position: relative;
-    overflow: hidden;
-    min-width: 0;
-    padding-block: 0.35rem;
-    mask-image: linear-gradient(
-      90deg,
-      transparent,
-      black 7%,
-      black 93%,
-      transparent
-    );
-  }
-
-  .viral-track {
-    display: flex;
-    width: max-content;
-    gap: 0.8rem;
-    animation: viral-scroll 44s linear infinite;
-  }
-
-  .viral-carousel[data-direction="right"] .viral-track {
-    animation-direction: reverse;
-  }
-
-  .viral-carousel:hover .viral-track {
-    animation-play-state: paused;
-  }
-
-  .viral-card {
-    position: relative;
-    flex: 0 0 170px;
-    width: 170px;
-    margin: 0;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 22px;
-    background: #050408;
-  }
-
-  .viral-card img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: contain;
-  }
-
-  .viral-card figcaption {
-    position: absolute;
-    left: 0.55rem;
-    bottom: 0.5rem;
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.3rem;
-    padding: 0.3rem 0.46rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.58);
+  blockquote p {
     color: white;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    font-size: 0.84rem;
+    line-height: 1.35;
   }
 
-  .viral-card figcaption small {
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0;
-  }
-
-  .video-strip {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .video-strip a {
-    display: grid;
-    gap: 0.75rem;
-    overflow: hidden;
-    padding: 0.65rem;
-    border: 1px solid var(--line);
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.06);
-    text-decoration: none;
-  }
-
-  .video-strip a:hover {
-    transform: translateY(-4px);
-    border-color: rgba(116, 82, 255, 0.8);
-  }
-
-  .video-strip img {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    border-radius: 16px;
-  }
-
-  .video-strip span {
-    color: var(--accent-2);
-    font-size: 0.82rem;
-    font-weight: 900;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .video-strip strong {
-    color: var(--ink);
-    font-size: clamp(1rem, 1.6vw, 1.18rem);
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: -0.05em;
-  }
-
-  .accounts {
-    display: grid;
-    grid-template-columns: 0.95fr 1.05fr;
-    align-items: end;
-    gap: clamp(2rem, 5vw, 4rem);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .account-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.8rem;
-  }
-
-  .account-card {
-    min-height: 230px;
-    padding: 1rem;
-    border: 1px solid var(--line);
-    border-radius: 26px;
-    background: rgba(255, 255, 255, 0.06);
-    text-decoration: none;
-  }
-
-  .account-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(116, 82, 255, 0.75);
-  }
-
-  .account-card img {
-    width: 76px;
-    height: 76px;
-    margin-bottom: 1rem;
-    border-radius: 50%;
-    object-fit: cover;
-    background: white;
-  }
-
-  .account-card span {
+  cite {
     display: block;
-    font-size: 1.4rem;
-    font-weight: 850;
-    letter-spacing: -0.05em;
+    margin-top: 0.8rem;
+    color: white;
+    font-size: 0.78rem;
+    font-style: normal;
+    font-weight: 800;
+  }
+
+  cite span {
+    display: block;
+    color: #c8c8c8;
+    font-weight: 500;
+  }
+
+  .quotes .cta {
+    margin-top: 0.9rem;
+  }
+
+  .services {
+    background: #f4f4f4;
+    color: #050505;
+    padding: 0.65rem 1.5rem 0.9rem;
+    text-align: center;
   }
 
   .service-grid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 1rem;
+    max-width: 1180px;
+    margin: 0.7rem auto 0;
+    text-align: left;
   }
 
-  .service-card {
+  .service-grid article {
     display: grid;
-    grid-column: span 3;
-    min-height: 460px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--surface);
+    grid-template-columns: 2.2rem 1fr;
+    column-gap: 0.65rem;
   }
 
-  .service-card-3,
-  .service-card-4,
-  .service-card-5 {
-    grid-column: span 2;
+  .service-icon {
+    grid-row: span 2;
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #111;
+    border-radius: 50%;
   }
 
-  .service-media {
-    min-height: 240px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-color: #201935;
+  .service-grid h3 {
+    font-size: 0.9rem;
+    line-height: 0.95;
   }
 
-  .service-card > div:last-child {
-    padding: 1.5rem;
+  .service-grid p {
+    margin-top: 0.35rem;
+    color: #111;
+    font-size: 0.75rem;
+    line-height: 1.25;
   }
 
-  .service-card span {
-    display: block;
-    margin-bottom: 0.8rem;
-    color: var(--accent-2);
-    font-size: 0.78rem;
+  .offer {
+    display: grid;
+    grid-template-columns: 1.1fr auto auto;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    background:
+      linear-gradient(110deg, var(--red) 0 37%, transparent 37.2%), #050505;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .offer p {
+    margin-top: 0.4rem;
+    font-size: 1rem;
     font-weight: 900;
-    letter-spacing: 0.16em;
   }
 
-  .result-grid {
+  .timer {
+    display: flex;
+    gap: 0.55rem;
+  }
+
+  .timer span {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr 1fr;
-    gap: 1rem;
+    min-width: 3.4rem;
+    padding: 0.45rem;
+    border-radius: 4px;
+    background: var(--red);
+    font:
+      800 0.62rem/1 Arial,
+      Helvetica,
+      sans-serif;
+    text-align: center;
   }
 
-  .result-card {
+  .timer strong {
+    font:
+      900 2rem/1 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      sans-serif;
+  }
+
+  .footer {
     display: grid;
-    min-height: 470px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.06);
+    grid-template-columns: 1.4fr 1fr 0.95fr 0.75fr;
+    gap: 1.6rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.1rem 1.5rem;
   }
 
-  .result-card:nth-child(2) {
-    transform: translateY(3rem);
+  .footer-cta {
+    margin: -1.5rem 0 -1.5rem -1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--red), #820000);
   }
 
-  .result-card img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    object-position: top;
+  .footer h3 {
+    font-size: 1.45rem;
+    line-height: 1;
   }
 
-  .result-card strong {
+  .footer p,
+  .footer small {
     display: block;
-    padding: 1.2rem 1.2rem 0;
-    color: var(--accent-2);
-    font-size: clamp(3rem, 8vw, 6rem);
-    line-height: 0.9;
-    letter-spacing: -0.08em;
-  }
-
-  .result-card p,
-  .result-card span {
-    padding-inline: 1.2rem;
-  }
-
-  .result-card span {
-    padding-bottom: 1.2rem;
-    color: var(--ink);
-    font-weight: 800;
-  }
-
-  .testimonial-stack {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  .testimonial-card {
-    padding: 1.35rem;
-    border: 1px solid var(--line);
-    border-radius: 26px;
-    background: rgba(255, 255, 255, 0.055);
-  }
-
-  .testimonial-card img {
-    width: 96px;
-    height: 56px;
-    margin-bottom: 1.5rem;
-    object-fit: contain;
-    filter: saturate(0.85);
-  }
-
-  .testimonial-card blockquote {
-    margin: 0 0 1.2rem;
-    color: var(--ink);
-    font-size: 1.05rem;
+    margin-top: 0.8rem;
+    color: white;
+    font-size: 0.9rem;
     line-height: 1.45;
   }
 
-  .testimonial-card p {
-    margin-bottom: 0.2rem;
-    font-weight: 850;
+  .footer .cta {
+    margin-top: 1rem;
   }
 
-  .testimonial-card span {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-
-  .logo-marquee {
-    width: 100%;
-    max-width: none;
-    padding-inline: 1rem;
-  }
-
-  .logo-marquee .section-title {
-    width: min(1180px, calc(100% - 2rem));
-    margin-inline: auto;
-  }
-
-  .partner-marquee {
-    display: grid;
-    gap: 1rem;
-    width: min(1180px, 100%);
-    margin: 0 auto;
-    overflow: hidden;
-  }
-
-  .partner-row {
-    overflow: hidden;
-    mask-image: linear-gradient(
-      90deg,
-      transparent,
-      black 8%,
-      black 92%,
-      transparent
-    );
-  }
-
-  .partner-track {
+  .socials {
     display: flex;
-    width: max-content;
-    gap: 1rem;
-    animation: partner-scroll 64s linear infinite;
-    will-change: transform;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1rem;
   }
 
-  .partner-row[data-direction="right"] .partner-track {
-    animation-direction: reverse;
-  }
-
-  .partner-row:hover .partner-track {
-    animation-play-state: paused;
-  }
-
-  .partner-logo {
-    display: grid;
-    flex: 0 0 164px;
-    place-items: center;
-    width: 164px;
-    height: 112px;
-    border: 1px solid var(--line);
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.92);
-  }
-
-  .partner-logo img {
-    width: 76%;
-    height: 70%;
-    object-fit: contain;
-  }
-
-  .partner-logo[data-partner="Basil King"] img,
-  .partner-logo[data-partner="Temper Restaurant"] img {
-    width: 62%;
-    height: 62%;
-    border-radius: 10px;
-  }
-
-  .va-footer {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2rem;
-    width: min(1180px, calc(100% - 2rem));
-    margin: 0 auto;
-    padding: clamp(3rem, 7vw, 6rem) 0 2rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .va-footer h2 {
-    max-width: 720px;
-    margin: 0 0 1.5rem;
-    font-size: clamp(3rem, 8vw, 7rem);
-    line-height: 0.9;
-    letter-spacing: -0.08em;
-  }
-
-  .va-footer address {
-    display: grid;
-    gap: 0.7rem;
-    align-content: start;
-    color: var(--muted);
-    font-style: normal;
-  }
-
-  .va-footer address a {
+  .socials a {
+    border-radius: 999px;
+    background: #1e1e1e;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 900;
+    padding: 0.45rem 0.7rem;
     text-decoration: none;
   }
 
-  .va-footer > p {
-    grid-column: 1 / -1;
-    color: rgba(247, 245, 255, 0.42);
-    font-size: 0.82rem;
-  }
-
-  :global(html.staging-preview) .va-site {
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --surface-2: #f6f4ff;
-    --ink: #171421;
-    --muted: #625b71;
-    --line: rgba(23, 20, 33, 0.12);
-    --accent: #5a3fd7;
-    --accent-2: #6d5ce7;
+  .qr {
+    display: grid;
+    place-items: center;
+    width: 7.2rem;
+    aspect-ratio: 1;
+    margin-top: 0.8rem;
+    border: 0.65rem solid white;
     background:
-      radial-gradient(
-        circle at 78% 8%,
-        rgba(90, 63, 215, 0.16),
-        transparent 30rem
-      ),
-      radial-gradient(
-        circle at 10% 22%,
-        rgba(250, 204, 21, 0.11),
-        transparent 22rem
-      ),
-      linear-gradient(180deg, #ffffff 0%, #faf9ff 48%, #ffffff 100%);
+      linear-gradient(90deg, #111 50%, transparent 0) 0 0 / 1.2rem 1.2rem,
+      linear-gradient(#111 50%, transparent 0) 0 0 / 1.2rem 1.2rem,
+      white;
+    color: white;
+    text-decoration: none;
   }
 
-  :global(html.staging-preview) .va-site::before {
-    opacity: 1;
-    background-image:
-      linear-gradient(rgba(90, 63, 215, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(90, 63, 215, 0.045) 1px, transparent 1px);
+  .qr span {
+    display: grid;
+    place-items: center;
+    width: 3.1rem;
+    height: 3.1rem;
+    border-radius: 50%;
+    background: #25d366;
+    font:
+      900 1rem/1 Arial,
+      Helvetica,
+      sans-serif;
   }
 
-  :global(html.staging-preview) .va-site .va-nav,
-  :global(html.staging-preview) .mobile-menu-panel {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 18px 60px rgba(23, 20, 33, 0.08);
-  }
-
-  :global(html.staging-preview) .va-nav-links,
-  :global(html.staging-preview) .va-button-secondary,
-  :global(html.staging-preview) .video-strip a,
-  :global(html.staging-preview) .account-card,
-  :global(html.staging-preview) .result-card,
-  :global(html.staging-preview) .testimonial-card {
-    background: rgba(90, 63, 215, 0.06);
-  }
-
-  :global(html.staging-preview) .va-nav-links a:hover {
-    background: rgba(90, 63, 215, 0.1);
-  }
-
-  :global(html.staging-preview) .nav-menu-button {
-    background: rgba(255, 255, 255, 0.86);
-    color: var(--ink);
-    box-shadow: 0 10px 32px rgba(90, 63, 215, 0.16);
-  }
-
-  :global(html.staging-preview) .va-site .mobile-menu {
-    background:
-      radial-gradient(
-        circle at 78% 10%,
-        rgba(90, 63, 215, 0.14),
-        transparent 32%
-      ),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.78));
-  }
-
-  :global(html.staging-preview) .mobile-menu-top span:last-child,
-  :global(html.staging-preview) .mobile-link-note {
-    color: rgba(109, 92, 231, 0.66);
-  }
-
-  :global(html.staging-preview) .hero-cta-tip {
-    background: rgba(255, 255, 255, 0.96);
-    color: var(--ink);
-    box-shadow: 0 22px 54px rgba(23, 20, 33, 0.12);
-  }
-
-  :global(html.staging-preview) .hero-cta-tip::after {
-    background: rgba(255, 255, 255, 0.96);
-  }
-
-  :global(html.staging-preview) .hero-stage {
-    background:
-      radial-gradient(
-        circle at 40% 20%,
-        rgba(90, 63, 215, 0.2),
-        transparent 18rem
-      ),
-      linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(246, 244, 255, 0.9));
-    box-shadow: 0 28px 90px rgba(23, 20, 33, 0.08);
-  }
-
-  :global(html.staging-preview) .hero-stage::before {
-    color: rgba(90, 63, 215, 0.09);
-  }
-
-  :global(html.staging-preview) .phone-card {
-    background: #ffffff;
-    box-shadow: 0 32px 90px rgba(23, 20, 33, 0.18);
-  }
-
-  :global(html.staging-preview) .hero-orbit {
-    background: rgba(255, 255, 255, 0.92);
-  }
-
-  :global(html.staging-preview) .intro blockquote {
-    border-color: rgba(23, 20, 33, 0.12);
-  }
-
-  :global(html.staging-preview) .intro-quote-mark {
-    color: rgba(90, 63, 215, 0.12);
-  }
-
-  :global(html.staging-preview) .quote-context,
-  :global(html.staging-preview) .quote-capability,
-  :global(html.staging-preview) .quote-outcome-lead,
-  :global(html.staging-preview) .quote-method,
-  :global(html.staging-preview) .intro footer span,
-  :global(html.staging-preview) .va-footer > p {
-    color: rgba(23, 20, 33, 0.56);
-  }
-
-  :global(html.staging-preview) .quote-method strong {
-    color: var(--accent-2);
-  }
-
-  :global(html.staging-preview) .viral-row {
-    background:
-      linear-gradient(90deg, rgba(90, 63, 215, 0.08), transparent 55%),
-      rgba(255, 255, 255, 0.78);
-  }
-
-  :global(html.staging-preview) .service-media {
-    background-color: #f1eefc;
-  }
-
-  :global(html.staging-preview) .partner-logo {
-    border-color: rgba(255, 255, 255, 0.1);
-    background: #171421;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 18px 48px rgba(23, 20, 33, 0.14);
-  }
-
-  :global(html.staging-preview) .partner-logo img {
-    filter:
-      drop-shadow(0 0 1px rgba(255, 255, 255, 0.9))
-      drop-shadow(0 3px 8px rgba(0, 0, 0, 0.28));
-  }
-
-  @keyframes partner-scroll {
-    from {
-      transform: translateX(0);
+  @media (max-width: 760px) {
+    .topbar {
+      grid-template-columns: 1fr auto;
     }
-    to {
-      transform: translateX(-50%);
+
+    .topbar nav {
+      order: 3;
+      grid-column: 1 / -1;
+      justify-content: space-between;
+    }
+
+    .hero,
+    .why,
+    .offer,
+    .footer {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      min-height: 0;
+    }
+
+    .hero-stat {
+      inset: 35% 6% auto auto;
+    }
+
+    .stats-bar {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .work-grid,
+    .logo-grid,
+    .service-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .offer,
+    .footer-cta {
+      margin: 0;
+      background: #050505;
     }
   }
 
-  @keyframes viral-scroll {
-    from {
-      transform: translateX(0);
+  @media (max-width: 680px) {
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
     }
-    to {
-      transform: translateX(-50%);
+
+    .topbar nav {
+      width: 100%;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding-bottom: 0.25rem;
+    }
+
+    .cta-top {
+      display: none;
+    }
+
+    h1 {
+      max-width: 8ch;
+      font-size: 4.4rem;
+    }
+
+    .hero-copy p {
+      font-size: 1.05rem;
+    }
+
+    .video-mosaic {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hero-stat {
+      position: static;
+      width: auto;
+      margin-top: 0.8rem;
+    }
+
+    .hero-stat strong {
+      font-size: 4rem;
+    }
+
+    .hero-stat span {
+      font-size: 2rem;
+    }
+
+    .stats-bar,
+    .work-grid,
+    .logo-grid,
+    .service-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer {
+      padding-bottom: 2rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .partner-track,
-    .viral-track {
-      animation: none;
-    }
-
     *,
     *::before,
     *::after {
       scroll-behavior: auto !important;
       transition-duration: 0.01ms !important;
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-    }
-  }
-
-  @media (max-width: 900px) {
-    .va-site .va-nav {
-      grid-template-columns: 1fr auto;
-      height: auto;
-      border-radius: 24px;
-    }
-
-    .va-nav-links,
-    .va-nav-cta {
-      display: none;
-    }
-
-    .nav-menu-button {
-      display: inline-flex;
-    }
-
-    .hero,
-    .viral-row,
-    .accounts,
-    .result-grid,
-    .va-footer {
-      grid-template-columns: 1fr;
-    }
-
-    .hero {
-      min-height: auto;
-      padding-top: 3rem;
-    }
-
-    h1 {
-      font-size: clamp(4.3rem, 22vw, 7rem);
-    }
-
-    .hero-stage {
-      min-height: 460px;
-    }
-
-    .viral-row {
-      align-items: start;
-    }
-
-    .viral-card {
-      flex-basis: 150px;
-      width: 150px;
-    }
-
-    .video-strip,
-    .account-grid,
-    .testimonial-stack {
-      grid-template-columns: 1fr;
-    }
-
-    .service-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .service-card,
-    .service-card-3,
-    .service-card-4,
-    .service-card-5 {
-      grid-column: auto;
-    }
-
-    .result-card:nth-child(2) {
-      transform: none;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .va-section {
-      width: min(calc(100% - 1rem), 1180px);
-      padding-block: 4rem;
-    }
-
-    .va-site .va-nav {
-      width: min(calc(100% - 1rem), 1180px);
-      top: 0.5rem;
-    }
-
-    .va-brand span {
-      display: none;
-    }
-
-    .va-button-small {
-      min-height: 42px;
-      padding-inline: 0.85rem;
-    }
-
-    .nav-menu-button {
-      gap: 0.55rem;
-      padding-inline: 0.72rem;
-    }
-
-    .hero-actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .hero-cta-wrap,
-    .hero-primary-cta {
-      width: 100%;
-    }
-
-    .hero-cta-tip {
-      left: 0;
-      width: 100%;
-      transform: translateY(0.45rem) scale(0.98);
-    }
-
-    .hero-cta-tip::after {
-      left: 50%;
-    }
-
-    .hero-cta-wrap:hover .hero-cta-tip,
-    .hero-cta-wrap:focus-within .hero-cta-tip {
-      transform: translateY(0) scale(1);
-    }
-
-    h1 {
-      font-size: clamp(4rem, 19vw, 6.25rem);
-      line-height: 0.9;
-    }
-
-    .hero-lede {
-      margin-top: 2rem;
-    }
-
-    .hero-actions .va-button {
-      width: 100%;
-    }
-
-    .hero-stage {
-      min-height: 380px;
-      border-radius: 24px;
-    }
-
-    .phone-card-main {
-      left: 6%;
-      width: 56%;
-      height: 68%;
-    }
-
-    .phone-card-offset {
-      right: 5%;
-      width: 48%;
-      height: 46%;
-    }
-
-    .hero-orbit {
-      width: 6.8rem;
-      height: 6.8rem;
-    }
-
-    .va-site .mobile-menu {
-      padding-top: 5.2rem;
-    }
-
-    .mobile-menu-panel a {
-      min-height: 54px;
-    }
-
-    .intro blockquote {
-      padding-top: 3.6rem;
-    }
-
-    .intro-quote-mark {
-      top: 0.7rem;
-      left: -0.02em;
-      font-size: 6.8rem;
-    }
-
-    .quote-context {
-      font-size: clamp(1rem, 4.6vw, 1.3rem);
-      line-height: 1.05;
-    }
-
-    .quote-capability {
-      margin-top: 1rem;
-      font-size: clamp(1.25rem, 6vw, 1.7rem);
-      line-height: 1;
-    }
-
-    .quote-capability strong {
-      margin-top: 0.12em;
-      font-size: clamp(3.1rem, 14.4vw, 4.05rem);
-      line-height: 0.92;
-      letter-spacing: -0.05em;
-    }
-
-    .quote-outcome {
-      margin-top: 2rem;
-    }
-
-    .quote-outcome-lead {
-      font-size: clamp(1.2rem, 5.8vw, 1.65rem);
-    }
-
-    .quote-value {
-      font-size: clamp(2.35rem, 11.5vw, 3.45rem);
-      line-height: 0.99;
-      letter-spacing: -0.045em;
-      word-spacing: 0.03em;
-    }
-
-    .quote-method {
-      margin-top: 1.2rem;
-      font-size: clamp(1.1rem, 5.3vw, 1.5rem);
-      line-height: 1.06;
-    }
-
-    .intro footer {
-      display: grid;
-      grid-template-columns: 3rem minmax(0, 1fr);
-      align-items: center;
-      gap: 0.18rem 0.85rem;
-    }
-
-    .intro footer::before {
-      grid-row: 1 / span 2;
-      width: 100%;
-    }
-
-    .intro footer strong,
-    .intro footer span {
-      grid-column: 2;
-    }
-
-    .intro footer span {
-      max-width: none;
-      line-height: 1.25;
-    }
-
-    .viral-row,
-    .service-card,
-    .result-card,
-    .testimonial-card {
-      border-radius: 22px;
-    }
-  }
-
-  @media (any-pointer: coarse) {
-    .hero-cta-wrap:hover .hero-cta-tip {
-      opacity: 0;
-      transform: translate(-50%, 0.45rem) scale(0.98);
-    }
-
-    .hero-cta-wrap:focus-within .hero-cta-tip {
-      opacity: 1;
-      transform: translate(-50%, 0) scale(1);
-    }
-  }
-
-  @media (max-width: 560px) and (any-pointer: coarse) {
-    .hero-cta-wrap:hover .hero-cta-tip {
-      transform: translateY(0.45rem) scale(0.98);
-    }
-
-    .hero-cta-wrap:focus-within .hero-cta-tip {
-      transform: translateY(0) scale(1);
     }
   }
 </style>
-
-<script>
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-
-  const menuButton =
-    document.querySelector<HTMLButtonElement>("[data-menu-button]");
-  const mobileMenu = document.querySelector<HTMLElement>("[data-mobile-menu]");
-  const mobilePanel =
-    mobileMenu?.querySelector<HTMLElement>(".mobile-menu-panel");
-  const mobileLinks = mobileMenu
-    ? gsap.utils.toArray<HTMLAnchorElement>(".mobile-menu-panel a")
-    : [];
-  let menuOpen = false;
-
-  const menuTl =
-    menuButton && mobileMenu && mobilePanel
-      ? gsap
-          .timeline({
-            paused: true,
-            defaults: { ease: "power3.out" },
-          })
-          .to(mobileMenu, { autoAlpha: 1, duration: 0.18 }, 0)
-          .fromTo(
-            mobilePanel,
-            { y: -16, scale: 0.98 },
-            { y: 0, scale: 1, duration: 0.36 },
-            0,
-          )
-          .fromTo(
-            mobileLinks,
-            { y: 14, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.28, stagger: 0.045 },
-            0.08,
-          )
-      : null;
-
-  function setMenu(open: boolean) {
-    if (!menuButton || !mobileMenu || !menuTl) return;
-
-    menuOpen = open;
-    menuButton.setAttribute("aria-expanded", String(open));
-    mobileMenu.setAttribute("aria-hidden", String(!open));
-    mobileMenu.style.pointerEvents = open ? "auto" : "none";
-    document.documentElement.classList.toggle("menu-open", open);
-
-    if (reduceMotion) {
-      menuTl.progress(open ? 1 : 0).pause();
-      return;
-    }
-
-    open ? menuTl.play() : menuTl.reverse();
-  }
-
-  const handleMenuClick = () => setMenu(!menuOpen);
-  const handleMenuBackdrop = (event: MouseEvent) => {
-    if (event.target === mobileMenu) setMenu(false);
-  };
-  const handleMenuKeydown = (event: KeyboardEvent) => {
-    if (event.key === "Escape") setMenu(false);
-  };
-  const handleMenuLinkClick = () => setMenu(false);
-
-  menuButton?.addEventListener("click", handleMenuClick);
-  mobileMenu?.addEventListener("click", handleMenuBackdrop);
-  document.addEventListener("keydown", handleMenuKeydown);
-  mobileLinks.forEach((link) =>
-    link.addEventListener("click", handleMenuLinkClick),
-  );
-
-  if (!reduceMotion) {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const ctx = gsap.context(() => {
-      gsap.from(".hero-word", {
-        yPercent: 110,
-        opacity: 0,
-        duration: 1.05,
-        stagger: 0.08,
-        ease: "power4.out",
-      });
-
-      gsap.to(".phone-card-main", {
-        y: -28,
-        rotate: -2,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
-      gsap.to(".phone-card-offset", {
-        y: 36,
-        rotate: 2,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
-      gsap.utils.toArray<HTMLElement>(".reveal").forEach((element) => {
-        gsap.from(element, {
-          y: 42,
-          opacity: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: element,
-            start: "top 82%",
-            once: true,
-          },
-        });
-      });
-
-      const quoteLines = gsap.utils.toArray<HTMLElement>(".quote-line");
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: ".intro",
-            start: "top 70%",
-            once: true,
-          },
-          defaults: { ease: "power4.out" },
-        })
-        .from(
-          quoteLines,
-          {
-            yPercent: 32,
-            opacity: 0,
-            duration: 0.72,
-            stagger: 0.09,
-          },
-          0,
-        )
-        .from(
-          ".quote-value",
-          {
-            yPercent: 18,
-            opacity: 0,
-            duration: 0.82,
-          },
-          0.22,
-        )
-        .from(
-          ".quote-capability strong",
-          {
-            scale: 0.72,
-            opacity: 0,
-            duration: 0.95,
-            ease: "back.out(1.7)",
-          },
-          0.18,
-        )
-        .from(
-          ".intro footer",
-          {
-            y: 16,
-            opacity: 0,
-            duration: 0.52,
-          },
-          0.62,
-        );
-    });
-
-    document.addEventListener("astro:before-swap", () => ctx.revert(), {
-      once: true,
-    });
-  }
-
-  document.addEventListener(
-    "astro:before-swap",
-    () => {
-      setMenu(false);
-      menuButton?.removeEventListener("click", handleMenuClick);
-      mobileMenu?.removeEventListener("click", handleMenuBackdrop);
-      document.removeEventListener("keydown", handleMenuKeydown);
-      mobileLinks.forEach((link) =>
-        link.removeEventListener("click", handleMenuLinkClick),
-      );
-      menuTl?.kill();
-    },
-    { once: true },
-  );
-</script>
