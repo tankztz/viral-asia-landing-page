@@ -1,23 +1,5 @@
 [
   {
-    "slug": "social-chamber-private-studios",
-    "title": "Social Chamber private studios",
-    "category": "merchant",
-    "cover": "/viral-post-covers/social-chamber-private-studios.jpg",
-    "redirectUrl": "https://www.instagram.com/reel/DT91-LekWIU/",
-    "instagramCode": "DT91-LekWIU",
-    "instagramViews": 3446089,
-    "combinedViewsEstimate": 5200000,
-    "combinedViewsLabel": "5.2M",
-    "breakdownEstimate": {
-      "instagram": 3446089,
-      "facebook": 650000,
-      "tiktok": 800000,
-      "xiaohongshu": 303911
-    },
-    "isCommercial": true
-  },
-  {
     "slug": "san-dai-fishball",
     "title": "San Dai Fishball maker",
     "category": "merchant",
@@ -104,6 +86,24 @@
       "facebook": 60000,
       "tiktok": 100000,
       "xiaohongshu": 29528
+    },
+    "isCommercial": true
+  },
+  {
+    "slug": "beijing-time-honored-cuisine",
+    "title": "Beijing Time Honored Cuisine",
+    "category": "merchant",
+    "cover": "/viral-post-covers/beijing-time-honored-cuisine.jpg",
+    "redirectUrl": "https://www.instagram.com/reel/C_fiWNoS0Xv/",
+    "instagramCode": "C_fiWNoS0Xv",
+    "instagramViews": 191134,
+    "combinedViewsEstimate": 360000,
+    "combinedViewsLabel": "360K",
+    "breakdownEstimate": {
+      "instagram": 191134,
+      "facebook": 55000,
+      "tiktok": 85000,
+      "xiaohongshu": 28866
     },
     "isCommercial": true
   },

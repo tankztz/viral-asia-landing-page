@@ -24,10 +24,10 @@ export const heroVideos = viralPostItems.map((post) => [
 
 export const workCards = [
   [
-    "/recent-work-covers/DZcQ7OVxmaM.jpg",
-    "Social Chamber x Haidilao moment",
+    "/recent-work-covers/recent-xing-rong-ji.jpg",
+    "339 AMK Xing Rong Ji",
     "@SGDaily - Jun 2026",
-    "555K",
+    "11K",
   ],
   [
     "/recent-work-covers/DZXEQ27RSNY.jpg",
