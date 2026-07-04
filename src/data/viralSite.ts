@@ -1,4 +1,5 @@
 import { readdirSync } from "node:fs";
+import viralPosts from "./viralPosts.json";
 
 export const whatsappHref =
   "https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service";
@@ -12,28 +13,14 @@ export const navItems = [
   ["Contact Us", "/contact"],
 ] as const;
 
-export const heroVideos = [
-  ["/viral-posts/food/26yrfishball.png", "12.3M", "Hawker story"],
-  [
-    "/viral-posts/food/Screenshot 2024-10-11 at 10.05.56 PM.png",
-    "8.7M",
-    "Restaurant hook",
-  ],
-  ["/viral-posts/things_to_do/IMG_8299.PNG", "7.1M", "Event reel"],
-  ["/viral-posts/food/loklok.png", "6.3M", "Buffet reel"],
-  ["/viral-posts/things_to_do/ritual_team.png", "5.4M", "Lifestyle reel"],
-  ["/viral-posts/property/Screenshot_1.png", "4.6M", "Property story"],
-  ["/viral-posts/food/containercafe.png", "3.8M", "Cafe launch"],
-  ["/viral-posts/things_to_do/tattoo.png", "3.2M", "Studio reel"],
-  ["/viral-posts/property/Screenshot_2.png", "2.9M", "Home tour"],
-  ["/viral-posts/food/bistro.png", "2.7M", "Dining reel"],
-  [
-    "/viral-posts/things_to_do/Screenshot 2024-10-11 at 10.28.32 PM.png",
-    "2.4M",
-    "Attraction reel",
-  ],
-  ["/viral-posts/food/pigtrotter.png", "2.1M", "Food guide"],
-] as const;
+export const viralPostItems = viralPosts;
+
+export const heroVideos = viralPostItems.map((post) => [
+  post.cover,
+  post.combinedViewsLabel,
+  post.title,
+  post.slug,
+]);
 
 export const workCards = [
   [

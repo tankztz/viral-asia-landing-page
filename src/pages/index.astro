@@ -55,12 +55,12 @@ import {
       <div class="hero-board" aria-label="Viral video examples">
         <div class="video-mosaic">
           {
-            heroVideos.map(([image, views, title]) => (
-              <article class="mini-video">
+            heroVideos.map(([image, views, title, slug]) => (
+              <a class="mini-video" href={`/redirect/${slug}/`}>
                 <img src={image} alt={title} loading="eager" />
                 <span class="play" aria-hidden="true" />
                 <strong>{views}</strong>
-              </article>
+              </a>
             ))
           }
         </div>
@@ -499,7 +499,10 @@ import {
   }
 
   .mini-video {
+    display: block;
     aspect-ratio: 4 / 5;
+    color: white;
+    text-decoration: none;
   }
 
   .mini-video img,
