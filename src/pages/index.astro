@@ -31,7 +31,9 @@ import {
       <div class="hero-copy">
         <h1>
           <span class="hero-line">We make</span>
-          <span class="hero-line hero-red">SG business</span>
+          <span class="hero-line hero-red"
+            ><span class="sg-flag-text">SG</span> business</span
+          >
           <span class="hero-line">go viral.</span>
         </h1>
         <p>
@@ -417,6 +419,14 @@ import {
 
   .hero-red {
     color: var(--red);
+  }
+
+  .sg-flag-text {
+    background: linear-gradient(180deg, #ef3340 0 52%, #ffffff 52% 100%);
+    background-clip: text;
+    color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .hero-copy p {
