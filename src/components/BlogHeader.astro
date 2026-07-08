@@ -13,7 +13,7 @@ const { title, subtitle, showBackButton = false } = Astro.props;
 <header class="blog-masthead">
   <div class="masthead-inner">
     <a class="brand" href="/" aria-label="Viral Asia home">
-      <span>Viral</span> Asia
+      <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
     </a>
 
     <nav aria-label="Blog navigation">
@@ -71,7 +71,7 @@ const { title, subtitle, showBackButton = false } = Astro.props;
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 180px 1fr auto;
+    grid-template-columns: 160px 1fr auto;
     align-items: center;
     gap: 1rem;
     max-width: 1180px;
@@ -80,19 +80,16 @@ const { title, subtitle, showBackButton = false } = Astro.props;
   }
 
   .brand {
-    color: white;
-    font:
-      900 1.75rem/0.9 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      "Arial Black",
-      sans-serif;
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
-    text-transform: uppercase;
   }
 
-  .brand span {
-    color: #e91515;
+  .brand img {
+    display: block;
+    width: 7.3rem;
+    max-width: 100%;
+    height: auto;
   }
 
   nav {

@@ -16,7 +16,7 @@ import {
   <main class="landing">
     <header class="topbar">
       <a class="brand" href="/" aria-label="Viral Asia home">
-        <span>Viral</span> Asia
+        <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
       </a>
       <nav aria-label="Primary navigation">
         {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
@@ -199,11 +199,16 @@ import {
         <h2>Limited time offer</h2>
         <p>Get 20% off your first campaign.</p>
       </div>
-      <div class="timer" aria-label="Offer countdown example">
-        <span><strong>03</strong>Days</span>
-        <span><strong>14</strong>Hours</span>
-        <span><strong>23</strong>Mins</span>
-        <span><strong>45</strong>Secs</span>
+      <div
+        class="timer"
+        data-countdown
+        aria-label="Offer countdown"
+        aria-live="polite"
+      >
+        <span><strong data-countdown-value="days">03</strong>Days</span>
+        <span><strong data-countdown-value="hours">14</strong>Hours</span>
+        <span><strong data-countdown-value="minutes">23</strong>Mins</span>
+        <span><strong data-countdown-value="seconds">45</strong>Secs</span>
       </div>
       <a class="cta cta-discount" href={whatsappHref}>
         Claim your discount
@@ -254,6 +259,60 @@ import {
   </main>
 </Layout>
 
+<script>
+  const countdown = document.querySelector("[data-countdown]");
+
+  if (countdown) {
+    const values = {
+      days: countdown.querySelector('[data-countdown-value="days"]'),
+      hours: countdown.querySelector('[data-countdown-value="hours"]'),
+      minutes: countdown.querySelector('[data-countdown-value="minutes"]'),
+      seconds: countdown.querySelector('[data-countdown-value="seconds"]'),
+    };
+
+    const dayMs = 24 * 60 * 60 * 1000;
+    const sgtOffsetMs = 8 * 60 * 60 * 1000;
+
+    const getNextSundayEndSgt = (now) => {
+      const sgtNow = new Date(now.getTime() + sgtOffsetMs);
+      const daysUntilSunday = (7 - sgtNow.getUTCDay()) % 7;
+      const deadlineSgtMs =
+        Date.UTC(
+          sgtNow.getUTCFullYear(),
+          sgtNow.getUTCMonth(),
+          sgtNow.getUTCDate() + daysUntilSunday,
+          23,
+          59,
+          59,
+        ) - sgtOffsetMs;
+
+      return deadlineSgtMs > now.getTime()
+        ? deadlineSgtMs
+        : deadlineSgtMs + 7 * dayMs;
+    };
+
+    const pad = (value) => String(value).padStart(2, "0");
+
+    const renderCountdown = () => {
+      const now = new Date();
+      const remaining = Math.max(0, getNextSundayEndSgt(now) - now.getTime());
+
+      const days = Math.floor(remaining / dayMs);
+      const hours = Math.floor((remaining % dayMs) / (60 * 60 * 1000));
+      const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+
+      values.days.textContent = pad(days);
+      values.hours.textContent = pad(hours);
+      values.minutes.textContent = pad(minutes);
+      values.seconds.textContent = pad(seconds);
+    };
+
+    renderCountdown();
+    window.setInterval(renderCountdown, 1000);
+  }
+</script>
+
 <style>
   :global(body) {
     background: #050505;
@@ -292,7 +351,7 @@ import {
 
   .topbar {
     display: grid;
-    grid-template-columns: 180px 1fr auto;
+    grid-template-columns: 160px 1fr auto;
     align-items: center;
     gap: 1rem;
     max-width: 1280px;
@@ -301,19 +360,20 @@ import {
   }
 
   .brand {
-    color: white;
-    font:
-      900 1.9rem/0.9 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      sans-serif;
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
-    text-transform: uppercase;
   }
 
-  .brand span,
   h2 span {
     color: var(--red);
+  }
+
+  .brand img {
+    display: block;
+    width: 7.3rem;
+    max-width: 100%;
+    height: auto;
   }
 
   nav {

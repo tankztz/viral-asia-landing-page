@@ -24,9 +24,9 @@ const { content } = Astro.props;
 <Layout title={`${content.title} - Viral Asia`}>
   <main class="subpage">
     <header class="topbar">
-      <a class="brand" href="/" aria-label="Viral Asia home"
-        ><span>Viral</span> Asia</a
-      >
+      <a class="brand" href="/" aria-label="Viral Asia home">
+        <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
+      </a>
       <nav aria-label="Primary navigation">
         {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
       </nav>
@@ -204,7 +204,7 @@ const { content } = Astro.props;
 
   .topbar {
     display: grid;
-    grid-template-columns: 180px 1fr auto;
+    grid-template-columns: 160px 1fr auto;
     align-items: center;
     gap: 1rem;
     max-width: 1180px;
@@ -213,19 +213,21 @@ const { content } = Astro.props;
   }
 
   .brand {
-    color: white;
-    font:
-      900 1.9rem/0.9 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      sans-serif;
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
   }
 
-  .brand span,
   .page-hero p,
   .content-grid strong {
     color: var(--red);
+  }
+
+  .brand img {
+    display: block;
+    width: 7.3rem;
+    max-width: 100%;
+    height: auto;
   }
 
   nav {
