@@ -274,50 +274,58 @@ const blogSchema = {
 
     <p class="filter-empty" data-filter-empty>More stories in this category will appear here once they are published.</p>
 
+<script is:inline>
+  (() => {
+    const initCategoryFilters = () => {
+      const filterRoot = document.querySelector("[data-category-filter]");
+      const filterButtons = Array.from(
+        document.querySelectorAll("[data-category-filter] button[data-filter]"),
+      );
+      const filterCards = Array.from(
+        document.querySelectorAll("[data-filter-card][data-category]"),
+      );
+      const emptyMessage = document.querySelector("[data-filter-empty]");
+
+      const applyCategoryFilter = (filter) => {
+        const normalizedFilter = filter || "latest";
+        let visibleCount = 0;
+
+        filterButtons.forEach((button) => {
+          button.setAttribute(
+            "aria-pressed",
+            String(button.dataset.filter === normalizedFilter),
+          );
+        });
+
+        filterCards.forEach((card) => {
+          const category = card.dataset.category || "";
+          const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
+          card.hidden = !shouldShow;
+          if (shouldShow) visibleCount += 1;
+        });
+
+        emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
+      };
+
+      filterRoot?.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-filter]");
+        if (!button) return;
+        applyCategoryFilter(button.dataset.filter || "latest");
+      });
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initCategoryFilters, { once: true });
+    } else {
+      initCategoryFilters();
+    }
+  })();
+</script>
+
     <Footer callToAction="Ready to Go Viral?" />
   </main>
 </Layout>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const filterRoot = document.querySelector("[data-category-filter]");
-    const filterButtons = Array.from(
-      document.querySelectorAll<HTMLButtonElement>("[data-category-filter] button[data-filter]"),
-    );
-    const filterCards = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-filter-card][data-category]"),
-    );
-    const emptyMessage = document.querySelector<HTMLElement>("[data-filter-empty]");
-
-    const applyCategoryFilter = (filter: string) => {
-      const normalizedFilter = filter || "latest";
-      let visibleCount = 0;
-
-      filterButtons.forEach((button) => {
-        button.setAttribute(
-          "aria-pressed",
-          String(button.dataset.filter === normalizedFilter),
-        );
-      });
-
-      filterCards.forEach((card) => {
-        const category = card.dataset.category || "";
-        const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
-        card.hidden = !shouldShow;
-        if (shouldShow) visibleCount += 1;
-      });
-
-      emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
-    };
-
-    filterRoot?.addEventListener("click", (event) => {
-      const target = event.target as HTMLElement;
-      const button = target.closest<HTMLButtonElement>("button[data-filter]");
-      if (!button) return;
-      applyCategoryFilter(button.dataset.filter || "latest");
-    });
-  });
-</script>
 
 <style>
   :global(body) {
