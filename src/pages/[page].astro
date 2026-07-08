@@ -19,6 +19,12 @@ export function getStaticPaths() {
 }
 
 const { content } = Astro.props;
+
+const getLinkLabel = (href: string) => {
+  if (href.startsWith("mailto:")) return "Email us";
+  if (href.startsWith("tel:")) return "Call us";
+  return "Open link";
+};
 ---
 
 <Layout title={`${content.title} - Viral Asia`}>
@@ -134,7 +140,7 @@ const { content } = Astro.props;
                 String(meta).startsWith("mailto:") ||
                 String(meta).startsWith("tel:") ? (
                   <a class="article-link" href={meta}>
-                    Open link
+                    {getLinkLabel(String(meta))}
                   </a>
                 ) : (
                   <strong>{meta}</strong>

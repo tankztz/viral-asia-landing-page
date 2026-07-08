@@ -9,8 +9,8 @@ export const navItems = [
   ["Our Work", "/work"],
   ["Services", "/services"],
   ["Clients", "/clients"],
+  ["Blog", "/blog"],
   ["About Us", "/about"],
-  ["Contact Us", "/contact"],
 ] as const;
 
 export const viralPostItems = viralPosts;
@@ -273,6 +273,9 @@ export const pageContent = {
         "Strategy, creators, production and ads under one roof.",
         "",
       ],
+      ["Mailing Address", "11 mosque street #02-01", ""],
+      ["Email Address", "hello@viralasia.co", "mailto:hello@viralasia.co"],
+      ["Phone Number", "(+65) 9090 6912", "tel:+6590906912"],
     ],
   },
   contact: {

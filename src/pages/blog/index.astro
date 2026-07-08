@@ -48,6 +48,9 @@ const categoryNav = [
   "Brand stories",
 ];
 
+const toFilterValue = (category: string) =>
+  category.toLowerCase().replaceAll(" ", "-");
+
 const formatDate = (date?: string) =>
   date
     ? new Date(date).toLocaleDateString("en-SG", {
@@ -114,15 +117,28 @@ const blogSchema = {
       subtitle="Campaign notes, food finds, lifestyle reads and local stories built for mobile readers."
     />
 
-    <nav class="category-strip" aria-label="Story categories">
+    <nav class="category-strip" aria-label="Filter stories by category" data-category-filter>
       <div>
-        {categoryNav.map((category) => <a href={`#${category.toLowerCase().replaceAll(" ", "-")}`}>{category}</a>)}
+        {categoryNav.map((category, index) => (
+          <button
+            type="button"
+            data-filter={toFilterValue(category)}
+            aria-pressed={index === 0 ? "true" : "false"}
+          >
+            {category}
+          </button>
+        ))}
       </div>
     </nav>
 
     {
       featuredPost && (
-        <section class="lead-section" id="latest" data-emdash-featured-post>
+        <section
+          class="lead-section"
+          data-filter-card
+          data-category={toFilterValue(inferCategory(featuredPost))}
+          data-emdash-featured-post
+        >
           <a class="lead-card" href={`/blog/${featuredPost.slug.current}`}>
             <div class="lead-media">
               {getImage(featuredPost) ? (
@@ -158,7 +174,12 @@ const blogSchema = {
       <div class="article-grid" data-emdash-entry-list>
         {
           latestPosts.map((post) => (
-            <article class="story-card" data-emdash-entry>
+            <article
+              class="story-card"
+              data-filter-card
+              data-category={toFilterValue(inferCategory(post))}
+              data-emdash-entry
+            >
               <a href={`/blog/${post.slug.current}`}>
                 <div class="story-image">
                   {getImage(post, 900) ? (
@@ -193,7 +214,12 @@ const blogSchema = {
       <div class="campaign-list">
         {
           campaignPosts.map((post) => (
-            <a class="campaign-row" href={`/redirect/${post.slug}/`}>
+            <a
+              class="campaign-row"
+              href={`/redirect/${post.slug}/`}
+              data-filter-card
+              data-category="brand-stories"
+            >
               <img src={post.cover} alt={post.title} loading="lazy" />
               <div>
                 <span>{post.category === "news" ? "News signal" : "Brand story"}</span>
@@ -223,16 +249,16 @@ const blogSchema = {
       </aside>
     </section>
 
-    <section class="mobile-brief" id="food" aria-label="Mobile editorial categories">
-      <div>
+    <section class="mobile-brief" aria-label="Mobile editorial categories">
+      <div data-filter-card data-category="food">
         <span>Food</span>
         <h2>Short reads for where people decide what to eat, book and try next.</h2>
       </div>
-      <div>
+      <div data-filter-card data-category="lifestyle">
         <span>Lifestyle</span>
         <h2>Local hooks, clear metadata and thumb-friendly story cards.</h2>
       </div>
-      <div>
+      <div data-filter-card data-category="property">
         <span>Property</span>
         <h2>Static Astro output today, cleaner content mapping for EmDash later.</h2>
       </div>
@@ -246,9 +272,52 @@ const blogSchema = {
       <a href={whatsappHref}>Plan a campaign</a>
     </section>
 
+    <p class="filter-empty" data-filter-empty>More stories in this category will appear here once they are published.</p>
+
     <Footer callToAction="Ready to Go Viral?" />
   </main>
 </Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterRoot = document.querySelector("[data-category-filter]");
+    const filterButtons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>("[data-category-filter] button[data-filter]"),
+    );
+    const filterCards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-filter-card][data-category]"),
+    );
+    const emptyMessage = document.querySelector<HTMLElement>("[data-filter-empty]");
+
+    const applyCategoryFilter = (filter: string) => {
+      const normalizedFilter = filter || "latest";
+      let visibleCount = 0;
+
+      filterButtons.forEach((button) => {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.filter === normalizedFilter),
+        );
+      });
+
+      filterCards.forEach((card) => {
+        const category = card.dataset.category || "";
+        const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
+        card.hidden = !shouldShow;
+        if (shouldShow) visibleCount += 1;
+      });
+
+      emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
+    };
+
+    filterRoot?.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      const button = target.closest<HTMLButtonElement>("button[data-filter]");
+      if (!button) return;
+      applyCategoryFilter(button.dataset.filter || "latest");
+    });
+  });
+</script>
 
 <style>
   :global(body) {
@@ -293,14 +362,15 @@ const blogSchema = {
     display: none;
   }
 
-  .category-strip a {
+  .category-strip button {
     flex: 0 0 auto;
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 999px;
+    background: transparent;
     color: rgba(255, 255, 255, 0.82);
+    cursor: pointer;
     font: 900 0.73rem/1 Arial, Helvetica, sans-serif;
     padding: 0.62rem 0.9rem;
-    text-decoration: none;
     text-transform: uppercase;
     transition:
       background 180ms ease,
@@ -309,10 +379,28 @@ const blogSchema = {
     white-space: nowrap;
   }
 
-  .category-strip a:hover {
+  .category-strip button:hover,
+  .category-strip button[aria-pressed="true"] {
     background: var(--yellow);
     color: #111;
     transform: translateY(-1px);
+  }
+
+  [data-filter-card][hidden] {
+    display: none !important;
+  }
+
+  .filter-empty {
+    display: none;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 1.25rem 2rem;
+    color: rgba(255, 255, 255, 0.7);
+    font: 800 0.95rem/1.5 Arial, Helvetica, sans-serif;
+  }
+
+  .filter-empty[data-visible="true"] {
+    display: block;
   }
 
   .lead-section,
