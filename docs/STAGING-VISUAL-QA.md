@@ -13,7 +13,7 @@ Staging URL: https://staging.viral-asia-landing-page.pages.dev/
 
 ## Follow-up checks
 
-- [ ] Recheck desktop hero after deployment. The 500M overlay should feel intentional and not hide the video tiles too heavily.
-- [ ] Recheck mobile top fold after deployment. The hero mosaic should not create sideways scrolling at 390px width.
-- [ ] Recheck services on mobile. Each service card should show a real visual, not an empty circle.
-- [ ] Recheck footer QR on desktop and mobile. It should scan to the WhatsApp consultation link.
+- [x] Recheck desktop hero after deployment. The 500M overlay should feel intentional and not hide the video tiles too heavily.
+- [x] Recheck mobile top fold after deployment. The hero mosaic should not create sideways scrolling at 390px width.
+- [x] Recheck services on mobile. Each service card should show a real visual, not an empty circle.
+- [x] Recheck footer QR on desktop and mobile. It should scan to the WhatsApp consultation link.
