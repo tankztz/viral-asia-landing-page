@@ -1,4 +1,6 @@
 ---
+import { navItems, whatsappHref } from "../data/viralSite";
+
 interface Props {
   title: string;
   subtitle?: string;
@@ -8,71 +10,222 @@ interface Props {
 const { title, subtitle, showBackButton = false } = Astro.props;
 ---
 
-<header class="sticky top-0 z-50 bg-gradient-to-r from-[#2e1a67] to-[#2e1a67] text-white transition-all duration-300" id="blog-header">
-  <div class="container mx-auto px-4 py-8 transition-all duration-300" id="header-content">
-    <div class="flex items-center justify-between gap-8">
-      <div class="flex items-center gap-8">
-        <a href="/" class="flex-shrink-0">
-          <img 
-            src="/company/ViralAsia.png" 
-            alt="Viral Asia Logo" 
-            class="h-16 md:h-20 transition-all duration-300"
-            id="header-logo"
-          />
+<header class="blog-masthead">
+  <div class="masthead-inner">
+    <a class="brand" href="/" aria-label="Viral Asia home">
+      <span>Viral</span> Asia
+    </a>
+
+    <nav aria-label="Blog navigation">
+      <a href="/blog" aria-current={showBackButton ? undefined : "page"}>Blog</a>
+      {navItems.slice(1, 4).map(([label, href]) => <a href={href}>{label}</a>)}
+    </nav>
+
+    <a class="masthead-cta" href={whatsappHref}>Enquire now</a>
+  </div>
+
+  <div class="masthead-title">
+    {
+      showBackButton && (
+        <a class="back-link" href="/blog" aria-label="Back to blog">
+          <span aria-hidden="true">←</span>
+          Back to Blog
         </a>
-        <div>
-          {showBackButton && (
-            <a href="/blog" class="inline-flex items-center text-gray-200 font-semibold mb-4 hover:text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-              </svg>
-              Back to Blog
-            </a>
-          )}
-          <h1 class="text-4xl font-bold text-white transition-all duration-300" id="header-title">{title}</h1>
-          {subtitle && <p class="mt-2 text-xl text-gray-200">{subtitle}</p>}
-        </div>
-      </div>
-      
-      <a href="https://wa.me/6590906912?text=I'm%20interested%20in%20your%20social%20media%20service" class="self-center">
-        <button
-          class="movingBG p-3 rounded-lg uppercase text-black font-bold"
-          style={{background: `url('/images/moving.gif')`}}
-        >
-          Enquire Now
-        </button>
-      </a>
-    </div>
+      )
+    }
+    <p>Viral Asia newsroom</p>
+    <h1>{title}</h1>
+    {subtitle && <span>{subtitle}</span>}
   </div>
 </header>
 
-<script>
-  const header = document.getElementById('blog-header');
-  const headerContent = document.getElementById('header-content');
-  const headerTitle = document.getElementById('header-title');
-  const headerLogo = document.getElementById('header-logo');
-
-  if (header && headerContent && headerTitle && headerLogo) {
-    window.addEventListener('scroll', () => {
-      const currentScroll = window.pageYOffset;
-      
-      if (currentScroll > 100) {
-        header.classList.add('shadow-lg');
-        headerContent.classList.add('py-4');
-        headerContent.classList.remove('py-8');
-        headerTitle.classList.add('text-2xl');
-        headerTitle.classList.remove('text-4xl');
-        headerLogo.classList.add('h-16');
-        headerLogo.classList.remove('h-20', 'md:h-24');
-      } else {
-        header.classList.remove('shadow-lg');
-        headerContent.classList.remove('py-4');
-        headerContent.classList.add('py-8');
-        headerTitle.classList.remove('text-2xl');
-        headerTitle.classList.add('text-4xl');
-        headerLogo.classList.remove('h-16');
-        headerLogo.classList.add('h-20', 'md:h-24');
-      }
-    });
+<style>
+  .blog-masthead {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    background:
+      radial-gradient(
+        circle at 78% 12%,
+        rgba(255, 225, 0, 0.2),
+        transparent 20rem
+      ),
+      radial-gradient(
+        circle at 12% 2%,
+        rgba(233, 21, 21, 0.28),
+        transparent 24rem
+      ),
+      #050505;
+    color: white;
   }
-</script> 
+
+  .blog-masthead::after {
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e91515, #ffe100, transparent);
+    content: "";
+  }
+
+  .masthead-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 180px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+  }
+
+  .brand {
+    color: white;
+    font:
+      900 1.75rem/0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      "Arial Black",
+      sans-serif;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .brand span {
+    color: #e91515;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.9rem, 2.4vw, 2rem);
+  }
+
+  nav a,
+  .masthead-cta,
+  .back-link {
+    font: 900 0.74rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  nav a {
+    color: rgba(255, 255, 255, 0.76);
+    transition:
+      color 180ms ease,
+      transform 180ms ease;
+  }
+
+  nav a:hover,
+  nav a[aria-current="page"] {
+    color: #ffe100;
+    transform: translateY(-1px);
+  }
+
+  .masthead-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.45rem;
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 4px;
+    background: #e91515;
+    box-shadow: 0 0.38rem 0 rgba(0, 0, 0, 0.48);
+    color: white;
+    padding: 0.72rem 1rem;
+    transition:
+      filter 180ms ease,
+      transform 180ms ease;
+  }
+
+  .masthead-cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  .masthead-cta:active {
+    transform: translateY(1px);
+  }
+
+  .masthead-title {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) 1.25rem clamp(2.6rem, 7vw, 5.5rem);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.35rem;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .back-link:hover {
+    color: #ffe100;
+  }
+
+  .masthead-title p {
+    margin: 0 0 0.7rem;
+    color: #ffe100;
+    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .masthead-title h1 {
+    max-width: 920px;
+    margin: 0;
+    color: white;
+    font:
+      900 clamp(2.8rem, 9vw, 7.2rem) / 0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      "Arial Black",
+      sans-serif;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .masthead-title span {
+    display: block;
+    max-width: 56rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.76);
+    font: 600 clamp(1rem, 2vw, 1.18rem) / 1.5 Arial, Helvetica, sans-serif;
+  }
+
+  @media (max-width: 840px) {
+    .masthead-inner {
+      grid-template-columns: 1fr auto;
+    }
+
+    nav {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+      scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .masthead-inner {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .masthead-cta {
+      width: max-content;
+    }
+  }
+</style>

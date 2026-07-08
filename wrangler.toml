@@ -1,0 +1,6 @@
+name = "viral-asia-landing-page"
+compatibility_date = "2026-07-08"
+pages_build_output_dir = "dist"
+
+[vars]
+PUBLIC_SITE_ENV = "staging"

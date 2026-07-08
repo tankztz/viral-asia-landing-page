@@ -1,106 +1,545 @@
 ---
 import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "sanity:client";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import Footer from "../../components/Footer.astro";
 import BlogHeader from "../../components/BlogHeader.astro";
+import PortableSanityImage from "../../components/PortableSanityImage.astro";
+import { viralPostItems, whatsappHref } from "../../data/viralSite";
+
+interface BlogPost extends SanityDocument {
+  title: string;
+  slug: { current: string };
+  publishedAt?: string;
+  excerpt?: string;
+  author?: { name?: string };
+  categories?: { title?: string }[];
+  mainImage?: {
+    asset?: {
+      url?: string;
+    };
+  };
+  body?: unknown[];
+  readingMinutes?: number;
+}
+
+export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
+  const SLUGS_QUERY = `*[_type == "post" && defined(slug.current)]{
+    "params": {"slug": slug.current}
+  }`;
+  return await sanityClient.fetch(SLUGS_QUERY);
+}
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
+  _id,
   title,
+  slug,
   publishedAt,
+  excerpt,
+  author->{name},
+  categories[]->{title},
   mainImage {
     asset-> {
       url
     }
   },
-  body
+  body,
+  "readingMinutes": round(length(pt::text(body)) / 900)
 }`;
-const post = await sanityClient.fetch<SanityDocument>(POST_QUERY, Astro.params);
 
-export async function getStaticPaths(): Promise<{ params: { slug: string } }> {
-  const SLUGS_QUERY = `*[_type == "post" && defined(slug.current)]{
-    "params": {"slug": slug.current}
-  }`;
-  return await sanityClient.fetch(SLUGS_QUERY, Astro.params);
-}
+const RELATED_POSTS_QUERY = `*[
+  _type == "post"
+  && defined(slug.current)
+  && slug.current != $slug
+]|order(publishedAt desc)[0...6]{
+  _id,
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  author->{name},
+  categories[]->{title},
+  mainImage {
+    asset-> {
+      url
+    }
+  }
+}`;
 
-const { projectId, dataset } = sanityClient.config();
-const urlFor = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
-const postMainImageUrl = post.mainImage?.asset?.url;
+const post = await sanityClient.fetch<BlogPost>(POST_QUERY, Astro.params);
+const relatedPosts = await sanityClient.fetch<BlogPost[]>(
+  RELATED_POSTS_QUERY,
+  Astro.params,
+);
+
+const formatDate = (date?: string) =>
+  date
+    ? new Date(date).toLocaleDateString("en-SG", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "Viral Asia";
+
+const inferCategory = (entry: BlogPost) => {
+  const explicitCategory = entry.categories?.find((category) => category.title)
+    ?.title;
+  if (explicitCategory) return explicitCategory;
+
+  const title = entry.title.toLowerCase();
+  if (title.includes("lok lok") || title.includes("cafe") || title.includes("pork")) {
+    return "Food";
+  }
+  if (title.includes("home") || title.includes("property")) return "Property";
+  if (title.includes("testing")) return "Studio";
+  return "Lifestyle";
+};
+
+const getImage = (entry?: BlogPost, width = 1400) =>
+  entry?.mainImage?.asset?.url
+    ? `${entry.mainImage.asset.url}?w=${width}&auto=format`
+    : undefined;
+
+const primaryCategory = post ? inferCategory(post) : "Story";
+const heroImage = getImage(post);
+const fallbackImage = viralPostItems[0]?.cover;
+const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
+const articleDescription =
+  post?.excerpt ||
+  "A Viral Asia editorial story for Singapore readers and mobile-first campaigns.";
+
+const articleSchema = post && {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: articleDescription,
+  datePublished: post.publishedAt,
+  author: {
+    "@type": "Organization",
+    name: post.author?.name || "Viral Asia",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Viral Asia",
+    logo: "/company/ViralAsia.png",
+  },
+  articleSection: primaryCategory,
+  image: heroImage,
+  url: `/blog/${post.slug.current}`,
+};
+
+const portableTextComponents = {
+  type: {
+    image: PortableSanityImage,
+  },
+};
 ---
 
 <Layout title={`${post.title} | Viral Asia Blog`}>
-  <main class="pt-0">
-    <BlogHeader 
-      title={post.title}
-      subtitle={new Date(post.publishedAt).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })}
+  {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+
+  <main class="article-page" data-emdash-site="viral-asia" data-emdash-entry={post.slug.current}>
+    <BlogHeader
+      title={primaryCategory}
+      subtitle="Singapore stories, campaign notes and mobile-first editorial reads."
       showBackButton={true}
     />
 
-    <section class="bg-gradient-to-b from-[#2e1a67] to-[#f0f0f0] text-white py-20">
-      <div class="container mx-auto max-w-5xl px-4">
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          {postMainImageUrl && (
-            <div class="order-2 md:order-1">
-              <img
-                src={postMainImageUrl}
-                alt={post.title}
-                class="w-full rounded-xl shadow-2xl transform hover:scale-105 transition-transform duration-300"
-                width="1200"
-                height="675"
-              />
-            </div>
-          )}
-          <div class="order-1 md:order-2">
-            <div class="space-y-6">
-              <div class="flex items-center gap-4">
-                <img 
-                  src="/company/ViralAsia.png"
-                  alt="Author"
-                  class="w-12 h-12 rounded-full bg-white p-2"
-                />
-                <div>
-                  <div class="font-semibold">Viral Asia</div>
-                  <time class="text-sm text-gray-200">
-                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </time>
-                </div>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <span class="px-3 py-1 bg-purple-700 rounded-full text-sm">TikTok Marketing</span>
-                <span class="px-3 py-1 bg-purple-700 rounded-full text-sm">Social Media</span>
-              </div>
-              <p class="text-lg text-gray-200">
-                Discover the latest insights on TikTok marketing strategies and learn how to grow your brand's social media presence.
-              </p>
-            </div>
+    <article class="story-shell">
+      <header class="article-hero">
+        <div class="headline-block">
+          <p>{primaryCategory}</p>
+          <h1>{post.title}</h1>
+          <span>{articleDescription}</span>
+          <div class="article-meta">
+            <strong>{post.author?.name || "Viral Asia editorial"}</strong>
+            <time>{formatDate(post.publishedAt)}</time>
+            <span>{readingMinutes} min read</span>
           </div>
         </div>
-      </div>
-    </section>
 
-    <article class="bg-[#f0f0f0] py-16">
-      <div class="container mx-auto max-w-3xl px-4">
-        <div class="prose prose-lg max-w-none">
-          {Array.isArray(post.body) && <PortableText value={post.body} />}
+        <figure>
+          <img
+            src={heroImage || fallbackImage}
+            alt={post.title}
+            width="1400"
+            height="900"
+            loading="eager"
+          />
+          <figcaption>{primaryCategory} story by Viral Asia</figcaption>
+        </figure>
+      </header>
+
+      <div class="article-layout">
+        <aside class="article-rail" aria-label="Article details">
+          <div>
+            <span>Category</span>
+            <strong>{primaryCategory}</strong>
+          </div>
+          <div>
+            <span>Published</span>
+            <strong>{formatDate(post.publishedAt)}</strong>
+          </div>
+          <a href={whatsappHref}>Plan a story</a>
+        </aside>
+
+        <div class="article-body" data-emdash-body>
+          {Array.isArray(post.body) && post.body.length > 0 ? (
+            <PortableText value={post.body} components={portableTextComponents} />
+          ) : (
+            <>
+              <p>
+                This story is ready for publishing in Sanity, but the article
+                body is currently empty.
+              </p>
+              <p>
+                Add content blocks in the Studio and the static Cloudflare build
+                will render them here.
+              </p>
+            </>
+          )}
         </div>
       </div>
     </article>
 
+    <section class="more-stories" aria-labelledby="more-stories-heading">
+      <div class="section-heading">
+        <p>More stories</p>
+        <h2 id="more-stories-heading">Keep reading</h2>
+      </div>
+
+      <div class="related-grid">
+        {
+          relatedPosts.map((entry) => (
+            <article>
+              <a href={`/blog/${entry.slug.current}`}>
+                <img
+                  src={getImage(entry, 800) || viralPostItems[1]?.cover}
+                  alt={entry.title}
+                  loading="lazy"
+                />
+                <div>
+                  <span>{inferCategory(entry)}</span>
+                  <h3>{entry.title}</h3>
+                  <time>{formatDate(entry.publishedAt)}</time>
+                </div>
+              </a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
     <Footer callToAction="Ready to Go Viral?" />
   </main>
 </Layout>
+
+<style>
+  :global(body) {
+    background: #050505;
+  }
+
+  .article-page {
+    --red: #e91515;
+    --yellow: #ffe100;
+    --ink: #050505;
+    --paper: #fff8e6;
+    min-height: 100dvh;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 88% 16%, rgba(233, 21, 21, 0.18), transparent 24rem),
+      radial-gradient(circle at 10% 48%, rgba(255, 225, 0, 0.1), transparent 22rem),
+      var(--ink);
+    color: white;
+  }
+
+  .story-shell,
+  .more-stories {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(2.4rem, 6vw, 5rem) 1.25rem;
+  }
+
+  .article-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 0.88fr) minmax(320px, 1.12fr);
+    gap: clamp(1.25rem, 4vw, 3rem);
+    align-items: end;
+  }
+
+  .headline-block p,
+  .section-heading p {
+    margin: 0 0 0.75rem;
+    color: var(--yellow);
+    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .headline-block h1,
+  .section-heading h2 {
+    margin: 0;
+    font:
+      900 clamp(3rem, 8vw, 7rem) / 0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      "Arial Black",
+      sans-serif;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .headline-block > span {
+    display: block;
+    max-width: 42rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.76);
+    font: 600 1.06rem/1.6 Arial, Helvetica, sans-serif;
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.4rem;
+    color: rgba(255, 255, 255, 0.62);
+    font: 900 0.74rem/1.3 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .article-meta strong {
+    color: white;
+  }
+
+  .article-meta time::before,
+  .article-meta span::before {
+    margin-right: 0.6rem;
+    color: var(--red);
+    content: "/";
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  figcaption {
+    margin-top: 0.55rem;
+    color: rgba(255, 255, 255, 0.52);
+    font: 700 0.78rem/1.4 Arial, Helvetica, sans-serif;
+  }
+
+  .article-layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 760px);
+    gap: clamp(1.4rem, 5vw, 4rem);
+    align-items: start;
+    margin-top: clamp(2.4rem, 6vw, 5rem);
+  }
+
+  .article-rail {
+    position: sticky;
+    top: 1rem;
+    display: grid;
+    gap: 0.85rem;
+    border-top: 3px solid var(--red);
+    color: white;
+    padding-top: 1rem;
+  }
+
+  .article-rail div {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 0.85rem;
+  }
+
+  .article-rail span {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: rgba(255, 255, 255, 0.54);
+    font: 900 0.7rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .article-rail strong {
+    font: 900 0.98rem/1.25 Arial, Helvetica, sans-serif;
+  }
+
+  .article-rail a {
+    display: inline-flex;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 4px;
+    background: var(--red);
+    box-shadow: 0 0.38rem 0 rgba(0, 0, 0, 0.48);
+    color: white;
+    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    padding: 0.82rem 0.9rem;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .article-body {
+    border-radius: 8px;
+    background: var(--paper);
+    color: #111;
+    padding: clamp(1.35rem, 4vw, 3rem);
+  }
+
+  :global(.article-body p),
+  :global(.article-body li) {
+    color: #1d1d1d;
+    font: 500 clamp(1.04rem, 2vw, 1.18rem) / 1.75 Arial, Helvetica, sans-serif;
+  }
+
+  :global(.article-body p:first-child) {
+    margin-top: 0;
+  }
+
+  :global(.article-body h2) {
+    margin: 2.2rem 0 0.8rem;
+    color: #111;
+    font:
+      900 clamp(2rem, 5vw, 3.5rem) / 0.95 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      "Arial Black",
+      sans-serif;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  :global(.article-body h3) {
+    margin: 1.8rem 0 0.7rem;
+    color: #111;
+    font: 900 1.45rem/1.1 Arial, Helvetica, sans-serif;
+  }
+
+  :global(.article-body blockquote) {
+    margin: 2rem 0;
+    border-left: 5px solid var(--red);
+    color: #111;
+    font:
+      900 clamp(1.55rem, 4vw, 2.5rem) / 1.05 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      sans-serif;
+    padding-left: 1rem;
+  }
+
+  :global(.article-body img) {
+    width: 100%;
+    border-radius: 6px;
+    margin: 1.6rem 0;
+  }
+
+  :global(.article-body a) {
+    color: #b70000;
+    font-weight: 900;
+  }
+
+  .section-heading {
+    display: grid;
+    grid-template-columns: 0.55fr 1.45fr;
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: clamp(1.5rem, 4vw, 2.4rem);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .related-grid a {
+    display: grid;
+    min-height: 100%;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.055);
+    color: white;
+    text-decoration: none;
+    transition:
+      border-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .related-grid a:hover {
+    border-color: rgba(255, 225, 0, 0.72);
+    transform: translateY(-2px);
+  }
+
+  .related-grid img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .related-grid div {
+    display: grid;
+    gap: 0.65rem;
+    padding: 1rem;
+  }
+
+  .related-grid span {
+    color: var(--red);
+    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .related-grid h3 {
+    margin: 0;
+    font: 900 1.18rem/1.08 Arial, Helvetica, sans-serif;
+    text-wrap: pretty;
+  }
+
+  .related-grid time {
+    color: rgba(255, 255, 255, 0.52);
+    font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 920px) {
+    .article-hero,
+    .article-layout,
+    .section-heading {
+      grid-template-columns: 1fr;
+    }
+
+    .article-rail {
+      position: static;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .article-rail a {
+      grid-column: 1 / -1;
+      width: max-content;
+    }
+
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .story-shell,
+    .more-stories {
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .article-rail {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

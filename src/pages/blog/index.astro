@@ -4,16 +4,33 @@ import { sanityClient } from "sanity:client";
 import Layout from "../../layouts/Layout.astro";
 import Footer from "../../components/Footer.astro";
 import BlogHeader from "../../components/BlogHeader.astro";
+import { viralPostItems, whatsappHref } from "../../data/viralSite";
+
+interface BlogPost extends SanityDocument {
+  title: string;
+  slug: { current: string };
+  publishedAt?: string;
+  excerpt?: string;
+  author?: { name?: string };
+  categories?: { title?: string }[];
+  mainImage?: {
+    asset?: {
+      url?: string;
+    };
+  };
+}
 
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...12]{
-  _id, 
-  title, 
-  slug, 
+]|order(publishedAt desc)[0...16]{
+  _id,
+  title,
+  slug,
   publishedAt,
   excerpt,
+  author->{name},
+  categories[]->{title},
   mainImage {
     asset-> {
       url
@@ -21,61 +38,640 @@ const POSTS_QUERY = `*[
   }
 }`;
 
-const posts = await sanityClient.fetch<SanityDocument[]>(POSTS_QUERY);
+const posts = await sanityClient.fetch<BlogPost[]>(POSTS_QUERY);
+const categoryNav = [
+  "Latest",
+  "Food",
+  "Lifestyle",
+  "Things to do",
+  "Property",
+  "Brand stories",
+];
+
+const formatDate = (date?: string) =>
+  date
+    ? new Date(date).toLocaleDateString("en-SG", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "Viral Asia";
+
+const inferCategory = (post: BlogPost) => {
+  const explicitCategory = post.categories?.find((category) => category.title)
+    ?.title;
+  if (explicitCategory) return explicitCategory;
+
+  const title = post.title.toLowerCase();
+  if (title.includes("lok lok") || title.includes("cafe") || title.includes("pork")) {
+    return "Food";
+  }
+  if (title.includes("home") || title.includes("property")) return "Property";
+  if (title.includes("testing")) return "Studio";
+  return "Lifestyle";
+};
+
+const getImage = (post?: BlogPost, width = 1200) =>
+  post?.mainImage?.asset?.url
+    ? `${post.mainImage.asset.url}?w=${width}&auto=format`
+    : undefined;
+
+const cleanPosts = posts.filter((post) => post.slug?.current && post.title);
+const featuredPost =
+  cleanPosts.find((post) => !/test/i.test(post.title)) ?? cleanPosts[0];
+const storyPosts = cleanPosts.filter((post) => post._id !== featuredPost?._id);
+const latestPosts = storyPosts.slice(0, 6);
+const sidePosts = storyPosts.slice(6, 10);
+const campaignPosts = viralPostItems.slice(0, 4);
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "Viral Asia Blog",
+  url: "/blog",
+  publisher: {
+    "@type": "Organization",
+    name: "Viral Asia",
+    logo: "/company/ViralAsia.png",
+  },
+  blogPost: cleanPosts.slice(0, 10).map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    datePublished: post.publishedAt,
+    url: `/blog/${post.slug.current}`,
+    articleSection: inferCategory(post),
+    image: getImage(post),
+  })),
+};
 ---
 
 <Layout title="Blog | Viral Asia">
-  <main class="pt-0">
-    <BlogHeader 
-      title="Viral Asia Blog" 
-      subtitle="Daily updates on Singapore lifestyle, housing, and more" 
+  <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
+
+  <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">
+    <BlogHeader
+      title="Stories that move Singapore"
+      subtitle="Campaign notes, food finds, lifestyle reads and local stories built for mobile readers."
     />
 
-    <section class="bg-[#f0f0f0] py-16">
-      <div class="container mx-auto max-w-4xl px-4">
-        <div class="grid gap-8">
-          {posts.map((post) => (
-            <article class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100">
-              <a href={`/blog/${post.slug.current}`} class="block">
-                {post.mainImage && (
-                  <div class="aspect-video w-full overflow-hidden">
-                    <img
-                      src={`${post.mainImage.asset.url}?w=800`}
-                      alt={post.title}
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div class="p-8">
-                  <div class="flex items-center gap-4 mb-4">
-                    <time class="text-sm text-gray-500">
-                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </time>
-                  </div>
-                  <h2 class="text-2xl font-bold mb-3 text-gray-900 group-hover:text-purple-600">
-                    {post.title}
-                  </h2>
-                  {post.excerpt && (
-                    <p class="text-gray-600 mb-4">{post.excerpt}</p>
+    <nav class="category-strip" aria-label="Story categories">
+      <div>
+        {categoryNav.map((category) => <a href={`#${category.toLowerCase().replaceAll(" ", "-")}`}>{category}</a>)}
+      </div>
+    </nav>
+
+    {
+      featuredPost && (
+        <section class="lead-section" id="latest" data-emdash-featured-post>
+          <a class="lead-card" href={`/blog/${featuredPost.slug.current}`}>
+            <div class="lead-media">
+              {getImage(featuredPost) ? (
+                <img src={getImage(featuredPost)} alt={featuredPost.title} loading="eager" />
+              ) : (
+                <img src={campaignPosts[0]?.cover} alt={featuredPost.title} loading="eager" />
+              )}
+              <span>{inferCategory(featuredPost)}</span>
+            </div>
+            <div class="lead-copy">
+              <p class="kicker">Featured story</p>
+              <h2>{featuredPost.title}</h2>
+              <p>
+                {featuredPost.excerpt ||
+                  "Read the latest Viral Asia story shaped for fast, visual, Singapore-first audiences."}
+              </p>
+              <div class="story-meta">
+                <span>{formatDate(featuredPost.publishedAt)}</span>
+                <span>Viral Asia editorial</span>
+              </div>
+            </div>
+          </a>
+        </section>
+      )
+    }
+
+    <section class="news-grid" aria-labelledby="latest-heading">
+      <div class="section-heading">
+        <p>Latest</p>
+        <h2 id="latest-heading">Fresh from the newsroom</h2>
+      </div>
+
+      <div class="article-grid" data-emdash-entry-list>
+        {
+          latestPosts.map((post) => (
+            <article class="story-card" data-emdash-entry>
+              <a href={`/blog/${post.slug.current}`}>
+                <div class="story-image">
+                  {getImage(post, 900) ? (
+                    <img src={getImage(post, 900)} alt={post.title} loading="lazy" />
+                  ) : (
+                    <img src={campaignPosts[1]?.cover} alt={post.title} loading="lazy" />
                   )}
-                  <div class="inline-flex items-center text-purple-600 font-semibold">
-                    Read More 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+                  <span>{inferCategory(post)}</span>
+                </div>
+                <div class="story-body">
+                  <div class="story-meta">
+                    <span>{formatDate(post.publishedAt)}</span>
+                    <span>{post.author?.name || "Viral Asia"}</span>
                   </div>
+                  <h3>{post.title}</h3>
+                  {post.excerpt && <p>{post.excerpt}</p>}
+                  <strong>Read story -></strong>
                 </div>
               </a>
             </article>
-          ))}
-        </div>
+          ))
+        }
       </div>
     </section>
 
-    <Footer callToAction="Get in Touch Today" />
+    <section class="split-feed" id="brand-stories" aria-labelledby="brand-heading">
+      <div class="section-heading">
+        <p>Campaign pulse</p>
+        <h2 id="brand-heading">What Singapore brands can learn from viral posts</h2>
+      </div>
+
+      <div class="campaign-list">
+        {
+          campaignPosts.map((post) => (
+            <a class="campaign-row" href={`/redirect/${post.slug}/`}>
+              <img src={post.cover} alt={post.title} loading="lazy" />
+              <div>
+                <span>{post.category === "news" ? "News signal" : "Brand story"}</span>
+                <h3>{post.title}</h3>
+                <p>{post.combinedViewsLabel} estimated cross-platform views</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+
+      <aside class="side-feed" aria-label="More stories">
+        <h2>More stories</h2>
+        {
+          sidePosts.length > 0 ? (
+            sidePosts.map((post) => (
+              <a href={`/blog/${post.slug.current}`}>
+                <span>{inferCategory(post)}</span>
+                <strong>{post.title}</strong>
+                <time>{formatDate(post.publishedAt)}</time>
+              </a>
+            ))
+          ) : (
+            <p>More Sanity posts will appear here once they are published.</p>
+          )
+        }
+      </aside>
+    </section>
+
+    <section class="mobile-brief" id="food" aria-label="Mobile editorial categories">
+      <div>
+        <span>Food</span>
+        <h2>Short reads for where people decide what to eat, book and try next.</h2>
+      </div>
+      <div>
+        <span>Lifestyle</span>
+        <h2>Local hooks, clear metadata and thumb-friendly story cards.</h2>
+      </div>
+      <div>
+        <span>Property</span>
+        <h2>Static Astro output today, cleaner content mapping for EmDash later.</h2>
+      </div>
+    </section>
+
+    <section class="blog-cta" id="things-to-do">
+      <div>
+        <p>Want a story people actually finish?</p>
+        <h2>Build it like content, distribute it like a campaign.</h2>
+      </div>
+      <a href={whatsappHref}>Plan a campaign</a>
+    </section>
+
+    <Footer callToAction="Ready to Go Viral?" />
   </main>
 </Layout>
+
+<style>
+  :global(body) {
+    background: #050505;
+  }
+
+  .blog-page {
+    --red: #e91515;
+    --yellow: #ffe100;
+    --ink: #050505;
+    --paper: #fff8e6;
+    --muted: rgba(255, 255, 255, 0.68);
+    min-height: 100dvh;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 86% 20%, rgba(233, 21, 21, 0.18), transparent 22rem),
+      radial-gradient(circle at 12% 48%, rgba(255, 225, 0, 0.12), transparent 20rem),
+      var(--ink);
+    color: white;
+  }
+
+  .category-strip {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(5, 5, 5, 0.88);
+    backdrop-filter: blur(18px);
+  }
+
+  .category-strip div {
+    display: flex;
+    gap: 0.65rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 0.82rem 1.25rem;
+    scrollbar-width: none;
+  }
+
+  .category-strip div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-strip a {
+    flex: 0 0 auto;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.82);
+    font: 900 0.73rem/1 Arial, Helvetica, sans-serif;
+    padding: 0.62rem 0.9rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      background 180ms ease,
+      color 180ms ease,
+      transform 180ms ease;
+    white-space: nowrap;
+  }
+
+  .category-strip a:hover {
+    background: var(--yellow);
+    color: #111;
+    transform: translateY(-1px);
+  }
+
+  .lead-section,
+  .news-grid,
+  .split-feed,
+  .mobile-brief,
+  .blog-cta {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(2.8rem, 7vw, 5.5rem) 1.25rem;
+  }
+
+  .lead-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    min-height: 32rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background: #101010;
+    color: white;
+    text-decoration: none;
+  }
+
+  .lead-media,
+  .story-image {
+    position: relative;
+    min-height: 100%;
+    overflow: hidden;
+    background: #171717;
+  }
+
+  .lead-media img,
+  .story-image img,
+  .campaign-row img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 260ms ease;
+  }
+
+  .lead-card:hover .lead-media img,
+  .story-card:hover .story-image img,
+  .campaign-row:hover img {
+    transform: scale(1.035);
+  }
+
+  .lead-media span,
+  .story-image span {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    border-radius: 3px;
+    background: var(--red);
+    color: white;
+    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    padding: 0.48rem 0.62rem;
+    text-transform: uppercase;
+  }
+
+  .lead-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: clamp(1.4rem, 4vw, 3rem);
+  }
+
+  .kicker,
+  .section-heading p,
+  .blog-cta p {
+    margin: 0 0 0.7rem;
+    color: var(--yellow);
+    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .lead-copy h2,
+  .section-heading h2,
+  .blog-cta h2 {
+    margin: 0;
+    font:
+      900 clamp(2.3rem, 6vw, 5rem) / 0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      "Arial Black",
+      sans-serif;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .lead-copy > p:not(.kicker) {
+    max-width: 38rem;
+    margin: 1rem 0 1.4rem;
+    color: rgba(255, 255, 255, 0.76);
+    font: 600 1.04rem/1.6 Arial, Helvetica, sans-serif;
+  }
+
+  .story-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    color: rgba(255, 255, 255, 0.58);
+    font: 800 0.73rem/1.3 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .story-meta span + span::before {
+    margin-right: 0.55rem;
+    color: var(--red);
+    content: "/";
+  }
+
+  .section-heading {
+    display: grid;
+    grid-template-columns: 0.6fr 1.4fr;
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .story-card a {
+    display: grid;
+    min-height: 100%;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.055);
+    color: white;
+    text-decoration: none;
+    transition:
+      border-color 180ms ease,
+      transform 180ms ease;
+  }
+
+  .story-card a:hover {
+    border-color: rgba(255, 225, 0, 0.72);
+    transform: translateY(-2px);
+  }
+
+  .story-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .story-body {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1rem;
+  }
+
+  .story-body h3,
+  .campaign-row h3,
+  .side-feed strong,
+  .mobile-brief h2 {
+    margin: 0;
+    font: 900 1.25rem/1.05 Arial, Helvetica, sans-serif;
+    text-wrap: pretty;
+  }
+
+  .story-body p,
+  .campaign-row p,
+  .side-feed p {
+    margin: 0;
+    color: var(--muted);
+    font: 500 0.95rem/1.55 Arial, Helvetica, sans-serif;
+  }
+
+  .story-body strong {
+    color: var(--yellow);
+    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .split-feed {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+    gap: 1.25rem;
+  }
+
+  .split-feed .section-heading {
+    grid-column: 1 / -1;
+  }
+
+  .campaign-list {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .campaign-row {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    gap: 1rem;
+    align-items: center;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    color: white;
+    padding: 1rem 0;
+    text-decoration: none;
+  }
+
+  .campaign-row img {
+    aspect-ratio: 1;
+    border-radius: 6px;
+  }
+
+  .campaign-row span,
+  .side-feed span,
+  .mobile-brief span {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--red);
+    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .campaign-row p {
+    margin-top: 0.45rem;
+  }
+
+  .side-feed {
+    align-self: start;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.055);
+    padding: 1rem;
+  }
+
+  .side-feed h2 {
+    margin: 0 0 0.7rem;
+    font:
+      900 2rem/0.9 Impact,
+      Haettenschweiler,
+      "Arial Narrow Bold",
+      sans-serif;
+    text-transform: uppercase;
+  }
+
+  .side-feed a {
+    display: block;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+    padding: 1rem 0;
+    text-decoration: none;
+  }
+
+  .side-feed a:first-of-type {
+    border-top: 0;
+  }
+
+  .side-feed time {
+    display: block;
+    margin-top: 0.45rem;
+    color: rgba(255, 255, 255, 0.52);
+    font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .mobile-brief {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    padding-top: 0;
+  }
+
+  .mobile-brief div {
+    background: var(--paper);
+    color: #111;
+    padding: clamp(1.2rem, 3vw, 2rem);
+  }
+
+  .mobile-brief h2 {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    line-height: 1;
+  }
+
+  .blog-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 0;
+  }
+
+  .blog-cta h2 {
+    max-width: 760px;
+  }
+
+  .blog-cta a {
+    flex: 0 0 auto;
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 4px;
+    background: var(--red);
+    box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
+    color: white;
+    font: 900 0.8rem/1 Arial, Helvetica, sans-serif;
+    padding: 0.9rem 1.1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      filter 180ms ease,
+      transform 180ms ease;
+    white-space: nowrap;
+  }
+
+  .blog-cta a:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 900px) {
+    .lead-card,
+    .split-feed,
+    .section-heading {
+      grid-template-columns: 1fr;
+    }
+
+    .lead-card {
+      min-height: auto;
+    }
+
+    .lead-media {
+      aspect-ratio: 4 / 3;
+    }
+
+    .article-grid,
+    .mobile-brief {
+      grid-template-columns: 1fr;
+    }
+
+    .blog-cta {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .lead-section,
+    .news-grid,
+    .split-feed,
+    .mobile-brief,
+    .blog-cta {
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .campaign-row {
+      grid-template-columns: 6.5rem 1fr;
+    }
+
+    .story-body h3,
+    .campaign-row h3 {
+      font-size: 1.08rem;
+    }
+  }
+</style>

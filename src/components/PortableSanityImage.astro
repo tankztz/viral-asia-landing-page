@@ -1,0 +1,51 @@
+---
+import imageUrlBuilder from "@sanity/image-url";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { sanityClient } from "sanity:client";
+
+interface SanityImageNode {
+  asset?: SanityImageSource;
+  alt?: string;
+  caption?: string;
+}
+
+const { node } = Astro.props as { node: SanityImageNode };
+const { projectId, dataset } = sanityClient.config();
+const imageUrl =
+  node?.asset && projectId && dataset
+    ? imageUrlBuilder({ projectId, dataset })
+        .image(node.asset)
+        .width(1400)
+        .fit("max")
+        .auto("format")
+        .url()
+    : undefined;
+---
+
+{imageUrl && (
+  <figure class="portable-image">
+    <img src={imageUrl} alt={node.alt || ""} loading="lazy" />
+    {node.caption && <figcaption>{node.caption}</figcaption>}
+  </figure>
+)}
+
+<style>
+  .portable-image {
+    margin: 2.25rem 0;
+  }
+
+  .portable-image img {
+    width: 100%;
+    border: 1px solid rgba(5, 5, 5, 0.08);
+    border-radius: 18px;
+    background: #111;
+    box-shadow: 0 1rem 2.6rem rgba(0, 0, 0, 0.16);
+    object-fit: cover;
+  }
+
+  .portable-image figcaption {
+    margin-top: 0.75rem;
+    color: rgba(5, 5, 5, 0.55);
+    font: 700 0.78rem/1.5 Arial, Helvetica, sans-serif;
+  }
+</style>
