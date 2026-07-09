@@ -150,29 +150,28 @@ const blogSchema = {
           <a href={whatsappHref}>Contact</a>
         </div>
       </nav>
+
+      <nav class="category-strip" aria-label="Filter stories by category" data-category-filter>
+        <div>
+          {categoryNav.map((category, index) => (
+            <button
+              type="button"
+              data-filter={toFilterValue(category)}
+              aria-pressed={index === 0 ? "true" : "false"}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </nav>
     </div>
 
     <header class="news-header">
       <div class="masthead">
         <p>Viral Asia Blog</p>
         <h1>Stories that move Singapore</h1>
-        <span>Campaign notes, food finds, lifestyle reads and local stories built for mobile readers.</span>
       </div>
     </header>
-
-    <nav class="category-strip" aria-label="Filter stories by category" data-category-filter>
-      <div>
-        {categoryNav.map((category, index) => (
-          <button
-            type="button"
-            data-filter={toFilterValue(category)}
-            aria-pressed={index === 0 ? "true" : "false"}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-    </nav>
 
     <section class="top-stories" aria-labelledby="top-stories-heading">
       <div class="section-label">
@@ -430,7 +429,6 @@ const blogSchema = {
         <a href="/" aria-label="Viral Asia home">
           <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
         </a>
-        <p>Singapore stories, brand campaigns and social-first publishing.</p>
       </div>
 
       <nav aria-label="Blog footer navigation">
@@ -646,12 +644,9 @@ const blogSchema = {
   }
 
   .category-strip {
-    position: sticky;
-    top: 4rem;
-    z-index: 30;
+    border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.96);
   }
 
   .category-strip div {
@@ -1083,10 +1078,6 @@ const blogSchema = {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       padding-right: 0.9rem;
       padding-left: 0.9rem;
-    }
-
-    .category-strip {
-      top: 3.65rem;
     }
 
     .masthead {
