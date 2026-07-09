@@ -39,7 +39,32 @@ export default defineType({
     }),
     defineArrayMember({
       type: "image",
+      title: "Image",
       options: { hotspot: true },
+      fields: [
+        {
+          name: "alt",
+          title: "Alt text",
+          type: "string",
+          description: "Describe the image for accessibility and SEO.",
+        },
+        {
+          name: "caption",
+          title: "Caption",
+          type: "string",
+        },
+        {
+          name: "sourceLabel",
+          title: "Source label",
+          type: "string",
+          description: "Example: Photo via Facebook, Google Maps, or Viral Asia.",
+        },
+        {
+          name: "sourceUrl",
+          title: "Source URL",
+          type: "url",
+        },
+      ],
     }),
   ],
 });
