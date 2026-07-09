@@ -3,10 +3,8 @@ import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "sanity:client";
 import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
-import Footer from "../../components/Footer.astro";
-import BlogHeader from "../../components/BlogHeader.astro";
 import PortableSanityImage from "../../components/PortableSanityImage.astro";
-import { viralPostItems, whatsappHref } from "../../data/viralSite";
+import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
 
 interface BlogPost extends SanityDocument {
   title: string;
@@ -52,6 +50,7 @@ const RELATED_POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
   && slug.current != $slug
+  && !(_id in path("drafts.**"))
 ]|order(publishedAt desc)[0...6]{
   _id,
   title,
@@ -77,7 +76,7 @@ const formatDate = (date?: string) =>
   date
     ? new Date(date).toLocaleDateString("en-SG", {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
       })
     : "Viral Asia";
@@ -108,6 +107,9 @@ const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
 const articleDescription =
   post?.excerpt ||
   "A Viral Asia editorial story for Singapore readers and mobile-first campaigns.";
+const cleanRelatedPosts = relatedPosts.filter(
+  (entry) => entry.slug?.current && entry.title && !/test/i.test(entry.title),
+);
 
 const articleSchema = post && {
   "@context": "https://schema.org",
@@ -140,11 +142,45 @@ const portableTextComponents = {
   {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
 
   <main class="article-page" data-emdash-site="viral-asia" data-emdash-entry={post.slug.current}>
-    <BlogHeader
-      title={primaryCategory}
-      subtitle="Singapore stories, campaign notes and mobile-first editorial reads."
-      showBackButton={true}
-    />
+    <div class="sticky-top" data-sticky-header>
+      <div class="topbar">
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-controls="blog-menu"
+          aria-expanded="false"
+          data-menu-toggle
+        >
+          <span class="menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span>Menu</span>
+        </button>
+
+        <a class="brand" href="/" aria-label="Viral Asia home">
+          <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
+        </a>
+
+        <a class="header-cta" href={whatsappHref}>Enquire now</a>
+      </div>
+
+      <nav class="site-nav" id="blog-menu" aria-label="Primary navigation" data-menu-panel hidden>
+        <div>
+          {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+          <a href={whatsappHref}>Contact</a>
+        </div>
+      </nav>
+    </div>
+
+    <nav class="article-strip" aria-label="Article navigation">
+      <div>
+        <a href="/blog">Back to Blog</a>
+        <span>{primaryCategory}</span>
+        <span>{formatDate(post.publishedAt)}</span>
+      </div>
+    </nav>
 
     <article class="story-shell">
       <header class="article-hero">
@@ -167,7 +203,6 @@ const portableTextComponents = {
             height="900"
             loading="eager"
           />
-          <figcaption>{primaryCategory} story by Viral Asia</figcaption>
         </figure>
       </header>
 
@@ -189,14 +224,8 @@ const portableTextComponents = {
             <PortableText value={post.body} components={portableTextComponents} />
           ) : (
             <>
-              <p>
-                This story is ready for publishing in Sanity, but the article
-                body is currently empty.
-              </p>
-              <p>
-                Add content blocks in the Studio and the static Cloudflare build
-                will render them here.
-              </p>
+              <p>This story is ready for publishing in Sanity, but the article body is currently empty.</p>
+              <p>Add content blocks in the Studio and the static Cloudflare build will render them here.</p>
             </>
           )}
         </div>
@@ -204,14 +233,13 @@ const portableTextComponents = {
     </article>
 
     <section class="more-stories" aria-labelledby="more-stories-heading">
-      <div class="section-heading">
-        <p>More stories</p>
-        <h2 id="more-stories-heading">Keep reading</h2>
+      <div class="section-label">
+        <h2 id="more-stories-heading">More Stories</h2>
       </div>
 
       <div class="related-grid">
         {
-          relatedPosts.map((entry) => (
+          cleanRelatedPosts.map((entry) => (
             <article>
               <a href={`/blog/${entry.slug.current}`}>
                 <img
@@ -231,63 +259,301 @@ const portableTextComponents = {
       </div>
     </section>
 
-    <Footer callToAction="Ready to Go Viral?" />
+    <section class="blog-cta">
+      <div>
+        <p>Want a story people actually finish?</p>
+        <h2>Build it like content. Distribute it like a campaign.</h2>
+      </div>
+      <a href={whatsappHref}>Plan a campaign</a>
+    </section>
+
+    <script is:inline>
+      (() => {
+        const initMenu = () => {
+          const header = document.querySelector("[data-sticky-header]");
+          const toggle = document.querySelector("[data-menu-toggle]");
+          const panel = document.querySelector("[data-menu-panel]");
+          if (!header || !toggle || !panel) return;
+
+          const setMenuState = (isOpen) => {
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            panel.hidden = !isOpen;
+            header.toggleAttribute("data-menu-open", isOpen);
+          };
+
+          toggle.addEventListener("click", () => {
+            setMenuState(toggle.getAttribute("aria-expanded") !== "true");
+          });
+
+          panel.addEventListener("click", (event) => {
+            if (event.target.closest("a")) setMenuState(false);
+          });
+
+          document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") setMenuState(false);
+          });
+
+          document.addEventListener("click", (event) => {
+            if (!header.contains(event.target)) setMenuState(false);
+          });
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initMenu, { once: true });
+        } else {
+          initMenu();
+        }
+      })();
+    </script>
+
+    <footer class="news-footer">
+      <div>
+        <a href="/" aria-label="Viral Asia home">
+          <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
+        </a>
+        <p>Singapore stories, brand campaigns and social-first publishing.</p>
+      </div>
+
+      <nav aria-label="Blog footer navigation">
+        <a href="/work">Our Work</a>
+        <a href="/services">Services</a>
+        <a href="/about">About Us</a>
+        <a href={whatsappHref}>Contact</a>
+      </nav>
+    </footer>
   </main>
 </Layout>
 
 <style>
   :global(body) {
-    background: #050505;
+    background: #ffffff;
   }
 
   .article-page {
-    --red: #e91515;
-    --yellow: #ffe100;
-    --ink: #050505;
-    --paper: #fff8e6;
+    --red: #ed1c24;
+    --red-dark: #b80f16;
+    --ink: #111111;
+    --muted: #666666;
+    --line: #dedede;
+    --paper: #ffffff;
+    --soft: #f5f5f5;
     min-height: 100dvh;
-    overflow: hidden;
-    background:
-      radial-gradient(circle at 88% 16%, rgba(233, 21, 21, 0.18), transparent 24rem),
-      radial-gradient(circle at 10% 48%, rgba(255, 225, 0, 0.1), transparent 22rem),
-      var(--ink);
-    color: white;
+    overflow-x: clip;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    min-height: 4rem;
+    padding: 0.7rem 1.25rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    justify-self: center;
+    min-width: 0;
+  }
+
+  .brand img {
+    display: block;
+    width: 5.8rem;
+    height: auto;
+  }
+
+  .menu-toggle,
+  .site-nav a,
+  .header-cta,
+  .article-strip a,
+  .article-strip span,
+  .section-label h2,
+  .article-meta,
+  .headline-block p,
+  .article-rail span,
+  .article-rail a,
+  .related-grid span,
+  .blog-cta p {
+    font: 900 0.74rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.6rem;
+    width: max-content;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+
+  .menu-icon {
+    display: grid;
+    gap: 0.22rem;
+    width: 1.4rem;
+  }
+
+  .menu-icon span {
+    display: block;
+    height: 2px;
+    background: currentColor;
+    transform-origin: center;
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(1) {
+    transform: translateY(0.38rem) rotate(45deg);
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(3) {
+    transform: translateY(-0.38rem) rotate(-45deg);
+  }
+
+  .site-nav {
+    border-top: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .site-nav[hidden] {
+    display: none;
+  }
+
+  .site-nav div {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 1.25rem 1px;
+    background: var(--line);
+  }
+
+  .site-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 3.1rem;
+    background: #ffffff;
+    color: var(--ink);
+    padding: 0.9rem 0.85rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-nav a:hover {
+    color: var(--red);
+  }
+
+  .header-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: end;
+    border-radius: 3px;
+    background: var(--red);
+    color: #ffffff;
+    min-height: 2.4rem;
+    padding: 0.72rem 0.95rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .article-strip {
+    position: sticky;
+    top: 4rem;
+    z-index: 30;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+  }
+
+  .article-strip div {
+    display: flex;
+    gap: 0.25rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 0.75rem 1.25rem;
+    scrollbar-width: none;
+  }
+
+  .article-strip div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .article-strip a,
+  .article-strip span {
+    flex: 0 0 auto;
+    color: var(--ink);
+    padding: 0.58rem 0.72rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .article-strip a {
+    background: var(--red);
+    color: #ffffff;
+  }
+
+  .article-strip span {
+    background: var(--soft);
   }
 
   .story-shell,
-  .more-stories {
+  .more-stories,
+  .blog-cta {
     max-width: 1180px;
     margin: 0 auto;
-    padding: clamp(2.4rem, 6vw, 5rem) 1.25rem;
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .story-shell {
+    padding-top: clamp(1.8rem, 4vw, 3.2rem);
+    padding-bottom: clamp(2rem, 5vw, 4rem);
   }
 
   .article-hero {
     display: grid;
-    grid-template-columns: minmax(0, 0.88fr) minmax(320px, 1.12fr);
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
     gap: clamp(1.25rem, 4vw, 3rem);
     align-items: end;
   }
 
-  .headline-block p,
-  .section-heading p {
+  .headline-block p {
     margin: 0 0 0.75rem;
-    color: var(--yellow);
-    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    color: var(--red);
   }
 
-  .headline-block h1,
-  .section-heading h2 {
+  .headline-block h1 {
     margin: 0;
-    font:
-      900 clamp(3rem, 8vw, 7rem) / 0.9 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      "Arial Black",
-      sans-serif;
-    letter-spacing: 0;
-    text-transform: uppercase;
+    font: 900 clamp(2.6rem, 7vw, 6.4rem) / 0.9 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.04em;
     text-wrap: balance;
   }
 
@@ -295,22 +561,20 @@ const portableTextComponents = {
     display: block;
     max-width: 42rem;
     margin-top: 1rem;
-    color: rgba(255, 255, 255, 0.76);
-    font: 600 1.06rem/1.6 Arial, Helvetica, sans-serif;
+    color: var(--muted);
+    font: 600 1.06rem/1.55 Arial, Helvetica, sans-serif;
   }
 
   .article-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
-    margin-top: 1.4rem;
-    color: rgba(255, 255, 255, 0.62);
-    font: 900 0.74rem/1.3 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
+    margin-top: 1.2rem;
+    color: #777777;
   }
 
   .article-meta strong {
-    color: white;
+    color: var(--ink);
   }
 
   .article-meta time::before,
@@ -326,16 +590,9 @@ const portableTextComponents = {
 
   figure img {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 8px;
+    aspect-ratio: 16 / 10;
+    background: var(--soft);
     object-fit: cover;
-  }
-
-  figcaption {
-    margin-top: 0.55rem;
-    color: rgba(255, 255, 255, 0.52);
-    font: 700 0.78rem/1.4 Arial, Helvetica, sans-serif;
   }
 
   .article-layout {
@@ -343,30 +600,28 @@ const portableTextComponents = {
     grid-template-columns: 220px minmax(0, 760px);
     gap: clamp(1.4rem, 5vw, 4rem);
     align-items: start;
-    margin-top: clamp(2.4rem, 6vw, 5rem);
+    margin-top: clamp(2.4rem, 6vw, 4.5rem);
   }
 
   .article-rail {
     position: sticky;
-    top: 1rem;
+    top: 8rem;
     display: grid;
     gap: 0.85rem;
-    border-top: 3px solid var(--red);
-    color: white;
+    border-top: 5px solid var(--red);
+    color: var(--ink);
     padding-top: 1rem;
   }
 
   .article-rail div {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid var(--line);
     padding-bottom: 0.85rem;
   }
 
   .article-rail span {
     display: block;
     margin-bottom: 0.35rem;
-    color: rgba(255, 255, 255, 0.54);
-    font: 900 0.7rem/1 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
+    color: var(--red);
   }
 
   .article-rail strong {
@@ -376,22 +631,15 @@ const portableTextComponents = {
   .article-rail a {
     display: inline-flex;
     justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.14);
-    border-radius: 4px;
+    border-radius: 3px;
     background: var(--red);
-    box-shadow: 0 0.38rem 0 rgba(0, 0, 0, 0.48);
-    color: white;
-    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    color: #ffffff;
     padding: 0.82rem 0.9rem;
     text-decoration: none;
-    text-transform: uppercase;
   }
 
   .article-body {
-    border-radius: 8px;
-    background: var(--paper);
-    color: #111;
-    padding: clamp(1.35rem, 4vw, 3rem);
+    color: var(--ink);
   }
 
   :global(.article-body p),
@@ -406,52 +654,52 @@ const portableTextComponents = {
 
   :global(.article-body h2) {
     margin: 2.2rem 0 0.8rem;
-    color: #111;
-    font:
-      900 clamp(2rem, 5vw, 3.5rem) / 0.95 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      "Arial Black",
-      sans-serif;
-    letter-spacing: 0;
-    text-transform: uppercase;
+    color: var(--ink);
+    font: 900 clamp(1.8rem, 4.5vw, 3rem) / 0.98 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.02em;
   }
 
   :global(.article-body h3) {
     margin: 1.8rem 0 0.7rem;
-    color: #111;
+    color: var(--ink);
     font: 900 1.45rem/1.1 Arial, Helvetica, sans-serif;
   }
 
   :global(.article-body blockquote) {
     margin: 2rem 0;
     border-left: 5px solid var(--red);
-    color: #111;
-    font:
-      900 clamp(1.55rem, 4vw, 2.5rem) / 1.05 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      sans-serif;
+    color: var(--ink);
+    font: 900 clamp(1.35rem, 3vw, 2rem) / 1.2 Arial, Helvetica, sans-serif;
     padding-left: 1rem;
   }
 
   :global(.article-body img) {
     width: 100%;
-    border-radius: 6px;
     margin: 1.6rem 0;
   }
 
   :global(.article-body a) {
-    color: #b70000;
+    color: var(--red-dark);
     font-weight: 900;
   }
 
-  .section-heading {
-    display: grid;
-    grid-template-columns: 0.55fr 1.45fr;
-    gap: 2rem;
-    align-items: end;
-    margin-bottom: clamp(1.5rem, 4vw, 2.4rem);
+  .more-stories {
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+    border-bottom: 4px solid var(--red);
+  }
+
+  .section-label h2 {
+    margin: 0;
+    background: var(--red);
+    color: #ffffff;
+    padding: 0.62rem 0.82rem 0.58rem;
   }
 
   .related-grid {
@@ -463,25 +711,20 @@ const portableTextComponents = {
   .related-grid a {
     display: grid;
     min-height: 100%;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.055);
-    color: white;
+    border: 1px solid var(--line);
+    background: #ffffff;
+    color: var(--ink);
     text-decoration: none;
-    transition:
-      border-color 180ms ease,
-      transform 180ms ease;
   }
 
-  .related-grid a:hover {
-    border-color: rgba(255, 225, 0, 0.72);
-    transform: translateY(-2px);
+  .related-grid a:hover h3 {
+    color: var(--red-dark);
   }
 
   .related-grid img {
     width: 100%;
     aspect-ratio: 4 / 3;
+    background: var(--soft);
     object-fit: cover;
   }
 
@@ -493,8 +736,6 @@ const portableTextComponents = {
 
   .related-grid span {
     color: var(--red);
-    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
   }
 
   .related-grid h3 {
@@ -504,15 +745,94 @@ const portableTextComponents = {
   }
 
   .related-grid time {
-    color: rgba(255, 255, 255, 0.52);
+    color: #777777;
     font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
     text-transform: uppercase;
   }
 
-  @media (max-width: 920px) {
+  .blog-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-top: 5px solid var(--red);
+    padding-top: clamp(1.4rem, 3vw, 2rem);
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .blog-cta p {
+    margin: 0 0 0.45rem;
+    color: var(--red);
+  }
+
+  .blog-cta h2 {
+    max-width: 760px;
+    margin: 0;
+    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .blog-cta a {
+    flex: 0 0 auto;
+    border-radius: 3px;
+    background: var(--red);
+    color: #ffffff;
+    font: 900 0.8rem/1 Arial, Helvetica, sans-serif;
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .news-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+    color: #ffffff;
+    padding: 1.3rem max(1.25rem, calc((100vw - 1180px) / 2 + 1.25rem));
+  }
+
+  .news-footer img {
+    width: 7.2rem;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .news-footer p {
+    margin: 0.55rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font: 600 0.9rem/1.35 Arial, Helvetica, sans-serif;
+  }
+
+  .news-footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.9rem;
+  }
+
+  .news-footer a {
+    color: #ffffff;
+    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .news-footer a:hover {
+    color: var(--red);
+  }
+
+  @media (max-width: 980px) {
+    .site-nav div {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
     .article-hero,
-    .article-layout,
-    .section-heading {
+    .article-layout {
       grid-template-columns: 1fr;
     }
 
@@ -531,15 +851,66 @@ const portableTextComponents = {
     }
   }
 
-  @media (max-width: 560px) {
-    .story-shell,
-    .more-stories {
+  @media (max-width: 700px) {
+    .topbar {
+      gap: 0.8rem;
+      grid-template-columns: minmax(4.5rem, 1fr) auto minmax(4.5rem, 1fr);
+      min-height: 3.65rem;
+      padding: 0.8rem 0.9rem;
+    }
+
+    .brand img {
+      width: 5.1rem;
+    }
+
+    .header-cta {
+      min-height: 2.15rem;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .menu-toggle > span:last-child {
+      display: none;
+    }
+
+    .site-nav div {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       padding-right: 0.9rem;
       padding-left: 0.9rem;
     }
 
+    .article-strip {
+      top: 3.65rem;
+    }
+
+    .article-strip div,
+    .story-shell,
+    .more-stories,
+    .blog-cta {
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .headline-block h1 {
+      font-size: clamp(2rem, 10vw, 3rem);
+    }
+
     .article-rail {
       grid-template-columns: 1fr;
+    }
+
+    .blog-cta,
+    .news-footer {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .news-footer {
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .news-footer nav {
+      justify-content: flex-start;
     }
   }
 </style>
