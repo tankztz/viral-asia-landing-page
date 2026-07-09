@@ -2,9 +2,7 @@
 import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "sanity:client";
 import Layout from "../../layouts/Layout.astro";
-import Footer from "../../components/Footer.astro";
-import BlogHeader from "../../components/BlogHeader.astro";
-import { viralPostItems, whatsappHref } from "../../data/viralSite";
+import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
 
 interface BlogPost extends SanityDocument {
   title: string;
@@ -23,7 +21,7 @@ interface BlogPost extends SanityDocument {
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...16]{
+]|order(publishedAt desc)[0...18]{
   _id,
   title,
   slug,
@@ -55,7 +53,7 @@ const formatDate = (date?: string) =>
   date
     ? new Date(date).toLocaleDateString("en-SG", {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
       })
     : "Viral Asia";
@@ -79,13 +77,23 @@ const getImage = (post?: BlogPost, width = 1200) =>
     ? `${post.mainImage.asset.url}?w=${width}&auto=format`
     : undefined;
 
-const cleanPosts = posts.filter((post) => post.slug?.current && post.title);
+const cleanPosts = posts.filter(
+  (post) => post.slug?.current && post.title && !/test/i.test(post.title),
+);
 const featuredPost =
   cleanPosts.find((post) => !/test/i.test(post.title)) ?? cleanPosts[0];
 const storyPosts = cleanPosts.filter((post) => post._id !== featuredPost?._id);
-const latestPosts = storyPosts.slice(0, 6);
-const sidePosts = storyPosts.slice(6, 10);
-const campaignPosts = viralPostItems.slice(0, 4);
+const topPosts = storyPosts.slice(0, 3);
+const latestPosts =
+  storyPosts.length > 3 ? storyPosts.slice(3, 11) : storyPosts;
+const sidePosts =
+  storyPosts.length > 8 ? storyPosts.slice(8, 12) : storyPosts.slice(0, 4);
+const campaignPosts = viralPostItems.slice(0, 6);
+const fallbackImages = campaignPosts.map((post) => post.cover);
+
+const postHref = (post: BlogPost) => `/blog/${post.slug.current}`;
+const postImage = (post?: BlogPost, width = 1200, fallbackIndex = 0) =>
+  getImage(post, width) || fallbackImages[fallbackIndex % fallbackImages.length];
 
 const blogSchema = {
   "@context": "https://schema.org",
@@ -101,7 +109,7 @@ const blogSchema = {
     "@type": "BlogPosting",
     headline: post.title,
     datePublished: post.publishedAt,
-    url: `/blog/${post.slug.current}`,
+    url: postHref(post),
     articleSection: inferCategory(post),
     image: getImage(post),
   })),
@@ -112,10 +120,25 @@ const blogSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
   <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">
-    <BlogHeader
-      title="Stories that move Singapore"
-      subtitle="Campaign notes, food finds, lifestyle reads and local stories built for mobile readers."
-    />
+    <header class="news-header">
+      <div class="topbar">
+        <a class="brand" href="/" aria-label="Viral Asia home">
+          <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+        </nav>
+
+        <a class="header-cta" href={whatsappHref}>Enquire now</a>
+      </div>
+
+      <div class="masthead">
+        <p>Viral Asia Blog</p>
+        <h1>Stories that move Singapore</h1>
+        <span>Campaign notes, food finds, lifestyle reads and local stories built for mobile readers.</span>
+      </div>
+    </header>
 
     <nav class="category-strip" aria-label="Filter stories by category" data-category-filter>
       <div>
@@ -131,367 +154,352 @@ const blogSchema = {
       </div>
     </nav>
 
-    {
-      featuredPost && (
-        <section
-          class="lead-section"
-          data-filter-card
-          data-category={toFilterValue(inferCategory(featuredPost))}
-          data-emdash-featured-post
-        >
-          <a class="lead-card" href={`/blog/${featuredPost.slug.current}`}>
-            <div class="lead-media">
-              {getImage(featuredPost) ? (
-                <img src={getImage(featuredPost)} alt={featuredPost.title} loading="eager" />
-              ) : (
-                <img src={campaignPosts[0]?.cover} alt={featuredPost.title} loading="eager" />
-              )}
-              <span>{inferCategory(featuredPost)}</span>
-            </div>
-            <div class="lead-copy">
-              <p class="kicker">Featured story</p>
-              <h2>{featuredPost.title}</h2>
-              <p>
-                {featuredPost.excerpt ||
-                  "Read the latest Viral Asia story shaped for fast, visual, Singapore-first audiences."}
-              </p>
-              <div class="story-meta">
-                <span>{formatDate(featuredPost.publishedAt)}</span>
-                <span>Viral Asia editorial</span>
-              </div>
-            </div>
-          </a>
-        </section>
-      )
-    }
-
-    <section class="news-grid" aria-labelledby="latest-heading">
-      <div class="section-heading">
-        <p>Latest</p>
-        <h2 id="latest-heading">Fresh from the newsroom</h2>
+    <section class="top-stories" aria-labelledby="top-stories-heading">
+      <div class="section-label">
+        <h2 id="top-stories-heading">Top Stories</h2>
       </div>
 
-      <div class="article-grid" data-emdash-entry-list>
+      <div class="top-grid">
         {
-          latestPosts.map((post) => (
+          featuredPost && (
             <article
-              class="story-card"
+              class="lead-story"
               data-filter-card
-              data-category={toFilterValue(inferCategory(post))}
-              data-emdash-entry
+              data-category={toFilterValue(inferCategory(featuredPost))}
+              data-emdash-featured-post
             >
-              <a href={`/blog/${post.slug.current}`}>
-                <div class="story-image">
-                  {getImage(post, 900) ? (
-                    <img src={getImage(post, 900)} alt={post.title} loading="lazy" />
-                  ) : (
-                    <img src={campaignPosts[1]?.cover} alt={post.title} loading="lazy" />
-                  )}
-                  <span>{inferCategory(post)}</span>
-                </div>
-                <div class="story-body">
-                  <div class="story-meta">
-                    <span>{formatDate(post.publishedAt)}</span>
-                    <span>{post.author?.name || "Viral Asia"}</span>
-                  </div>
-                  <h3>{post.title}</h3>
-                  {post.excerpt && <p>{post.excerpt}</p>}
-                  <strong>Read story -></strong>
+              <a href={postHref(featuredPost)}>
+                <img src={postImage(featuredPost, 1400, 0)} alt={featuredPost.title} loading="eager" />
+                <div>
+                  <span>{inferCategory(featuredPost)}</span>
+                  <h3>{featuredPost.title}</h3>
+                  <p>
+                    {featuredPost.excerpt ||
+                      "Read the latest Viral Asia story shaped for fast, visual, Singapore-first audiences."}
+                  </p>
+                  <time>{formatDate(featuredPost.publishedAt)}</time>
                 </div>
               </a>
             </article>
-          ))
+          )
         }
+
+        <div class="side-stack" data-emdash-entry-list>
+          {
+            topPosts.map((post, index) => (
+              <article
+                class="compact-story"
+                data-filter-card
+                data-category={toFilterValue(inferCategory(post))}
+                data-emdash-entry
+              >
+                <a href={postHref(post)}>
+                  <img src={postImage(post, 700, index + 1)} alt={post.title} loading="lazy" />
+                  <div>
+                    <span>{inferCategory(post)}</span>
+                    <h3>{post.title}</h3>
+                    <time>{formatDate(post.publishedAt)}</time>
+                  </div>
+                </a>
+              </article>
+            ))
+          }
+        </div>
       </div>
     </section>
 
-    <section class="split-feed" id="brand-stories" aria-labelledby="brand-heading">
-      <div class="section-heading">
-        <p>Campaign pulse</p>
-        <h2 id="brand-heading">What Singapore brands can learn from viral posts</h2>
+    <section class="content-feed" aria-labelledby="latest-heading">
+      <div class="main-feed">
+        <div class="section-label">
+          <h2 id="latest-heading">Latest News</h2>
+        </div>
+
+        <div class="article-list" data-emdash-entry-list>
+          {
+            latestPosts.map((post, index) => (
+              <article
+                class="list-story"
+                data-filter-card
+                data-category={toFilterValue(inferCategory(post))}
+                data-emdash-entry
+              >
+                <a href={postHref(post)}>
+                  <img src={postImage(post, 760, index + 5)} alt={post.title} loading="lazy" />
+                  <div>
+                    <span>{inferCategory(post)}</span>
+                    <h3>{post.title}</h3>
+                    {post.excerpt && <p>{post.excerpt}</p>}
+                    <div class="story-meta">
+                      <time>{formatDate(post.publishedAt)}</time>
+                      <strong>{post.author?.name || "Viral Asia"}</strong>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            ))
+          }
+        </div>
       </div>
 
-      <div class="campaign-list">
-        {
-          campaignPosts.map((post) => (
-            <a
-              class="campaign-row"
-              href={`/redirect/${post.slug}/`}
-              data-filter-card
-              data-category="brand-stories"
-            >
-              <img src={post.cover} alt={post.title} loading="lazy" />
-              <div>
-                <span>{post.category === "news" ? "News signal" : "Brand story"}</span>
-                <h3>{post.title}</h3>
-                <p>{post.combinedViewsLabel} estimated cross-platform views</p>
-              </div>
-            </a>
-          ))
-        }
-      </div>
-
-      <aside class="side-feed" aria-label="More stories">
-        <h2>More stories</h2>
-        {
-          sidePosts.length > 0 ? (
-            sidePosts.map((post) => (
-              <a href={`/blog/${post.slug.current}`}>
-                <span>{inferCategory(post)}</span>
-                <strong>{post.title}</strong>
-                <time>{formatDate(post.publishedAt)}</time>
+      <aside class="rail-feed" aria-label="More stories">
+        <div class="rail-panel">
+          <h2>Trending</h2>
+          {
+            campaignPosts.slice(0, 4).map((post) => (
+              <a
+                class="trend-row"
+                href={`/redirect/${post.slug}/`}
+                data-filter-card
+                data-category="brand-stories"
+              >
+                <img src={post.cover} alt={post.title} loading="lazy" />
+                <div>
+                  <span>{post.category === "news" ? "News signal" : "Brand story"}</span>
+                  <strong>{post.title}</strong>
+                  <p>{post.combinedViewsLabel} estimated cross-platform views</p>
+                </div>
               </a>
             ))
-          ) : (
-            <p>More Sanity posts will appear here once they are published.</p>
-          )
-        }
+          }
+        </div>
+
+        <div class="rail-panel">
+          <h2>More Reads</h2>
+          {
+            sidePosts.length > 0 ? (
+              sidePosts.map((post) => (
+                <a class="text-row" href={postHref(post)}>
+                  <span>{inferCategory(post)}</span>
+                  <strong>{post.title}</strong>
+                  <time>{formatDate(post.publishedAt)}</time>
+                </a>
+              ))
+            ) : (
+              <p class="empty-copy">More Sanity posts will appear here once they are published.</p>
+            )
+          }
+        </div>
       </aside>
     </section>
 
-    <section class="mobile-brief" aria-label="Mobile editorial categories">
+    <section class="topic-band" aria-label="Editorial categories">
       <div data-filter-card data-category="food">
         <span>Food</span>
-        <h2>Short reads for where people decide what to eat, book and try next.</h2>
+        <h2>Where people decide what to eat next.</h2>
       </div>
       <div data-filter-card data-category="lifestyle">
         <span>Lifestyle</span>
-        <h2>Local hooks, clear metadata and thumb-friendly story cards.</h2>
+        <h2>Local hooks shaped for fast mobile reading.</h2>
       </div>
       <div data-filter-card data-category="property">
         <span>Property</span>
-        <h2>Static Astro output today, cleaner content mapping for EmDash later.</h2>
+        <h2>Homes, neighbourhoods and Singapore living.</h2>
       </div>
     </section>
 
-    <section class="blog-cta" id="things-to-do">
+    <section class="blog-cta">
       <div>
         <p>Want a story people actually finish?</p>
-        <h2>Build it like content, distribute it like a campaign.</h2>
+        <h2>Build it like content. Distribute it like a campaign.</h2>
       </div>
       <a href={whatsappHref}>Plan a campaign</a>
     </section>
 
     <p class="filter-empty" data-filter-empty>More stories in this category will appear here once they are published.</p>
 
-<script is:inline>
-  (() => {
-    const initCategoryFilters = () => {
-      const filterRoot = document.querySelector("[data-category-filter]");
-      const filterButtons = Array.from(
-        document.querySelectorAll("[data-category-filter] button[data-filter]"),
-      );
-      const filterCards = Array.from(
-        document.querySelectorAll("[data-filter-card][data-category]"),
-      );
-      const emptyMessage = document.querySelector("[data-filter-empty]");
-
-      const applyCategoryFilter = (filter) => {
-        const normalizedFilter = filter || "latest";
-        let visibleCount = 0;
-
-        filterButtons.forEach((button) => {
-          button.setAttribute(
-            "aria-pressed",
-            String(button.dataset.filter === normalizedFilter),
+    <script is:inline>
+      (() => {
+        const initCategoryFilters = () => {
+          const filterRoot = document.querySelector("[data-category-filter]");
+          const filterButtons = Array.from(
+            document.querySelectorAll("[data-category-filter] button[data-filter]"),
           );
-        });
+          const filterCards = Array.from(
+            document.querySelectorAll("[data-filter-card][data-category]"),
+          );
+          const emptyMessage = document.querySelector("[data-filter-empty]");
 
-        filterCards.forEach((card) => {
-          const category = card.dataset.category || "";
-          const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
-          card.hidden = !shouldShow;
-          if (shouldShow) visibleCount += 1;
-        });
+          const applyCategoryFilter = (filter, shouldPush = true) => {
+            const normalizedFilter = filter || "latest";
+            let visibleCount = 0;
 
-        emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
-      };
+            filterButtons.forEach((button) => {
+              button.setAttribute(
+                "aria-pressed",
+                String(button.dataset.filter === normalizedFilter),
+              );
+            });
 
-      filterRoot?.addEventListener("click", (event) => {
-        const button = event.target.closest("button[data-filter]");
-        if (!button) return;
-        applyCategoryFilter(button.dataset.filter || "latest");
-      });
-    };
+            filterCards.forEach((card) => {
+              const category = card.dataset.category || "";
+              const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
+              card.hidden = !shouldShow;
+              if (shouldShow) visibleCount += 1;
+            });
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initCategoryFilters, { once: true });
-    } else {
-      initCategoryFilters();
-    }
-  })();
-</script>
+            emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
 
-    <Footer callToAction="Ready to Go Viral?" />
+            if (shouldPush) {
+              const nextUrl = new URL(window.location.href);
+              if (normalizedFilter === "latest") {
+                nextUrl.searchParams.delete("category");
+              } else {
+                nextUrl.searchParams.set("category", normalizedFilter);
+              }
+              window.history.replaceState({}, "", nextUrl);
+            }
+          };
+
+          filterRoot?.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-filter]");
+            if (!button) return;
+            applyCategoryFilter(button.dataset.filter || "latest");
+          });
+
+          const initialFilter = new URL(window.location.href).searchParams.get("category");
+          if (initialFilter) applyCategoryFilter(initialFilter, false);
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initCategoryFilters, { once: true });
+        } else {
+          initCategoryFilters();
+        }
+      })();
+    </script>
+
+    <footer class="news-footer">
+      <div>
+        <a href="/" aria-label="Viral Asia home">
+          <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
+        </a>
+        <p>Singapore stories, brand campaigns and social-first publishing.</p>
+      </div>
+
+      <nav aria-label="Blog footer navigation">
+        <a href="/work">Our Work</a>
+        <a href="/services">Services</a>
+        <a href="/about">About Us</a>
+        <a href={whatsappHref}>Contact</a>
+      </nav>
+    </footer>
   </main>
 </Layout>
 
-
 <style>
   :global(body) {
-    background: #050505;
+    background: #ffffff;
   }
 
   .blog-page {
-    --red: #e91515;
-    --yellow: #ffe100;
-    --ink: #050505;
-    --paper: #fff8e6;
-    --muted: rgba(255, 255, 255, 0.68);
+    --red: #ed1c24;
+    --red-dark: #b80f16;
+    --ink: #111111;
+    --muted: #666666;
+    --line: #dedede;
+    --paper: #ffffff;
+    --soft: #f5f5f5;
     min-height: 100dvh;
     overflow: hidden;
-    background:
-      radial-gradient(circle at 86% 20%, rgba(233, 21, 21, 0.18), transparent 22rem),
-      radial-gradient(circle at 12% 48%, rgba(255, 225, 0, 0.12), transparent 20rem),
-      var(--ink);
-    color: white;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
   }
 
-  .category-strip {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(5, 5, 5, 0.88);
-    backdrop-filter: blur(18px);
+  .news-header {
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
   }
 
-  .category-strip div {
-    display: flex;
-    gap: 0.65rem;
+  .topbar {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    align-items: center;
+    gap: 1rem;
     max-width: 1180px;
     margin: 0 auto;
-    overflow-x: auto;
-    padding: 0.82rem 1.25rem;
-    scrollbar-width: none;
+    padding: 0.9rem 1.25rem;
   }
 
-  .category-strip div::-webkit-scrollbar {
-    display: none;
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
   }
 
-  .category-strip button {
-    flex: 0 0 auto;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.82);
-    cursor: pointer;
-    font: 900 0.73rem/1 Arial, Helvetica, sans-serif;
-    padding: 0.62rem 0.9rem;
+  .brand img {
+    display: block;
+    width: 7.4rem;
+    height: auto;
+  }
+
+  .site-nav {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.8rem, 2vw, 1.7rem);
+    min-width: 0;
+  }
+
+  .site-nav a,
+  .header-cta,
+  .category-strip button,
+  .section-label h2,
+  .story-meta,
+  .lead-story span,
+  .compact-story span,
+  .list-story span,
+  .trend-row span,
+  .text-row span,
+  .topic-band span,
+  .blog-cta p {
+    font: 900 0.74rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    transition:
-      background 180ms ease,
-      color 180ms ease,
-      transform 180ms ease;
+  }
+
+  .site-nav a {
+    color: var(--ink);
+    text-decoration: none;
     white-space: nowrap;
   }
 
-  .category-strip button:hover,
-  .category-strip button[aria-pressed="true"] {
-    background: var(--yellow);
-    color: #111;
-    transform: translateY(-1px);
+  .site-nav a:hover {
+    color: var(--red);
   }
 
-  [data-filter-card][hidden] {
-    display: none !important;
-  }
-
-  .filter-empty {
-    display: none;
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 1.25rem 2rem;
-    color: rgba(255, 255, 255, 0.7);
-    font: 800 0.95rem/1.5 Arial, Helvetica, sans-serif;
-  }
-
-  .filter-empty[data-visible="true"] {
-    display: block;
-  }
-
-  .lead-section,
-  .news-grid,
-  .split-feed,
-  .mobile-brief,
-  .blog-cta {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: clamp(2.8rem, 7vw, 5.5rem) 1.25rem;
-  }
-
-  .lead-card {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-    min-height: 32rem;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 8px;
-    background: #101010;
-    color: white;
-    text-decoration: none;
-  }
-
-  .lead-media,
-  .story-image {
-    position: relative;
-    min-height: 100%;
-    overflow: hidden;
-    background: #171717;
-  }
-
-  .lead-media img,
-  .story-image img,
-  .campaign-row img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 260ms ease;
-  }
-
-  .lead-card:hover .lead-media img,
-  .story-card:hover .story-image img,
-  .campaign-row:hover img {
-    transform: scale(1.035);
-  }
-
-  .lead-media span,
-  .story-image span {
-    position: absolute;
-    left: 1rem;
-    top: 1rem;
+  .header-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 3px;
     background: var(--red);
-    color: white;
-    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
-    padding: 0.48rem 0.62rem;
+    color: #ffffff;
+    min-height: 2.4rem;
+    padding: 0.72rem 0.95rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .masthead {
+    background: var(--red);
+    color: #ffffff;
+    padding: clamp(1.8rem, 4vw, 3.8rem) 1.25rem;
+    text-align: center;
+  }
+
+  .masthead p {
+    margin: 0 0 0.65rem;
+    color: rgba(255, 255, 255, 0.84);
+    font: 900 0.82rem/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
-  .lead-copy {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: clamp(1.4rem, 4vw, 3rem);
-  }
-
-  .kicker,
-  .section-heading p,
-  .blog-cta p {
-    margin: 0 0 0.7rem;
-    color: var(--yellow);
-    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .lead-copy h2,
-  .section-heading h2,
-  .blog-cta h2 {
-    margin: 0;
+  .masthead h1 {
+    max-width: 960px;
+    margin: 0 auto;
     font:
-      900 clamp(2.3rem, 6vw, 5rem) / 0.9 Impact,
+      900 clamp(2.8rem, 8vw, 7rem) / 0.88 Impact,
       Haettenschweiler,
       "Arial Narrow Bold",
       "Arial Black",
@@ -501,194 +509,311 @@ const blogSchema = {
     text-wrap: balance;
   }
 
-  .lead-copy > p:not(.kicker) {
-    max-width: 38rem;
-    margin: 1rem 0 1.4rem;
-    color: rgba(255, 255, 255, 0.76);
-    font: 600 1.04rem/1.6 Arial, Helvetica, sans-serif;
+  .masthead span {
+    display: block;
+    max-width: 660px;
+    margin: 0.9rem auto 0;
+    color: rgba(255, 255, 255, 0.88);
+    font: 700 1rem/1.5 Arial, Helvetica, sans-serif;
+  }
+
+  .category-strip {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+  }
+
+  .category-strip div {
+    display: flex;
+    gap: 0.3rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 0.75rem 1.25rem;
+    scrollbar-width: none;
+  }
+
+  .category-strip div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-strip button {
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0.58rem 0.72rem;
+    transition:
+      background 160ms ease,
+      color 160ms ease;
+    white-space: nowrap;
+  }
+
+  .category-strip button:hover,
+  .category-strip button[aria-pressed="true"] {
+    background: var(--red);
+    color: #ffffff;
+  }
+
+  [data-filter-card][hidden] {
+    display: none !important;
+  }
+
+  .top-stories,
+  .content-feed,
+  .topic-band,
+  .blog-cta,
+  .filter-empty {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .top-stories {
+    padding-top: clamp(1.6rem, 4vw, 2.8rem);
+    padding-bottom: clamp(1.8rem, 4vw, 3rem);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+    border-bottom: 4px solid var(--red);
+  }
+
+  .section-label h2 {
+    margin: 0;
+    background: var(--red);
+    color: #ffffff;
+    padding: 0.62rem 0.82rem 0.58rem;
+  }
+
+  .top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+    gap: 1.1rem;
+  }
+
+  .lead-story a,
+  .compact-story a,
+  .list-story a,
+  .trend-row,
+  .text-row {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .lead-story a {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .lead-story img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--soft);
+    object-fit: cover;
+  }
+
+  .lead-story span,
+  .compact-story span,
+  .list-story span,
+  .trend-row span,
+  .text-row span,
+  .topic-band span {
+    display: block;
+    color: var(--red);
+  }
+
+  .lead-story h3 {
+    margin: 0.45rem 0 0;
+    font: 900 clamp(2rem, 4vw, 3.6rem) / 0.95 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .lead-story p {
+    max-width: 720px;
+    margin: 0.65rem 0 0.7rem;
+    color: var(--muted);
+    font: 500 1.05rem/1.48 Arial, Helvetica, sans-serif;
+  }
+
+  .lead-story time,
+  .compact-story time,
+  .text-row time {
+    color: #777777;
+    font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+  }
+
+  .side-stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .compact-story a {
+    display: grid;
+    grid-template-columns: 42% 1fr;
+    gap: 0.85rem;
+    align-items: start;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
+  }
+
+  .compact-story img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--soft);
+    object-fit: cover;
+  }
+
+  .compact-story h3 {
+    margin: 0.35rem 0 0.55rem;
+    font: 900 1.08rem/1.12 Arial, Helvetica, sans-serif;
+    text-wrap: pretty;
+  }
+
+  .content-feed {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.36fr);
+    gap: 1.6rem;
+    padding-top: 0.6rem;
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .article-list {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .list-story a {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 1rem;
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 0;
+  }
+
+  .list-story img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--soft);
+    object-fit: cover;
+  }
+
+  .list-story h3 {
+    margin: 0.35rem 0 0.5rem;
+    font: 900 clamp(1.2rem, 2.2vw, 1.7rem) / 1.05 Arial, Helvetica, sans-serif;
+    text-wrap: pretty;
+  }
+
+  .list-story p {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font: 500 0.96rem/1.45 Arial, Helvetica, sans-serif;
   }
 
   .story-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
-    color: rgba(255, 255, 255, 0.58);
-    font: 800 0.73rem/1.3 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
+    gap: 0.5rem;
+    color: #777777;
   }
 
-  .story-meta span + span::before {
-    margin-right: 0.55rem;
+  .story-meta strong {
+    color: #777777;
+  }
+
+  .story-meta strong::before {
+    margin-right: 0.5rem;
     color: var(--red);
     content: "/";
   }
 
-  .section-heading {
+  .rail-feed {
     display: grid;
-    grid-template-columns: 0.6fr 1.4fr;
-    gap: 2rem;
-    align-items: end;
-    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
-  }
-
-  .article-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  .story-card a {
-    display: grid;
-    min-height: 100%;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.055);
-    color: white;
-    text-decoration: none;
-    transition:
-      border-color 180ms ease,
-      transform 180ms ease;
-  }
-
-  .story-card a:hover {
-    border-color: rgba(255, 225, 0, 0.72);
-    transform: translateY(-2px);
-  }
-
-  .story-image {
-    aspect-ratio: 4 / 3;
-  }
-
-  .story-body {
-    display: grid;
-    gap: 0.8rem;
-    padding: 1rem;
-  }
-
-  .story-body h3,
-  .campaign-row h3,
-  .side-feed strong,
-  .mobile-brief h2 {
-    margin: 0;
-    font: 900 1.25rem/1.05 Arial, Helvetica, sans-serif;
-    text-wrap: pretty;
-  }
-
-  .story-body p,
-  .campaign-row p,
-  .side-feed p {
-    margin: 0;
-    color: var(--muted);
-    font: 500 0.95rem/1.55 Arial, Helvetica, sans-serif;
-  }
-
-  .story-body strong {
-    color: var(--yellow);
-    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
-  }
-
-  .split-feed {
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
-    gap: 1.25rem;
-  }
-
-  .split-feed .section-heading {
-    grid-column: 1 / -1;
-  }
-
-  .campaign-list {
-    display: grid;
-    gap: 0.85rem;
-  }
-
-  .campaign-row {
-    display: grid;
-    grid-template-columns: 8rem 1fr;
-    gap: 1rem;
-    align-items: center;
-    overflow: hidden;
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
-    color: white;
-    padding: 1rem 0;
-    text-decoration: none;
-  }
-
-  .campaign-row img {
-    aspect-ratio: 1;
-    border-radius: 6px;
-  }
-
-  .campaign-row span,
-  .side-feed span,
-  .mobile-brief span {
-    display: block;
-    margin-bottom: 0.4rem;
-    color: var(--red);
-    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
-  }
-
-  .campaign-row p {
-    margin-top: 0.45rem;
-  }
-
-  .side-feed {
     align-self: start;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.055);
-    padding: 1rem;
+    gap: 1rem;
   }
 
-  .side-feed h2 {
-    margin: 0 0 0.7rem;
-    font:
-      900 2rem/0.9 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      sans-serif;
+  .rail-panel {
+    border: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .rail-panel h2 {
+    margin: 0;
+    background: var(--ink);
+    color: #ffffff;
+    font: 900 1.2rem/1 Arial, Helvetica, sans-serif;
+    padding: 0.85rem 0.9rem;
     text-transform: uppercase;
   }
 
-  .side-feed a {
-    display: block;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    color: white;
-    padding: 1rem 0;
-    text-decoration: none;
+  .trend-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 0.8rem;
+    border-top: 1px solid var(--line);
+    padding: 0.9rem;
   }
 
-  .side-feed a:first-of-type {
+  .trend-row:first-of-type,
+  .text-row:first-of-type {
     border-top: 0;
   }
 
-  .side-feed time {
-    display: block;
-    margin-top: 0.45rem;
-    color: rgba(255, 255, 255, 0.52);
-    font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
-    text-transform: uppercase;
+  .trend-row img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--soft);
+    object-fit: cover;
   }
 
-  .mobile-brief {
+  .trend-row strong,
+  .text-row strong {
+    display: block;
+    margin: 0.3rem 0;
+    font: 900 0.96rem/1.15 Arial, Helvetica, sans-serif;
+  }
+
+  .trend-row p,
+  .empty-copy {
+    margin: 0;
+    color: var(--muted);
+    font: 500 0.85rem/1.35 Arial, Helvetica, sans-serif;
+  }
+
+  .text-row {
+    display: block;
+    border-top: 1px solid var(--line);
+    padding: 0.9rem;
+  }
+
+  .topic-band {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
-    padding-top: 0;
+    padding-bottom: clamp(2rem, 5vw, 3.8rem);
   }
 
-  .mobile-brief div {
-    background: var(--paper);
-    color: #111;
-    padding: clamp(1.2rem, 3vw, 2rem);
+  .topic-band div {
+    background: var(--soft);
+    padding: clamp(1.1rem, 3vw, 1.8rem);
   }
 
-  .mobile-brief h2 {
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-    line-height: 1;
+  .topic-band h2 {
+    margin: 0.45rem 0 0;
+    font: 900 clamp(1.15rem, 2.4vw, 1.65rem) / 1.02 Arial, Helvetica, sans-serif;
   }
 
   .blog-cta {
@@ -696,78 +821,215 @@ const blogSchema = {
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
-    padding-top: 0;
+    border-top: 5px solid var(--red);
+    padding-top: clamp(1.4rem, 3vw, 2rem);
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .blog-cta p {
+    margin: 0 0 0.45rem;
+    color: var(--red);
   }
 
   .blog-cta h2 {
     max-width: 760px;
+    margin: 0;
+    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 
   .blog-cta a {
     flex: 0 0 auto;
-    border: 2px solid rgba(255, 255, 255, 0.14);
-    border-radius: 4px;
+    border-radius: 3px;
     background: var(--red);
-    box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
-    color: white;
+    color: #ffffff;
     font: 900 0.8rem/1 Arial, Helvetica, sans-serif;
-    padding: 0.9rem 1.1rem;
+    padding: 0.9rem 1rem;
     text-decoration: none;
     text-transform: uppercase;
-    transition:
-      filter 180ms ease,
-      transform 180ms ease;
     white-space: nowrap;
   }
 
-  .blog-cta a:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
+  .lead-story a:hover h3,
+  .compact-story a:hover h3,
+  .list-story a:hover h3,
+  .trend-row:hover strong,
+  .text-row:hover strong {
+    color: var(--red-dark);
   }
 
-  @media (max-width: 900px) {
-    .lead-card,
-    .split-feed,
-    .section-heading {
+  .filter-empty {
+    display: none;
+    padding-bottom: 2rem;
+    color: var(--muted);
+    font: 800 0.95rem/1.5 Arial, Helvetica, sans-serif;
+  }
+
+  .filter-empty[data-visible="true"] {
+    display: block;
+  }
+
+  .news-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+    color: #ffffff;
+    padding: 1.3rem max(1.25rem, calc((100vw - 1180px) / 2 + 1.25rem));
+  }
+
+  .news-footer img {
+    width: 7.2rem;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .news-footer p {
+    margin: 0.55rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font: 600 0.9rem/1.35 Arial, Helvetica, sans-serif;
+  }
+
+  .news-footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.9rem;
+  }
+
+  .news-footer a {
+    color: #ffffff;
+    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .news-footer a:hover {
+    color: var(--red);
+  }
+
+  @media (max-width: 980px) {
+    .topbar {
+      grid-template-columns: 1fr auto;
+    }
+
+    .site-nav {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+      scrollbar-width: none;
+    }
+
+    .site-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .top-grid,
+    .content-feed {
       grid-template-columns: 1fr;
     }
 
-    .lead-card {
-      min-height: auto;
+    .side-stack {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .lead-media {
-      aspect-ratio: 4 / 3;
+    .rail-feed {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 700px) {
+    .topbar {
+      gap: 0.8rem;
+      padding: 0.8rem 0.9rem;
     }
 
-    .article-grid,
-    .mobile-brief {
+    .brand img {
+      width: 6.4rem;
+    }
+
+    .header-cta {
+      min-height: 2.15rem;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .masthead {
+      padding: 1.7rem 0.9rem 2rem;
+      text-align: left;
+    }
+
+    .masthead h1,
+    .masthead span {
+      margin-right: 0;
+      margin-left: 0;
+    }
+
+    .category-strip div,
+    .top-stories,
+    .content-feed,
+    .topic-band,
+    .blog-cta,
+    .filter-empty {
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .side-stack,
+    .rail-feed,
+    .topic-band {
       grid-template-columns: 1fr;
+    }
+
+    .compact-story a,
+    .list-story a,
+    .trend-row {
+      grid-template-columns: 112px 1fr;
+    }
+
+    .lead-story h3 {
+      font-size: clamp(1.65rem, 8vw, 2.25rem);
+    }
+
+    .list-story p {
+      display: none;
     }
 
     .blog-cta {
       align-items: flex-start;
       flex-direction: column;
     }
-  }
 
-  @media (max-width: 560px) {
-    .lead-section,
-    .news-grid,
-    .split-feed,
-    .mobile-brief,
-    .blog-cta {
+    .news-footer {
+      align-items: flex-start;
+      flex-direction: column;
       padding-right: 0.9rem;
       padding-left: 0.9rem;
     }
 
-    .campaign-row {
-      grid-template-columns: 6.5rem 1fr;
+    .news-footer nav {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .compact-story a,
+    .list-story a,
+    .trend-row {
+      grid-template-columns: 96px 1fr;
+      gap: 0.75rem;
     }
 
-    .story-body h3,
-    .campaign-row h3 {
-      font-size: 1.08rem;
+    .compact-story h3,
+    .list-story h3 {
+      font-size: 1rem;
+    }
+
+    .story-meta strong {
+      display: none;
     }
   }
 </style>
