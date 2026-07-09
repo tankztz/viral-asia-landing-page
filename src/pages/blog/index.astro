@@ -120,19 +120,39 @@ const blogSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
   <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">
-    <header class="news-header">
+    <div class="sticky-top" data-sticky-header>
       <div class="topbar">
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-controls="blog-menu"
+          aria-expanded="false"
+          data-menu-toggle
+        >
+          <span class="menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span>Menu</span>
+        </button>
+
         <a class="brand" href="/" aria-label="Viral Asia home">
           <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
         </a>
 
-        <nav class="site-nav" aria-label="Primary navigation">
-          {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
-        </nav>
-
         <a class="header-cta" href={whatsappHref}>Enquire now</a>
       </div>
 
+      <nav class="site-nav" id="blog-menu" aria-label="Primary navigation" data-menu-panel hidden>
+        <div>
+          {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+          <a href={whatsappHref}>Contact</a>
+        </div>
+      </nav>
+    </div>
+
+    <header class="news-header">
       <div class="masthead">
         <p>Viral Asia Blog</p>
         <h1>Stories that move Singapore</h1>
@@ -309,6 +329,35 @@ const blogSchema = {
 
     <script is:inline>
       (() => {
+        const initMenu = () => {
+          const header = document.querySelector("[data-sticky-header]");
+          const toggle = document.querySelector("[data-menu-toggle]");
+          const panel = document.querySelector("[data-menu-panel]");
+          if (!header || !toggle || !panel) return;
+
+          const setMenuState = (isOpen) => {
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            panel.hidden = !isOpen;
+            header.toggleAttribute("data-menu-open", isOpen);
+          };
+
+          toggle.addEventListener("click", () => {
+            setMenuState(toggle.getAttribute("aria-expanded") !== "true");
+          });
+
+          panel.addEventListener("click", (event) => {
+            if (event.target.closest("a")) setMenuState(false);
+          });
+
+          document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") setMenuState(false);
+          });
+
+          document.addEventListener("click", (event) => {
+            if (!header.contains(event.target)) setMenuState(false);
+          });
+        };
+
         const initCategoryFilters = () => {
           const filterRoot = document.querySelector("[data-category-filter]");
           const filterButtons = Array.from(
@@ -361,8 +410,16 @@ const blogSchema = {
         };
 
         if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", initCategoryFilters, { once: true });
+          document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+              initMenu();
+              initCategoryFilters();
+            },
+            { once: true },
+          );
         } else {
+          initMenu();
           initCategoryFilters();
         }
       })();
@@ -411,35 +468,40 @@ const blogSchema = {
     background: var(--paper);
   }
 
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+  }
+
   .topbar {
     display: grid;
-    grid-template-columns: 160px 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
     max-width: 1180px;
     margin: 0 auto;
-    padding: 0.9rem 1.25rem;
+    min-height: 4rem;
+    padding: 0.7rem 1.25rem;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
+    justify-self: center;
     min-width: 0;
   }
 
   .brand img {
     display: block;
-    width: 7.4rem;
+    width: 5.8rem;
     height: auto;
   }
 
-  .site-nav {
-    display: flex;
-    justify-content: center;
-    gap: clamp(0.8rem, 2vw, 1.7rem);
-    min-width: 0;
-  }
-
+  .menu-toggle,
   .site-nav a,
   .header-cta,
   .category-strip button,
@@ -457,8 +519,73 @@ const blogSchema = {
     text-transform: uppercase;
   }
 
-  .site-nav a {
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.6rem;
+    width: max-content;
+    border: 0;
+    background: transparent;
     color: var(--ink);
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+
+  .menu-icon {
+    display: grid;
+    gap: 0.22rem;
+    width: 1.4rem;
+  }
+
+  .menu-icon span {
+    display: block;
+    height: 2px;
+    background: currentColor;
+    transform-origin: center;
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(1) {
+    transform: translateY(0.38rem) rotate(45deg);
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(3) {
+    transform: translateY(-0.38rem) rotate(-45deg);
+  }
+
+  .site-nav {
+    border-top: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .site-nav[hidden] {
+    display: none;
+  }
+
+  .site-nav div {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 1.25rem 1px;
+    background: var(--line);
+  }
+
+  .site-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 3.1rem;
+    background: #ffffff;
+    color: var(--ink);
+    padding: 0.9rem 0.85rem;
     text-decoration: none;
     white-space: nowrap;
   }
@@ -471,6 +598,7 @@ const blogSchema = {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    justify-self: end;
     border-radius: 3px;
     background: var(--red);
     color: #ffffff;
@@ -519,8 +647,8 @@ const blogSchema = {
 
   .category-strip {
     position: sticky;
-    top: 0;
-    z-index: 20;
+    top: 4rem;
+    z-index: 30;
     border-bottom: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(16px);
@@ -912,20 +1040,8 @@ const blogSchema = {
   }
 
   @media (max-width: 980px) {
-    .topbar {
-      grid-template-columns: 1fr auto;
-    }
-
-    .site-nav {
-      grid-column: 1 / -1;
-      justify-content: flex-start;
-      overflow-x: auto;
-      padding-bottom: 0.15rem;
-      scrollbar-width: none;
-    }
-
-    .site-nav::-webkit-scrollbar {
-      display: none;
+    .site-nav div {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .top-grid,
@@ -945,16 +1061,32 @@ const blogSchema = {
   @media (max-width: 700px) {
     .topbar {
       gap: 0.8rem;
+      grid-template-columns: minmax(4.5rem, 1fr) auto minmax(4.5rem, 1fr);
+      min-height: 3.65rem;
       padding: 0.8rem 0.9rem;
     }
 
     .brand img {
-      width: 6.4rem;
+      width: 5.1rem;
     }
 
     .header-cta {
       min-height: 2.15rem;
       padding: 0.6rem 0.75rem;
+    }
+
+    .menu-toggle > span:last-child {
+      display: none;
+    }
+
+    .site-nav div {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .category-strip {
+      top: 3.65rem;
     }
 
     .masthead {
