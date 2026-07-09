@@ -13,9 +13,18 @@
     <div id="sanity"></div>
     <script>
       import { defineConfig } from 'sanity';
-      import { deskTool } from 'sanity/desk';
+      import { structureTool } from 'sanity/structure';
       import { visionTool } from '@sanity/vision';
-      import post from '../schemas/post';
+      import { schemaTypes } from '../schemas';
+
+      const blogStructure = (S) =>
+        S.list()
+          .title('Blog')
+          .items([
+            S.documentTypeListItem('post').title('Posts'),
+            S.documentTypeListItem('author').title('Authors'),
+            S.documentTypeListItem('category').title('Categories'),
+          ]);
 
       const config = defineConfig({
         projectId: '3an9f3n5',
@@ -23,9 +32,9 @@
         title: 'Viral Asia Blog',
         apiVersion: '2024-03-19',
         basePath: '/studio',
-        plugins: [deskTool(), visionTool()],
+        plugins: [structureTool({ structure: blogStructure }), visionTool()],
         schema: {
-          types: [post],
+          types: schemaTypes,
         },
       });
 
