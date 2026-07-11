@@ -559,11 +559,14 @@ import {
 
   .hero-board {
     position: relative;
+    isolation: isolate;
     align-self: stretch;
     min-width: 0;
   }
 
   .video-mosaic {
+    position: relative;
+    z-index: 0;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.5rem;
@@ -644,9 +647,11 @@ import {
   .hero-stat {
     position: absolute;
     inset: 33% 9% auto auto;
+    z-index: 5;
     width: min(25rem, 56%);
     color: var(--yellow);
     text-shadow: 0 6px 18px black;
+    pointer-events: none;
   }
 
   .hero-stat strong {
