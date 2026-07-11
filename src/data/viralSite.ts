@@ -26,37 +26,37 @@ export const workCards = [
   [
     "/recent-work-covers/recent-xing-rong-ji.jpg",
     "339 AMK Xing Rong Ji",
-    "@SGDaily - Jun 2026",
+    "@SGDaily",
     "11K",
   ],
   [
     "/recent-work-covers/DZXEQ27RSNY.jpg",
     "Eat3Cuts Geylang opening",
-    "@SGDaily - Jun 2026",
+    "@SGDaily",
     "55K",
   ],
   [
     "/recent-work-covers/batamfast-app.jpg",
     "BatamFast app booking",
-    "@SGDaily - Jun 2026",
+    "@SGDaily",
     "14K",
   ],
   [
     "/recent-work-covers/vold-artisan-sourdough.jpg",
     "Vold Artisan sourdough",
-    "@SGDaily - Jun 2026",
+    "@SGDaily",
     "11K",
   ],
   [
     "/recent-work-covers/guangzhou-wanton-noodle.jpg",
     "Guangzhou Wanton Noodle",
-    "@SGDaily - Jul 2026",
+    "@SGDaily",
     "11K",
   ],
   [
     "/recent-work-covers/DZy5if1RPw3.jpg",
     "Malaysia supermarket dispute",
-    "@SGDaily - Jun 2026",
+    "@SGDaily",
     "66K",
   ],
 ] as const;
