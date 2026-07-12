@@ -450,13 +450,16 @@ const blogSchema = {
 
           const applyCategoryFilter = (filter, shouldPush = true) => {
             const normalizedFilter = filter || "latest";
+            let activeButton = null;
             let visibleCount = 0;
 
             filterButtons.forEach((button) => {
+              const isActive = button.dataset.filter === normalizedFilter;
               button.setAttribute(
                 "aria-pressed",
-                String(button.dataset.filter === normalizedFilter),
+                String(isActive),
               );
+              if (isActive) activeButton = button;
             });
 
             filterCards.forEach((card) => {
@@ -467,6 +470,7 @@ const blogSchema = {
             });
 
             emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
+            activeButton?.scrollIntoView({ block: "nearest", inline: "center" });
 
             if (shouldPush) {
               const nextUrl = new URL(window.location.href);
