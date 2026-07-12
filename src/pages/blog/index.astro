@@ -44,7 +44,23 @@ const categoryNav = [
   "Things to do",
   "Property",
   "Brand stories",
+  "Travel",
+  "Events",
+  "Entertainment",
+  "Deals",
+  "Wellness",
 ];
+
+const topicHighlights = [
+  ["Food", "Restaurant openings, hawker finds and dining decisions people share."],
+  ["Lifestyle", "Daily-life stories, local habits and mobile-first city reads."],
+  ["Property", "Homes, neighbourhoods and Singapore living."],
+  ["Travel", "Short trips, staycations and cross-border guides."],
+  ["Events", "Pop-ups, festivals, launches and weekend happenings."],
+  ["Entertainment", "Nightlife, shows and creator-led culture moments."],
+  ["Deals", "Promotions, value finds and limited-time offers."],
+  ["Wellness", "Beauty, fitness, health and self-care stories."],
+] as const;
 
 const toFilterValue = (category: string) =>
   category.toLowerCase().replaceAll(" ", "-");
@@ -66,6 +82,21 @@ const inferCategory = (post: BlogPost) => {
   const title = post.title.toLowerCase();
   if (title.includes("lok lok") || title.includes("cafe") || title.includes("pork")) {
     return "Food";
+  }
+  if (title.includes("jb") || title.includes("johor") || title.includes("batam") || title.includes("travel")) {
+    return "Travel";
+  }
+  if (title.includes("festival") || title.includes("event") || title.includes("pop-up") || title.includes("opening")) {
+    return "Events";
+  }
+  if (title.includes("club") || title.includes("show") || title.includes("nightlife")) {
+    return "Entertainment";
+  }
+  if (title.includes("deal") || title.includes("promo") || title.includes("discount") || title.includes("sale")) {
+    return "Deals";
+  }
+  if (title.includes("beauty") || title.includes("fitness") || title.includes("wellness") || title.includes("health")) {
+    return "Wellness";
   }
   if (title.includes("home") || title.includes("property")) return "Property";
   if (title.includes("testing")) return "Studio";
@@ -302,18 +333,12 @@ const blogSchema = {
     </section>
 
     <section class="topic-band" aria-label="Editorial categories">
-      <div data-filter-card data-category="food">
-        <span>Food</span>
-        <h2>Where people decide what to eat next.</h2>
-      </div>
-      <div data-filter-card data-category="lifestyle">
-        <span>Lifestyle</span>
-        <h2>Local hooks shaped for fast mobile reading.</h2>
-      </div>
-      <div data-filter-card data-category="property">
-        <span>Property</span>
-        <h2>Homes, neighbourhoods and Singapore living.</h2>
-      </div>
+      {topicHighlights.map(([category, description]) => (
+        <div data-filter-card data-category={toFilterValue(category)}>
+          <span>{category}</span>
+          <h2>{description}</h2>
+        </div>
+      ))}
     </section>
 
     <section class="blog-cta">
@@ -924,7 +949,7 @@ const blogSchema = {
 
   .topic-band {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1px;
     padding-bottom: clamp(2rem, 5vw, 3.8rem);
   }
@@ -1049,6 +1074,10 @@ const blogSchema = {
     }
 
     .rail-feed {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .topic-band {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }

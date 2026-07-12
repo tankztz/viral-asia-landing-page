@@ -8,6 +8,7 @@
     "start": "astro dev",
     "build": "astro build",
     "build:staging": "PUBLIC_SITE_ENV=staging astro build",
+    "sanity:seed-categories": "node scripts/seed-blog-categories.mjs",
     "content:snapshot": "node scripts/extract-content-snapshot.mjs",
     "preview": "astro preview",
     "astro": "astro"
