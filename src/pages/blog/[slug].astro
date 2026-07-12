@@ -535,7 +535,7 @@ const portableTextComponents = {
 
   .article-hero {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(300px, 1fr);
     gap: clamp(1.25rem, 4vw, 3rem);
     align-items: end;
   }
@@ -547,8 +547,9 @@ const portableTextComponents = {
 
   .headline-block h1 {
     margin: 0;
-    font: 900 clamp(2.6rem, 7vw, 6.4rem) / 0.9 Arial, Helvetica, sans-serif;
-    letter-spacing: -0.04em;
+    max-width: 15ch;
+    font: 900 clamp(2.5rem, 5.1vw, 4.9rem) / 0.94 Arial, Helvetica, sans-serif;
+    letter-spacing: -0.035em;
     text-wrap: balance;
   }
 
@@ -587,7 +588,7 @@ const portableTextComponents = {
     width: 100%;
     aspect-ratio: 16 / 10;
     background: var(--soft);
-    object-fit: cover;
+    object-fit: contain;
   }
 
   .article-layout {
@@ -882,7 +883,8 @@ const portableTextComponents = {
     }
 
     .headline-block h1 {
-      font-size: clamp(2rem, 10vw, 3rem);
+      max-width: 100%;
+      font-size: clamp(2rem, 9vw, 3rem);
     }
 
     .article-rail {
