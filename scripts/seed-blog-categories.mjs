@@ -30,26 +30,6 @@ const categories = [
     slug: "wellness",
     description: "Beauty, fitness, health and self-care stories for urban Singapore living.",
   },
-  {
-    title: "CN Daily Happenings",
-    slug: "cn-daily-happenings",
-    description: "Daily happenings, social moments and timely local stories for China-focused coverage.",
-  },
-  {
-    title: "CN Events",
-    slug: "cn-events",
-    description: "Events, launches, pop-ups and cultural happenings for China-focused coverage.",
-  },
-  {
-    title: "CN Explore",
-    slug: "cn-explore",
-    description: "Places, experiences and discovery guides for China-focused coverage.",
-  },
-  {
-    title: "CN Food",
-    slug: "cn-food",
-    description: "Restaurants, food finds and dining stories for China-focused coverage.",
-  },
 ];
 
 if (!token) {
