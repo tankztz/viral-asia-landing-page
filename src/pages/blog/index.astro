@@ -18,6 +18,11 @@ interface BlogPost extends SanityDocument {
   };
 }
 
+interface BlogCategory extends SanityDocument {
+  title: string;
+  description?: string;
+}
+
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
@@ -36,34 +41,41 @@ const POSTS_QUERY = `*[
   }
 }`;
 
-const posts = await sanityClient.fetch<BlogPost[]>(POSTS_QUERY);
-const categoryNav = [
-  "Latest",
-  "Food",
-  "Lifestyle",
-  "Things to do",
-  "Property",
-  "Brand stories",
-  "Travel",
-  "Events",
-  "Entertainment",
-  "Deals",
-  "Wellness",
-];
+const CATEGORIES_QUERY = `*[
+  _type == "category"
+  && defined(title)
+]|order(title asc){
+  _id,
+  title,
+  description
+}`;
 
-const topicHighlights = [
-  ["Food", "Restaurant openings, hawker finds and dining decisions people share."],
-  ["Lifestyle", "Daily-life stories, local habits and mobile-first city reads."],
-  ["Property", "Homes, neighbourhoods and Singapore living."],
-  ["Travel", "Short trips, staycations and cross-border guides."],
-  ["Events", "Pop-ups, festivals, launches and weekend happenings."],
-  ["Entertainment", "Nightlife, shows and creator-led culture moments."],
-  ["Deals", "Promotions, value finds and limited-time offers."],
-  ["Wellness", "Beauty, fitness, health and self-care stories."],
-] as const;
+const [posts, studioCategories] = await Promise.all([
+  sanityClient.fetch<BlogPost[]>(POSTS_QUERY),
+  sanityClient.fetch<BlogCategory[]>(CATEGORIES_QUERY),
+]);
 
 const toFilterValue = (category: string) =>
-  category.toLowerCase().replaceAll(" ", "-");
+  category
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+const categoryNav = [
+  "Latest",
+  ...studioCategories
+    .map((category) => category.title?.trim())
+    .filter((title): title is string => Boolean(title)),
+];
+
+const topicHighlights = studioCategories
+  .filter((category) => category.title?.trim() && category.description?.trim())
+  .map((category) => [
+    category.title.trim(),
+    category.description!.trim(),
+  ] as const);
 
 const formatDate = (date?: string) =>
   date
@@ -332,14 +344,18 @@ const blogSchema = {
       </aside>
     </section>
 
-    <section class="topic-band" aria-label="Editorial categories">
-      {topicHighlights.map(([category, description]) => (
-        <div data-filter-card data-category={toFilterValue(category)}>
-          <span>{category}</span>
-          <h2>{description}</h2>
-        </div>
-      ))}
-    </section>
+    {
+      topicHighlights.length > 0 && (
+        <section class="topic-band" aria-label="Editorial categories">
+          {topicHighlights.map(([category, description]) => (
+            <div data-filter-card data-category={toFilterValue(category)}>
+              <span>{category}</span>
+              <h2>{description}</h2>
+            </div>
+          ))}
+        </section>
+      )
+    }
 
     <section class="blog-cta">
       <div>
