@@ -2,7 +2,7 @@ import { createClient } from "@sanity/client";
 
 const projectId = process.env.PUBLIC_SANITY_PROJECT_ID || "3an9f3n5";
 const dataset = process.env.PUBLIC_SANITY_DATASET || "production";
-const token = process.env.SANITY_WRITE_TOKEN || process.env.sanity_token;
+const token = process.env.SANITY_WRITE_TOKEN || process.env.sanity_editor || process.env.sanity_token;
 
 const categories = [
   {
@@ -53,7 +53,7 @@ const categories = [
 ];
 
 if (!token) {
-  console.error("Missing SANITY_WRITE_TOKEN or sanity_token. Create a Sanity write token and run: sanity_token=... npm run sanity:seed-categories");
+  console.error("Missing SANITY_WRITE_TOKEN, sanity_editor, or sanity_token. Create a Sanity write token and run: sanity_editor=... npm run sanity:seed-categories");
   process.exit(1);
 }
 
@@ -69,7 +69,7 @@ const transaction = client.transaction();
 
 for (const category of categories) {
   transaction.createIfNotExists({
-    _id: `category.${category.slug}`,
+    _id: `category-${category.slug}`,
     _type: "category",
     title: category.title,
     slug: { _type: "slug", current: category.slug },
