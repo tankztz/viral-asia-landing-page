@@ -77,6 +77,24 @@ const topicHighlights = studioCategories
     category.description!.trim(),
   ] as const);
 
+const categoryTitleByFilter = new Map(
+  studioCategories
+    .map((category) => category.title?.trim())
+    .filter((title): title is string => Boolean(title))
+    .map((title) => [toFilterValue(title), title]),
+);
+
+const getStudioCategory = (title: string) =>
+  categoryTitleByFilter.get(toFilterValue(title));
+
+const resolveCategory = (fallback: string, alternatives: string[] = []) => {
+  for (const title of [fallback, ...alternatives]) {
+    const studioTitle = getStudioCategory(title);
+    if (studioTitle) return studioTitle;
+  }
+  return fallback;
+};
+
 const formatDate = (date?: string) =>
   date
     ? new Date(date).toLocaleDateString("en-SG", {
@@ -88,31 +106,53 @@ const formatDate = (date?: string) =>
 
 const inferCategory = (post: BlogPost) => {
   const explicitCategory = post.categories?.find((category) => category.title)
-    ?.title;
-  if (explicitCategory) return explicitCategory;
+    ?.title?.trim();
+  if (explicitCategory) {
+    const studioCategory = getStudioCategory(explicitCategory);
+    if (studioCategory) return studioCategory;
+  }
 
   const title = post.title.toLowerCase();
   if (title.includes("lok lok") || title.includes("cafe") || title.includes("pork")) {
-    return "Food";
+    return resolveCategory("Food", ["SG Food"]);
   }
   if (title.includes("jb") || title.includes("johor") || title.includes("batam") || title.includes("travel")) {
-    return "Travel";
+    return resolveCategory("Travel", ["SG Explore"]);
   }
   if (title.includes("festival") || title.includes("event") || title.includes("pop-up") || title.includes("opening")) {
-    return "Events";
+    return resolveCategory("Events", ["SG Events"]);
   }
   if (title.includes("club") || title.includes("show") || title.includes("nightlife")) {
-    return "Entertainment";
+    return resolveCategory("Entertainment");
   }
   if (title.includes("deal") || title.includes("promo") || title.includes("discount") || title.includes("sale")) {
-    return "Deals";
+    return resolveCategory("Deals");
   }
   if (title.includes("beauty") || title.includes("fitness") || title.includes("wellness") || title.includes("health")) {
-    return "Wellness";
+    return resolveCategory("Wellness");
   }
-  if (title.includes("home") || title.includes("property")) return "Property";
+  if (title.includes("home") || title.includes("property")) {
+    return resolveCategory("Property", ["SG Explore", "SG Daily Happenings"]);
+  }
   if (title.includes("testing")) return "Studio";
-  return "Lifestyle";
+  if (explicitCategory) {
+    return resolveCategory(explicitCategory, ["SG Daily Happenings"]);
+  }
+  return resolveCategory("Lifestyle", ["SG Daily Happenings"]);
+};
+
+const inferCampaignCategory = (post: (typeof viralPostItems)[number]) => {
+  const title = post.title.toLowerCase();
+  if (title.includes("fishball") || title.includes("lok lok") || title.includes("cuisine") || title.includes("cafe")) {
+    return resolveCategory("Food", ["SG Food"]);
+  }
+  if (title.includes("sentosa")) {
+    return resolveCategory("Travel", ["SG Explore"]);
+  }
+  if (post.category === "news") {
+    return resolveCategory("News", ["SG Daily Happenings"]);
+  }
+  return resolveCategory("Brand Stories", ["SG Daily Happenings"]);
 };
 
 const getImage = (post?: BlogPost, width = 1200) =>
@@ -312,7 +352,7 @@ const blogSchema = {
                 class="trend-row"
                 href={`/redirect/${post.slug}/`}
                 data-filter-card
-                data-category="brand-stories"
+                data-category={toFilterValue(inferCampaignCategory(post))}
               >
                 <img src={post.cover} alt={post.title} loading="lazy" />
                 <div>
