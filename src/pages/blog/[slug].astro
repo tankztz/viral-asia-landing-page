@@ -154,7 +154,7 @@ const portableTextComponents = {
 ---
 
 <Layout
-  title={`${post.title} | Viral Asia Blog`}
+  title={`${post.title} | Viral Asia`}
   description={schemaDescription}
   canonicalUrl={canonicalUrl}
   imageUrl={heroImage}
@@ -196,7 +196,7 @@ const portableTextComponents = {
 
       <nav class="article-strip" aria-label="Article navigation">
         <div>
-          <a href="/blog">Back to Blog</a>
+          <a href="/">Back to main page</a>
           <span>{primaryCategory}</span>
           <span>{formatDate(post.publishedAt)}</span>
         </div>
@@ -788,8 +788,8 @@ const portableTextComponents = {
   .blog-cta h2 {
     max-width: 760px;
     margin: 0;
-    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 var(--font-body);
-    letter-spacing: -0.02em;
+    font: 600 1.06rem/1.55 var(--font-body);
+    letter-spacing: 0;
     text-wrap: balance;
   }
 

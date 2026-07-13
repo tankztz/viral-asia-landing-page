@@ -179,8 +179,8 @@ const postImage = (post?: BlogPost, width = 1200, fallbackIndex = 0) =>
   getImage(post, width) || fallbackImages[fallbackIndex % fallbackImages.length];
 
 const defaultHero = {
-  eyebrow: "Viral Asia Blog",
-  title: "Stories that move Singapore",
+  eyebrow: "Daily SG Happenings",
+  title: "Latest stories happening in Singapore",
 };
 const defaultCta = {
   eyebrow: "build viral stories and craft effective campaigns",
@@ -191,7 +191,7 @@ const defaultCta = {
 const blogSchema = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  name: "viral asia blog",
+  name: "Viral Asia Stories",
   url: "/blog",
   publisher: {
     "@type": "Organization",
@@ -209,7 +209,7 @@ const blogSchema = {
 };
 ---
 
-<Layout title="Blog | Viral Asia">
+<Layout title="Stories | Viral Asia">
   <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
   <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">
@@ -469,26 +469,26 @@ const blogSchema = {
 
           const getCountryLabel = (filter) => {
             const countryCode = (filter || "").split("-")[0];
-            const countries = { sg: "singapore", th: "thailand" };
+            const countries = { sg: "Singapore", th: "Thailand" };
             return countries[countryCode] || countryCode.toLowerCase();
           };
 
           const getHappeningsEyebrow = (filter) => {
             const countryCode = (filter || "").split("-")[0];
-            return `daily ${countryCode.toUpperCase()} happenings`;
+            return `Daily ${countryCode.toUpperCase()} Happenings`;
           };
 
           const updatePageCopy = (filter) => {
             const isHappenings = filter.includes("happenings");
             if (isHappenings) {
               if (heroEyebrow) heroEyebrow.textContent = getHappeningsEyebrow(filter);
-              if (heroTitle) heroTitle.textContent = `latest stories happening in ${getCountryLabel(filter)}`;
+              if (heroTitle) heroTitle.textContent = `Latest stories happening in ${getCountryLabel(filter)}`;
               if (ctaEyebrow) ctaEyebrow.textContent = "have a story to share?";
               if (ctaTitle) ctaTitle.textContent = "write in to us @ hello@viralasia.co or whatsapp us at 90906912";
               if (ctaButton) ctaButton.textContent = "share a story";
             } else {
-              if (heroEyebrow) heroEyebrow.textContent = "Viral Asia Blog";
-              if (heroTitle) heroTitle.textContent = "Stories that move Singapore";
+              if (heroEyebrow) heroEyebrow.textContent = "Daily SG Happenings";
+              if (heroTitle) heroTitle.textContent = "Latest stories happening in Singapore";
               if (ctaEyebrow) ctaEyebrow.textContent = "build viral stories and craft effective campaigns";
               if (ctaTitle) ctaTitle.textContent = "build viral stories and craft effective campaigns";
               if (ctaButton) ctaButton.textContent = "plan a campaign";
@@ -1102,8 +1102,8 @@ const blogSchema = {
   .blog-cta h2 {
     max-width: 760px;
     margin: 0;
-    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 var(--font-body);
-    letter-spacing: -0.02em;
+    font: 600 1.06rem/1.55 var(--font-body);
+    letter-spacing: 0;
     text-wrap: balance;
   }
 
