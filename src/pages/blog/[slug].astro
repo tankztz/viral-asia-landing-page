@@ -106,6 +106,9 @@ const fallbackImage = viralPostItems[0]?.cover;
 const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
 const articleDescription = post?.excerpt;
 const schemaDescription = post?.excerpt || post?.title;
+const canonicalUrl = post?.slug?.current
+  ? `https://viralasia.co/blog/${post.slug.current}/`
+  : undefined;
 const cleanRelatedPosts = relatedPosts.filter(
   (entry) => entry.slug?.current && entry.title && !/test/i.test(entry.title),
 );
@@ -127,7 +130,8 @@ const articleSchema = post && {
   },
   articleSection: primaryCategory,
   image: heroImage,
-  url: `/blog/${post.slug.current}`,
+  mainEntityOfPage: canonicalUrl,
+  url: canonicalUrl,
 };
 
 const portableTextComponents = {
@@ -137,7 +141,13 @@ const portableTextComponents = {
 };
 ---
 
-<Layout title={`${post.title} | Viral Asia Blog`}>
+<Layout
+  title={`${post.title} | Viral Asia Blog`}
+  description={schemaDescription}
+  canonicalUrl={canonicalUrl}
+  imageUrl={heroImage}
+  type="article"
+>
   {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
 
   <main class="article-page" data-emdash-site="viral-asia" data-emdash-entry={post.slug.current}>

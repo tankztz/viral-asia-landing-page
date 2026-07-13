@@ -3,20 +3,37 @@ import { isProduction } from "../config/environment";
 
 interface Props {
   title: string;
+  description?: string;
+  canonicalUrl?: string;
+  imageUrl?: string;
+  type?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = "Viral Asia is a leading social media marketing company in Singapore that helps businesses grow their online presence",
+  canonicalUrl,
+  imageUrl,
+  type = "website",
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="description"
-      content="Viral Asia is a leading social media marketing company in Singapore that helps businesses grow their online presence"
-    />
+    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta name="twitter:card" content={imageUrl ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260711" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20260711" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=20260711" />
