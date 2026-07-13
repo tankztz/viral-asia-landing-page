@@ -150,7 +150,7 @@ const inferCampaignCategory = (post: (typeof viralPostItems)[number]) => {
     return resolveCategory("Travel", ["SG Explore"]);
   }
   if (post.category === "news") {
-    return resolveCategory("News", ["SG Daily Happenings"]);
+    return resolveCategory("Happenings", ["SG Daily Happenings"]);
   }
   return resolveCategory("Brand Stories", ["SG Daily Happenings"]);
 };
@@ -256,7 +256,7 @@ const blogSchema = {
       </div>
     </header>
 
-    <section class="top-stories" aria-labelledby="top-stories-heading">
+    <section class="top-stories" aria-labelledby="top-stories-heading" data-filter-section>
       <div class="section-label">
         <h2 id="top-stories-heading">Top Stories</h2>
       </div>
@@ -310,10 +310,10 @@ const blogSchema = {
       </div>
     </section>
 
-    <section class="content-feed" aria-labelledby="latest-heading">
+    <section class="content-feed" aria-labelledby="latest-heading" data-filter-section data-primary-filter-section>
       <div class="main-feed">
         <div class="section-label">
-          <h2 id="latest-heading">Latest News</h2>
+          <h2 id="latest-heading">Latest Happenings</h2>
         </div>
 
         <div class="article-list" data-emdash-entry-list>
@@ -322,6 +322,7 @@ const blogSchema = {
               <article
                 class="list-story"
                 data-filter-card
+                data-primary-filter-card
                 data-category={toFilterValue(inferCategory(post))}
                 data-emdash-entry
               >
@@ -356,7 +357,7 @@ const blogSchema = {
               >
                 <img src={post.cover} alt={post.title} loading="lazy" />
                 <div>
-                  <span>{post.category === "news" ? "News signal" : "Brand story"}</span>
+                  <span>{post.category === "news" ? "Happenings signal" : "Brand story"}</span>
                   <strong>{post.title}</strong>
                   <p>{post.combinedViewsLabel} estimated cross-platform views</p>
                 </div>
@@ -386,7 +387,7 @@ const blogSchema = {
 
     {
       topicHighlights.length > 0 && (
-        <section class="topic-band" aria-label="Editorial categories">
+        <section class="topic-band" aria-label="Editorial categories" data-filter-section>
           {topicHighlights.map(([category, description]) => (
             <div data-filter-card data-category={toFilterValue(category)}>
               <span>{category}</span>
@@ -447,6 +448,9 @@ const blogSchema = {
             document.querySelectorAll("[data-filter-card][data-category]"),
           );
           const emptyMessage = document.querySelector("[data-filter-empty]");
+          const filterSections = Array.from(
+            document.querySelectorAll("[data-filter-section]"),
+          );
 
           const applyCategoryFilter = (filter, shouldPush = true) => {
             const normalizedFilter = filter || "latest";
@@ -467,6 +471,19 @@ const blogSchema = {
               const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
               card.hidden = !shouldShow;
               if (shouldShow) visibleCount += 1;
+            });
+
+            filterSections.forEach((section) => {
+              const sectionCards = Array.from(
+                section.hasAttribute("data-primary-filter-section")
+                  ? section.querySelectorAll("[data-primary-filter-card][data-category]")
+                  : section.querySelectorAll("[data-filter-card][data-category]"),
+              );
+              const visibleSectionCards = sectionCards.filter((card) => !card.hidden);
+              section.toggleAttribute(
+                "data-filter-empty-section",
+                normalizedFilter !== "latest" && visibleSectionCards.length === 0,
+              );
             });
 
             emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
@@ -768,7 +785,8 @@ const blogSchema = {
     color: #ffffff;
   }
 
-  [data-filter-card][hidden] {
+  [data-filter-card][hidden],
+  [data-filter-section][data-filter-empty-section] {
     display: none !important;
   }
 
