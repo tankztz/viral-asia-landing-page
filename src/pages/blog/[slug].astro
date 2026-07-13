@@ -101,6 +101,18 @@ const getImage = (entry?: BlogPost, width = 1400) =>
     : undefined;
 
 const primaryCategory = post ? inferCategory(post) : "Story";
+const isHappeningsArticle = primaryCategory.toLowerCase().includes("happenings");
+const articleCta = isHappeningsArticle
+  ? {
+      eyebrow: "have a story to share?",
+      title: "write in to us @ hello@viralasia.co or whatsapp us at 90906912",
+      button: "share a story",
+    }
+  : {
+      eyebrow: "build viral stories and craft effective campaigns",
+      title: "build viral stories and craft effective campaigns",
+      button: "plan a campaign",
+    };
 const heroImage = getImage(post);
 const fallbackImage = viralPostItems[0]?.cover;
 const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
@@ -225,7 +237,7 @@ const portableTextComponents = {
             <span>Published</span>
             <strong>{formatDate(post.publishedAt)}</strong>
           </div>
-          <a href={whatsappHref}>Plan a story</a>
+          <a href={whatsappHref}>{articleCta.button}</a>
         </aside>
 
         <div class="article-body" data-emdash-body>
@@ -270,10 +282,10 @@ const portableTextComponents = {
 
     <section class="blog-cta">
       <div>
-        <p>Want a story people actually finish?</p>
-        <h2>Build it like content. Distribute it like a campaign.</h2>
+        <p>{articleCta.eyebrow}</p>
+        <h2>{articleCta.title}</h2>
       </div>
-      <a href={whatsappHref}>Plan a campaign</a>
+      <a href={whatsappHref}>{articleCta.button}</a>
     </section>
 
     <script is:inline>
@@ -349,7 +361,7 @@ const portableTextComponents = {
     overflow-x: clip;
     background: var(--paper);
     color: var(--ink);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-body);
   }
 
   .sticky-top {
@@ -397,7 +409,7 @@ const portableTextComponents = {
   .article-rail a,
   .related-grid span,
   .blog-cta p {
-    font: 900 0.74rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.74rem/1 var(--font-body);
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
@@ -558,7 +570,7 @@ const portableTextComponents = {
   .headline-block h1 {
     margin: 0;
     max-width: 15ch;
-    font: 900 clamp(2.5rem, 5.1vw, 4.9rem) / 0.94 Arial, Helvetica, sans-serif;
+    font: 900 clamp(2.5rem, 5.1vw, 4.9rem) / 0.94 var(--font-body);
     letter-spacing: -0.035em;
     text-wrap: balance;
   }
@@ -568,7 +580,7 @@ const portableTextComponents = {
     max-width: 42rem;
     margin-top: 1rem;
     color: var(--muted);
-    font: 600 1.06rem/1.55 Arial, Helvetica, sans-serif;
+    font: 600 1.06rem/1.55 var(--font-body);
   }
 
   .article-meta {
@@ -631,7 +643,7 @@ const portableTextComponents = {
   }
 
   .article-rail strong {
-    font: 900 0.98rem/1.25 Arial, Helvetica, sans-serif;
+    font: 900 0.98rem/1.25 var(--font-body);
   }
 
   .article-rail a {
@@ -651,7 +663,7 @@ const portableTextComponents = {
   :global(.article-body p),
   :global(.article-body li) {
     color: #1d1d1d;
-    font: 500 clamp(1.04rem, 2vw, 1.18rem) / 1.75 Arial, Helvetica, sans-serif;
+    font: 500 clamp(1.04rem, 2vw, 1.18rem) / 1.75 var(--font-body);
   }
 
   :global(.article-body p:first-child) {
@@ -661,21 +673,21 @@ const portableTextComponents = {
   :global(.article-body h2) {
     margin: 2.2rem 0 0.8rem;
     color: var(--ink);
-    font: 900 clamp(1.8rem, 4.5vw, 3rem) / 0.98 Arial, Helvetica, sans-serif;
+    font: 900 clamp(1.8rem, 4.5vw, 3rem) / 0.98 var(--font-body);
     letter-spacing: -0.02em;
   }
 
   :global(.article-body h3) {
     margin: 1.8rem 0 0.7rem;
     color: var(--ink);
-    font: 900 1.45rem/1.1 Arial, Helvetica, sans-serif;
+    font: 900 1.45rem/1.1 var(--font-body);
   }
 
   :global(.article-body blockquote) {
     margin: 2rem 0;
     border-left: 5px solid var(--red);
     color: var(--ink);
-    font: 900 clamp(1.35rem, 3vw, 2rem) / 1.2 Arial, Helvetica, sans-serif;
+    font: 900 clamp(1.35rem, 3vw, 2rem) / 1.2 var(--font-body);
     padding-left: 1rem;
   }
 
@@ -746,13 +758,13 @@ const portableTextComponents = {
 
   .related-grid h3 {
     margin: 0;
-    font: 900 1.18rem/1.08 Arial, Helvetica, sans-serif;
+    font: 900 1.18rem/1.08 var(--font-body);
     text-wrap: pretty;
   }
 
   .related-grid time {
     color: #777777;
-    font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
+    font: 800 0.72rem/1 var(--font-body);
     text-transform: uppercase;
   }
 
@@ -769,12 +781,13 @@ const portableTextComponents = {
   .blog-cta p {
     margin: 0 0 0.45rem;
     color: var(--red);
+    text-transform: none;
   }
 
   .blog-cta h2 {
     max-width: 760px;
     margin: 0;
-    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 Arial, Helvetica, sans-serif;
+    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 var(--font-body);
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
@@ -784,7 +797,7 @@ const portableTextComponents = {
     border-radius: 3px;
     background: var(--red);
     color: #ffffff;
-    font: 900 0.8rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.8rem/1 var(--font-body);
     padding: 0.9rem 1rem;
     text-decoration: none;
     text-transform: uppercase;
@@ -811,7 +824,7 @@ const portableTextComponents = {
   .news-footer p {
     margin: 0.55rem 0 0;
     color: rgba(255, 255, 255, 0.72);
-    font: 600 0.9rem/1.35 Arial, Helvetica, sans-serif;
+    font: 600 0.9rem/1.35 var(--font-body);
   }
 
   .news-footer nav {
@@ -823,7 +836,7 @@ const portableTextComponents = {
 
   .news-footer a {
     color: #ffffff;
-    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.72rem/1 var(--font-body);
     text-decoration: none;
     text-transform: uppercase;
   }

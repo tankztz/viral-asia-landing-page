@@ -47,15 +47,37 @@ const {
   </body>
 </html>
 <style is:global>
+  @font-face {
+    font-family: "proxima-nova-regular";
+    src: url("/fonts/says/ProximaNova-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "proxima-nova-semibold";
+    src: url("/fonts/says/ProximaNova-SemiBold.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "proxima-nova-bold";
+    src: url("/fonts/says/ProximaNova-Bold.woff2") format("woff2");
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
+    --font-body: "proxima-nova-regular", Arial, sans-serif;
+    --font-semibold: "proxima-nova-semibold", Arial, sans-serif;
+    --font-bold: "proxima-nova-bold", Arial, sans-serif;
+    --font-display: "proxima-nova-bold", Arial, sans-serif;
     color-scheme: dark;
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
+    font-family: var(--font-body);
     background: #08070b;
     color: #f7f5ff;
   }

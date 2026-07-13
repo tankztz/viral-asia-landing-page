@@ -101,7 +101,7 @@ const { title, subtitle, showBackButton = false } = Astro.props;
   nav a,
   .masthead-cta,
   .back-link {
-    font: 900 0.74rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.74rem/1 var(--font-body);
     letter-spacing: 0.02em;
     text-decoration: none;
     text-transform: uppercase;
@@ -169,7 +169,7 @@ const { title, subtitle, showBackButton = false } = Astro.props;
   .masthead-title p {
     margin: 0 0 0.7rem;
     color: #ffe100;
-    font: 900 0.76rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.76rem/1 var(--font-body);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -179,11 +179,7 @@ const { title, subtitle, showBackButton = false } = Astro.props;
     margin: 0;
     color: white;
     font:
-      900 clamp(2.8rem, 9vw, 7.2rem) / 0.9 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      "Arial Black",
-      sans-serif;
+      900 clamp(2.8rem, 9vw, 7.2rem) / 0.9 var(--font-display);
     letter-spacing: 0;
     text-transform: uppercase;
     text-wrap: balance;
@@ -194,7 +190,7 @@ const { title, subtitle, showBackButton = false } = Astro.props;
     max-width: 56rem;
     margin-top: 1rem;
     color: rgba(255, 255, 255, 0.76);
-    font: 600 clamp(1rem, 2vw, 1.18rem) / 1.5 Arial, Helvetica, sans-serif;
+    font: 600 clamp(1rem, 2vw, 1.18rem) / 1.5 var(--font-body);
   }
 
   @media (max-width: 840px) {

@@ -178,10 +178,20 @@ const postHref = (post: BlogPost) => `/blog/${post.slug.current}`;
 const postImage = (post?: BlogPost, width = 1200, fallbackIndex = 0) =>
   getImage(post, width) || fallbackImages[fallbackIndex % fallbackImages.length];
 
+const defaultHero = {
+  eyebrow: "Viral Asia Blog",
+  title: "Stories that move Singapore",
+};
+const defaultCta = {
+  eyebrow: "build viral stories and craft effective campaigns",
+  title: "build viral stories and craft effective campaigns",
+  button: "plan a campaign",
+};
+
 const blogSchema = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  name: "Viral Asia Blog",
+  name: "viral asia blog",
   url: "/blog",
   publisher: {
     "@type": "Organization",
@@ -251,8 +261,8 @@ const blogSchema = {
 
     <header class="news-header">
       <div class="masthead">
-        <p>Viral Asia Blog</p>
-        <h1>Stories that move Singapore</h1>
+        <p data-hero-eyebrow>{defaultHero.eyebrow}</p>
+        <h1 data-hero-title>{defaultHero.title}</h1>
       </div>
     </header>
 
@@ -400,10 +410,10 @@ const blogSchema = {
 
     <section class="blog-cta">
       <div>
-        <p>Want a story people actually finish?</p>
-        <h2>Build it like content. Distribute it like a campaign.</h2>
+        <p data-cta-eyebrow>{defaultCta.eyebrow}</p>
+        <h2 data-cta-title>{defaultCta.title}</h2>
       </div>
-      <a href={whatsappHref}>Plan a campaign</a>
+      <a href={whatsappHref} data-cta-button>{defaultCta.button}</a>
     </section>
 
     <p class="filter-empty" data-filter-empty>More stories in this category will appear here once they are published.</p>
@@ -448,14 +458,49 @@ const blogSchema = {
             document.querySelectorAll("[data-filter-card][data-category]"),
           );
           const emptyMessage = document.querySelector("[data-filter-empty]");
+          const heroEyebrow = document.querySelector("[data-hero-eyebrow]");
+          const heroTitle = document.querySelector("[data-hero-title]");
+          const ctaEyebrow = document.querySelector("[data-cta-eyebrow]");
+          const ctaTitle = document.querySelector("[data-cta-title]");
+          const ctaButton = document.querySelector("[data-cta-button]");
           const filterSections = Array.from(
             document.querySelectorAll("[data-filter-section]"),
           );
+
+          const getCountryLabel = (filter) => {
+            const countryCode = (filter || "").split("-")[0];
+            const countries = { sg: "singapore", th: "thailand" };
+            return countries[countryCode] || countryCode.toLowerCase();
+          };
+
+          const getHappeningsEyebrow = (filter) => {
+            const countryCode = (filter || "").split("-")[0];
+            return `daily ${countryCode.toUpperCase()} happenings`;
+          };
+
+          const updatePageCopy = (filter) => {
+            const isHappenings = filter.includes("happenings");
+            if (isHappenings) {
+              if (heroEyebrow) heroEyebrow.textContent = getHappeningsEyebrow(filter);
+              if (heroTitle) heroTitle.textContent = `latest stories happening in ${getCountryLabel(filter)}`;
+              if (ctaEyebrow) ctaEyebrow.textContent = "have a story to share?";
+              if (ctaTitle) ctaTitle.textContent = "write in to us @ hello@viralasia.co or whatsapp us at 90906912";
+              if (ctaButton) ctaButton.textContent = "share a story";
+            } else {
+              if (heroEyebrow) heroEyebrow.textContent = "Viral Asia Blog";
+              if (heroTitle) heroTitle.textContent = "Stories that move Singapore";
+              if (ctaEyebrow) ctaEyebrow.textContent = "build viral stories and craft effective campaigns";
+              if (ctaTitle) ctaTitle.textContent = "build viral stories and craft effective campaigns";
+              if (ctaButton) ctaButton.textContent = "plan a campaign";
+            }
+          };
 
           const applyCategoryFilter = (filter, shouldPush = true) => {
             const normalizedFilter = filter || "latest";
             let activeButton = null;
             let visibleCount = 0;
+
+            updatePageCopy(normalizedFilter);
 
             filterButtons.forEach((button) => {
               const isActive = button.dataset.filter === normalizedFilter;
@@ -560,7 +605,7 @@ const blogSchema = {
     overflow-x: clip;
     background: var(--paper);
     color: var(--ink);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-body);
   }
 
   .news-header {
@@ -614,7 +659,7 @@ const blogSchema = {
   .text-row span,
   .topic-band span,
   .blog-cta p {
-    font: 900 0.74rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.74rem/1 var(--font-body);
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
@@ -718,22 +763,18 @@ const blogSchema = {
   .masthead p {
     margin: 0 0 0.65rem;
     color: rgba(255, 255, 255, 0.84);
-    font: 900 0.82rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.82rem/1 var(--font-body);
     letter-spacing: 0.05em;
-    text-transform: uppercase;
+    text-transform: none;
   }
 
   .masthead h1 {
     max-width: 960px;
     margin: 0 auto;
     font:
-      900 clamp(2.8rem, 8vw, 7rem) / 0.88 Impact,
-      Haettenschweiler,
-      "Arial Narrow Bold",
-      "Arial Black",
-      sans-serif;
+      900 clamp(2.8rem, 8vw, 7rem) / 0.88 var(--font-display);
     letter-spacing: 0;
-    text-transform: uppercase;
+    text-transform: none;
     text-wrap: balance;
   }
 
@@ -742,7 +783,7 @@ const blogSchema = {
     max-width: 660px;
     margin: 0.9rem auto 0;
     color: rgba(255, 255, 255, 0.88);
-    font: 700 1rem/1.5 Arial, Helvetica, sans-serif;
+    font: 700 1rem/1.5 var(--font-body);
   }
 
   .category-strip {
@@ -860,7 +901,7 @@ const blogSchema = {
 
   .lead-story h3 {
     margin: 0.45rem 0 0;
-    font: 900 clamp(2rem, 4vw, 3.6rem) / 0.95 Arial, Helvetica, sans-serif;
+    font: 900 clamp(2rem, 4vw, 3.6rem) / 0.95 var(--font-body);
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
@@ -869,14 +910,14 @@ const blogSchema = {
     max-width: 720px;
     margin: 0.65rem 0 0.7rem;
     color: var(--muted);
-    font: 500 1.05rem/1.48 Arial, Helvetica, sans-serif;
+    font: 500 1.05rem/1.48 var(--font-body);
   }
 
   .lead-story time,
   .compact-story time,
   .text-row time {
     color: #777777;
-    font: 800 0.72rem/1 Arial, Helvetica, sans-serif;
+    font: 800 0.72rem/1 var(--font-body);
     text-transform: uppercase;
   }
 
@@ -903,7 +944,7 @@ const blogSchema = {
 
   .compact-story h3 {
     margin: 0.35rem 0 0.55rem;
-    font: 900 1.08rem/1.12 Arial, Helvetica, sans-serif;
+    font: 900 1.08rem/1.12 var(--font-body);
     text-wrap: pretty;
   }
 
@@ -938,14 +979,14 @@ const blogSchema = {
 
   .list-story h3 {
     margin: 0.35rem 0 0.5rem;
-    font: 900 clamp(1.2rem, 2.2vw, 1.7rem) / 1.05 Arial, Helvetica, sans-serif;
+    font: 900 clamp(1.2rem, 2.2vw, 1.7rem) / 1.05 var(--font-body);
     text-wrap: pretty;
   }
 
   .list-story p {
     margin: 0 0 0.75rem;
     color: var(--muted);
-    font: 500 0.96rem/1.45 Arial, Helvetica, sans-serif;
+    font: 500 0.96rem/1.45 var(--font-body);
   }
 
   .story-meta {
@@ -980,7 +1021,7 @@ const blogSchema = {
     margin: 0;
     background: var(--ink);
     color: #ffffff;
-    font: 900 1.2rem/1 Arial, Helvetica, sans-serif;
+    font: 900 1.2rem/1 var(--font-body);
     padding: 0.85rem 0.9rem;
     text-transform: uppercase;
   }
@@ -1009,14 +1050,14 @@ const blogSchema = {
   .text-row strong {
     display: block;
     margin: 0.3rem 0;
-    font: 900 0.96rem/1.15 Arial, Helvetica, sans-serif;
+    font: 900 0.96rem/1.15 var(--font-body);
   }
 
   .trend-row p,
   .empty-copy {
     margin: 0;
     color: var(--muted);
-    font: 500 0.85rem/1.35 Arial, Helvetica, sans-serif;
+    font: 500 0.85rem/1.35 var(--font-body);
   }
 
   .text-row {
@@ -1039,7 +1080,7 @@ const blogSchema = {
 
   .topic-band h2 {
     margin: 0.45rem 0 0;
-    font: 900 clamp(1.15rem, 2.4vw, 1.65rem) / 1.02 Arial, Helvetica, sans-serif;
+    font: 900 clamp(1.15rem, 2.4vw, 1.65rem) / 1.02 var(--font-body);
   }
 
   .blog-cta {
@@ -1055,12 +1096,13 @@ const blogSchema = {
   .blog-cta p {
     margin: 0 0 0.45rem;
     color: var(--red);
+    text-transform: none;
   }
 
   .blog-cta h2 {
     max-width: 760px;
     margin: 0;
-    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 Arial, Helvetica, sans-serif;
+    font: 900 clamp(1.8rem, 4.2vw, 3.2rem) / 0.96 var(--font-body);
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
@@ -1070,10 +1112,10 @@ const blogSchema = {
     border-radius: 3px;
     background: var(--red);
     color: #ffffff;
-    font: 900 0.8rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.8rem/1 var(--font-body);
     padding: 0.9rem 1rem;
     text-decoration: none;
-    text-transform: uppercase;
+    text-transform: none;
     white-space: nowrap;
   }
 
@@ -1089,7 +1131,7 @@ const blogSchema = {
     display: none;
     padding-bottom: 2rem;
     color: var(--muted);
-    font: 800 0.95rem/1.5 Arial, Helvetica, sans-serif;
+    font: 800 0.95rem/1.5 var(--font-body);
   }
 
   .filter-empty[data-visible="true"] {
@@ -1116,7 +1158,7 @@ const blogSchema = {
   .news-footer p {
     margin: 0.55rem 0 0;
     color: rgba(255, 255, 255, 0.72);
-    font: 600 0.9rem/1.35 Arial, Helvetica, sans-serif;
+    font: 600 0.9rem/1.35 var(--font-body);
   }
 
   .news-footer nav {
@@ -1128,7 +1170,7 @@ const blogSchema = {
 
   .news-footer a {
     color: #ffffff;
-    font: 900 0.72rem/1 Arial, Helvetica, sans-serif;
+    font: 900 0.72rem/1 var(--font-body);
     text-decoration: none;
     text-transform: uppercase;
   }
