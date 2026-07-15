@@ -63,12 +63,31 @@ const toFilterValue = (category: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-const categoryNav = [
-  "Latest",
-  ...studioCategories
-    .map((category) => category.title?.trim())
-    .filter((title): title is string => Boolean(title)),
+const preferredCategoryOrder = [
+  "SG Daily Happenings",
+  "SG Food",
+  "SG Events",
+  "SG Explore",
+  "TH Daily Happenings",
+  "TH Food",
+  "TH Events",
+  "TH Explore",
 ];
+
+const sortedCategoryTitles = studioCategories
+  .map((category) => category.title?.trim())
+  .filter((title): title is string => Boolean(title))
+  .sort((a, b) => {
+    const aIndex = preferredCategoryOrder.indexOf(a);
+    const bIndex = preferredCategoryOrder.indexOf(b);
+    if (aIndex !== -1 || bIndex !== -1) {
+      return (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
+        (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex);
+    }
+    return a.localeCompare(b);
+  });
+
+const categoryNav = ["Latest", ...sortedCategoryTitles];
 
 const topicHighlights = studioCategories
   .filter((category) => category.title?.trim() && category.description?.trim())
