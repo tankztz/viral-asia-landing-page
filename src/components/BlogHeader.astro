@@ -16,8 +16,8 @@ const { title, subtitle, showBackButton = false } = Astro.props;
       <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
     </a>
 
-    <nav aria-label="Blog navigation">
-      <a href="/blog" aria-current={showBackButton ? undefined : "page"}>Blog</a>
+    <nav aria-label="Main navigation">
+      <a href="/" aria-current={showBackButton ? undefined : "page"}>Main page</a>
       {navItems.slice(1, 4).map(([label, href]) => <a href={href}>{label}</a>)}
     </nav>
 
@@ -27,13 +27,13 @@ const { title, subtitle, showBackButton = false } = Astro.props;
   <div class="masthead-title">
     {
       showBackButton && (
-        <a class="back-link" href="/blog" aria-label="Back to blog">
+        <a class="back-link" href="/" aria-label="Back to main page">
           <span aria-hidden="true">←</span>
-          Back to Blog
+          Back to main page
         </a>
       )
     }
-    <p>Viral Asia newsroom</p>
+    <p>Viral Asia</p>
     <h1>{title}</h1>
     {subtitle && <span>{subtitle}</span>}
   </div>

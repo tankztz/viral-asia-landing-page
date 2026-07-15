@@ -179,8 +179,8 @@ const postImage = (post?: BlogPost, width = 1200, fallbackIndex = 0) =>
   getImage(post, width) || fallbackImages[fallbackIndex % fallbackImages.length];
 
 const defaultHero = {
-  eyebrow: "Daily SG Happenings",
-  title: "Latest stories happening in Singapore",
+  eyebrow: "SG Daily Happenings",
+  title: "Latest happenings in Singapore",
 };
 const defaultCta = {
   eyebrow: "build viral stories and craft effective campaigns",
@@ -191,7 +191,7 @@ const defaultCta = {
 const blogSchema = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  name: "Viral Asia Stories",
+  name: "Latest happenings in Singapore",
   url: "/blog",
   publisher: {
     "@type": "Organization",
@@ -209,7 +209,7 @@ const blogSchema = {
 };
 ---
 
-<Layout title="Stories | Viral Asia">
+<Layout title="Latest happenings in Singapore | Viral Asia">
   <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
   <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">
@@ -244,7 +244,7 @@ const blogSchema = {
         </div>
       </nav>
 
-      <nav class="category-strip" aria-label="Filter stories by category" data-category-filter>
+      <nav class="category-strip" aria-label="Filter categories" data-category-filter>
         <div>
           {categoryNav.map((category, index) => (
             <button
@@ -354,7 +354,7 @@ const blogSchema = {
         </div>
       </div>
 
-      <aside class="rail-feed" aria-label="More stories">
+      <aside class="rail-feed" aria-label="More reads">
         <div class="rail-panel">
           <h2>Trending</h2>
           {
@@ -474,21 +474,21 @@ const blogSchema = {
           };
 
           const getHappeningsEyebrow = (filter) => {
-            const countryCode = (filter || "").split("-")[0];
-            return `Daily ${countryCode.toUpperCase()} Happenings`;
+            const countryCode = (filter || "").split("-")[0].toUpperCase();
+            return `${countryCode} Daily Happenings`;
           };
 
           const updatePageCopy = (filter) => {
             const isHappenings = filter.includes("happenings");
             if (isHappenings) {
               if (heroEyebrow) heroEyebrow.textContent = getHappeningsEyebrow(filter);
-              if (heroTitle) heroTitle.textContent = `Latest stories happening in ${getCountryLabel(filter)}`;
+              if (heroTitle) heroTitle.textContent = `Latest happenings in ${getCountryLabel(filter)}`;
               if (ctaEyebrow) ctaEyebrow.textContent = "have a story to share?";
               if (ctaTitle) ctaTitle.textContent = "write in to us @ hello@viralasia.co or whatsapp us at 90906912";
               if (ctaButton) ctaButton.textContent = "share a story";
             } else {
-              if (heroEyebrow) heroEyebrow.textContent = "Daily SG Happenings";
-              if (heroTitle) heroTitle.textContent = "Latest stories happening in Singapore";
+              if (heroEyebrow) heroEyebrow.textContent = "SG Daily Happenings";
+              if (heroTitle) heroTitle.textContent = "Latest happenings in Singapore";
               if (ctaEyebrow) ctaEyebrow.textContent = "build viral stories and craft effective campaigns";
               if (ctaTitle) ctaTitle.textContent = "build viral stories and craft effective campaigns";
               if (ctaButton) ctaButton.textContent = "plan a campaign";
@@ -578,7 +578,7 @@ const blogSchema = {
         </a>
       </div>
 
-      <nav aria-label="Blog footer navigation">
+      <nav aria-label="Footer navigation">
         <a href="/work">Our Work</a>
         <a href="/services">Services</a>
         <a href="/about">About Us</a>

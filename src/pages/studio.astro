@@ -19,7 +19,7 @@
 
       const blogStructure = (S) =>
         S.list()
-          .title('Blog')
+          .title('Content')
           .items([
             S.documentTypeListItem('post').title('Posts'),
             S.documentTypeListItem('author').title('Authors'),
@@ -29,7 +29,7 @@
       const config = defineConfig({
         projectId: '3an9f3n5',
         dataset: 'production',
-        title: 'Viral Asia Blog',
+        title: 'Viral Asia Studio',
         apiVersion: '2024-03-19',
         basePath: '/studio',
         plugins: [structureTool({ structure: blogStructure }), visionTool()],
