@@ -66,5 +66,51 @@ export default defineType({
         },
       ],
     }),
+    defineArrayMember({
+      name: "socialEmbed",
+      title: "Social embed",
+      type: "object",
+      fields: [
+        {
+          name: "platform",
+          title: "Platform",
+          type: "string",
+          options: {
+            list: [
+              { title: "Instagram", value: "instagram" },
+              { title: "TikTok", value: "tiktok" },
+              { title: "YouTube", value: "youtube" },
+            ],
+            layout: "radio",
+          },
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: "url",
+          title: "Post URL",
+          type: "url",
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: "caption",
+          title: "Caption",
+          type: "string",
+          description: "Optional source label shown under the embed.",
+        },
+      ],
+      preview: {
+        select: {
+          platform: "platform",
+          url: "url",
+          caption: "caption",
+        },
+        prepare({ platform, url, caption }) {
+          return {
+            title: caption || `${platform || "Social"} embed`,
+            subtitle: url,
+          };
+        },
+      },
+    }),
   ],
 });

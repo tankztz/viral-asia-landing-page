@@ -9,6 +9,12 @@ import {
 } from "../config/site";
 import { navItems, viralPostItems, whatsappHref } from "../data/viralSite";
 
+interface ImageDimensions {
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
+}
+
 interface BlogPost extends SanityDocument {
   title: string;
   slug: { current: string };
@@ -19,6 +25,9 @@ interface BlogPost extends SanityDocument {
   mainImage?: {
     asset?: {
       url?: string;
+      metadata?: {
+        dimensions?: ImageDimensions;
+      };
     };
   };
 }
@@ -41,7 +50,10 @@ const POSTS_QUERY = `*[
   categories[]->{title},
   mainImage {
     asset-> {
-      url
+      url,
+      metadata {
+        dimensions
+      }
     }
   }
 }`;
@@ -184,6 +196,20 @@ const getImage = (post?: BlogPost, width = 1200) =>
     ? `${post.mainImage.asset.url}?w=${width}&auto=format`
     : undefined;
 
+const getImageOrientation = (post?: BlogPost) => {
+  const dimensions = post?.mainImage?.asset?.metadata?.dimensions;
+  const aspectRatio =
+    dimensions?.aspectRatio ||
+    (dimensions?.width && dimensions?.height
+      ? dimensions.width / dimensions.height
+      : undefined);
+
+  if (!aspectRatio) return "unknown";
+  if (aspectRatio < 0.86) return "portrait";
+  if (aspectRatio > 1.18) return "landscape";
+  return "square";
+};
+
 const cleanPosts = posts.filter(
   (post) => post.slug?.current && post.title && !/test/i.test(post.title),
 );
@@ -322,7 +348,12 @@ const blogSchema = {
               data-emdash-featured-post
             >
               <a href={postHref(featuredPost)}>
-                <img src={postImage(featuredPost, 1400, 0)} alt={featuredPost.title} loading="eager" />
+                <img
+                  src={postImage(featuredPost, 1400, 0)}
+                  alt={featuredPost.title}
+                  data-media-orientation={getImageOrientation(featuredPost)}
+                  loading="eager"
+                />
                 <div>
                   <span>{inferCategory(featuredPost)}</span>
                   <h3>{featuredPost.title}</h3>
@@ -347,7 +378,12 @@ const blogSchema = {
                 data-emdash-entry
               >
                 <a href={postHref(post)}>
-                  <img src={postImage(post, 700, index + 1)} alt={post.title} loading="lazy" />
+                  <img
+                    src={postImage(post, 700, index + 1)}
+                    alt={post.title}
+                    data-media-orientation={getImageOrientation(post)}
+                    loading="lazy"
+                  />
                   <div>
                     <span>{inferCategory(post)}</span>
                     <h3>{post.title}</h3>
@@ -378,7 +414,12 @@ const blogSchema = {
                 data-emdash-entry
               >
                 <a href={postHref(post)}>
-                  <img src={postImage(post, 760, index + 5)} alt={post.title} loading="lazy" />
+                  <img
+                    src={postImage(post, 760, index + 5)}
+                    alt={post.title}
+                    data-media-orientation={getImageOrientation(post)}
+                    loading="lazy"
+                  />
                   <div>
                     <span>{inferCategory(post)}</span>
                     <h3>{post.title}</h3>
@@ -956,6 +997,12 @@ const blogSchema = {
     object-fit: cover;
   }
 
+  .lead-story img[data-media-orientation="portrait"] {
+    aspect-ratio: 4 / 5;
+    background: #111111;
+    object-fit: contain;
+  }
+
   .lead-story span,
   .compact-story span,
   .list-story span,
@@ -1009,6 +1056,12 @@ const blogSchema = {
     object-fit: cover;
   }
 
+  .compact-story img[data-media-orientation="portrait"] {
+    aspect-ratio: 4 / 5;
+    background: #111111;
+    object-fit: contain;
+  }
+
   .compact-story h3 {
     margin: 0.35rem 0 0.55rem;
     font: 900 1.08rem/1.12 var(--font-body);
@@ -1042,6 +1095,12 @@ const blogSchema = {
     aspect-ratio: 4 / 3;
     background: var(--soft);
     object-fit: cover;
+  }
+
+  .list-story img[data-media-orientation="portrait"] {
+    aspect-ratio: 4 / 5;
+    background: #111111;
+    object-fit: contain;
   }
 
   .list-story h3 {

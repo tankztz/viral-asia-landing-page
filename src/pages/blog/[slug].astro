@@ -4,8 +4,15 @@ import { sanityClient } from "sanity:client";
 import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import PortableSanityImage from "../../components/PortableSanityImage.astro";
+import SocialEmbed from "../../components/SocialEmbed.astro";
 import { canonicalUrl as buildCanonicalUrl } from "../../config/site";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
+
+interface ImageDimensions {
+  width?: number;
+  height?: number;
+  aspectRatio?: number;
+}
 
 interface BlogPost extends SanityDocument {
   title: string;
@@ -17,6 +24,9 @@ interface BlogPost extends SanityDocument {
   mainImage?: {
     asset?: {
       url?: string;
+      metadata?: {
+        dimensions?: ImageDimensions;
+      };
     };
   };
   body?: unknown[];
@@ -41,7 +51,10 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   categories[]->{title},
   mainImage {
     asset-> {
-      url
+      url,
+      metadata {
+        dimensions
+      }
     }
   },
   _updatedAt,
@@ -64,7 +77,10 @@ const RELATED_POSTS_QUERY = `*[
   categories[]->{title},
   mainImage {
     asset-> {
-      url
+      url,
+      metadata {
+        dimensions
+      }
     }
   }
 }`;
@@ -102,6 +118,20 @@ const getImage = (entry?: BlogPost, width = 1400) =>
   entry?.mainImage?.asset?.url
     ? `${entry.mainImage.asset.url}?w=${width}&auto=format`
     : undefined;
+
+const getImageOrientation = (entry?: BlogPost) => {
+  const dimensions = entry?.mainImage?.asset?.metadata?.dimensions;
+  const aspectRatio =
+    dimensions?.aspectRatio ||
+    (dimensions?.width && dimensions?.height
+      ? dimensions.width / dimensions.height
+      : undefined);
+
+  if (!aspectRatio) return "unknown";
+  if (aspectRatio < 0.86) return "portrait";
+  if (aspectRatio > 1.18) return "landscape";
+  return "square";
+};
 
 const primaryCategory = post ? inferCategory(post) : "Story";
 const isHappeningsArticle = primaryCategory.toLowerCase().includes("happenings");
@@ -158,6 +188,7 @@ const articleSchema = post && {
 const portableTextComponents = {
   type: {
     image: PortableSanityImage,
+    socialEmbed: SocialEmbed,
   },
 };
 ---
@@ -229,6 +260,7 @@ const portableTextComponents = {
           <img
             src={heroImage || fallbackImage}
             alt={post.title}
+            data-media-orientation={getImageOrientation(post)}
             width="1400"
             height="900"
             loading="eager"
@@ -275,6 +307,7 @@ const portableTextComponents = {
                 <img
                   src={getImage(entry, 800) || viralPostItems[1]?.cover}
                   alt={entry.title}
+                  data-media-orientation={getImageOrientation(entry)}
                   loading="lazy"
                 />
                 <div>
@@ -299,6 +332,122 @@ const portableTextComponents = {
 
     <script is:inline>
       (() => {
+        const loadEmbedScript = (src, id, onLoad) => {
+          const existing = document.getElementById(id);
+          if (existing) {
+            existing.addEventListener("load", onLoad, { once: true });
+            onLoad();
+            return;
+          }
+
+          const script = document.createElement("script");
+          script.id = id;
+          script.async = true;
+          script.src = src;
+          script.addEventListener("load", onLoad, { once: true });
+          document.body.append(script);
+        };
+
+        const getInstagramEmbedUrl = (sourceUrl) => {
+          try {
+            const parsed = new URL(sourceUrl);
+            const match = parsed.pathname.match(/\/(p|reel|tv)\/([^/?]+)/);
+            return match
+              ? `https://www.instagram.com/${match[1]}/${match[2]}/embed/captioned/`
+              : "";
+          } catch {
+            return "";
+          }
+        };
+
+        const getTikTokVideoId = (sourceUrl) => {
+          try {
+            return new URL(sourceUrl).pathname.match(/\/video\/(\d+)/)?.[1] || "";
+          } catch {
+            return "";
+          }
+        };
+
+        const upgradeSourceLinks = () => {
+          const links = document.querySelectorAll(
+            '.article-body p a[href*="instagram.com"], .article-body p a[href*="tiktok.com"]',
+          );
+          let needsTikTok = false;
+
+          links.forEach((link) => {
+            const paragraph = link.closest("p");
+            if (!paragraph || paragraph.dataset.embedUpgraded === "true") return;
+
+            const sourceUrl = link.href;
+            const isInstagram = /instagram\.com/.test(sourceUrl);
+            const isTikTok = /tiktok\.com/.test(sourceUrl);
+            const text = paragraph.textContent?.trim().toLowerCase() || "";
+            const isSourceLink =
+              text.startsWith("source:") ||
+              text.includes("instagram post") ||
+              text.includes("tiktok post");
+            if ((!isInstagram && !isTikTok) || !isSourceLink) return;
+
+            const figure = document.createElement("figure");
+            figure.className = `source-social-embed source-social-embed--${
+              isInstagram ? "instagram" : "tiktok"
+            }`;
+
+            if (isInstagram) {
+              const embedUrl = getInstagramEmbedUrl(sourceUrl);
+              if (embedUrl) {
+                const frame = document.createElement("iframe");
+                frame.className = "source-social-embed-frame";
+                frame.src = embedUrl;
+                frame.title = link.textContent || "Embedded Instagram post";
+                frame.loading = "lazy";
+                frame.allow =
+                  "autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share";
+                figure.append(frame);
+              } else {
+                const fallbackLink = document.createElement("a");
+                fallbackLink.href = sourceUrl;
+                fallbackLink.target = "_blank";
+                fallbackLink.rel = "noopener noreferrer";
+                fallbackLink.textContent = "View this post on Instagram";
+                figure.append(fallbackLink);
+              }
+            }
+
+            if (isTikTok) {
+              const quote = document.createElement("blockquote");
+              quote.className = "tiktok-embed";
+              quote.cite = sourceUrl;
+              quote.dataset.videoId = getTikTokVideoId(sourceUrl);
+              const fallbackLink = document.createElement("a");
+              fallbackLink.href = sourceUrl;
+              fallbackLink.target = "_blank";
+              fallbackLink.rel = "noopener noreferrer";
+              fallbackLink.textContent = "View this post on TikTok";
+              quote.append(fallbackLink);
+              figure.append(quote);
+              needsTikTok = true;
+            }
+
+            const caption = document.createElement("figcaption");
+            const captionText = document.createElement("span");
+            captionText.textContent = link.textContent || "Source video";
+            const sourceAnchor = document.createElement("a");
+            sourceAnchor.href = sourceUrl;
+            sourceAnchor.target = "_blank";
+            sourceAnchor.rel = "noopener noreferrer";
+            sourceAnchor.textContent = "Open source post";
+            caption.append(captionText, sourceAnchor);
+            figure.append(caption);
+            paragraph.dataset.embedUpgraded = "true";
+            paragraph.replaceWith(figure);
+          });
+
+          if (needsTikTok) {
+            loadEmbedScript("https://www.tiktok.com/embed.js", "tiktok-embed-script", () => {});
+          }
+        };
+
         const initMenu = () => {
           const header = document.querySelector("[data-sticky-header]");
           const toggle = document.querySelector("[data-menu-toggle]");
@@ -329,9 +478,17 @@ const portableTextComponents = {
         };
 
         if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", initMenu, { once: true });
+          document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+              initMenu();
+              upgradeSourceLinks();
+            },
+            { once: true },
+          );
         } else {
           initMenu();
+          upgradeSourceLinks();
         }
       })();
     </script>
@@ -622,6 +779,11 @@ const portableTextComponents = {
     object-fit: contain;
   }
 
+  figure img[data-media-orientation="portrait"] {
+    aspect-ratio: 4 / 5;
+    background: #111111;
+  }
+
   .article-layout {
     display: grid;
     grid-template-columns: 220px minmax(0, 760px);
@@ -711,6 +873,43 @@ const portableTextComponents = {
     font-weight: 900;
   }
 
+  :global(.source-social-embed) {
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    margin: 2rem 0;
+  }
+
+  :global(.source-social-embed .instagram-media),
+  :global(.source-social-embed .tiktok-embed) {
+    width: min(100%, 540px) !important;
+    min-width: 0 !important;
+    margin: 0 auto !important;
+  }
+
+  :global(.source-social-embed-frame) {
+    width: min(100%, 540px);
+    height: min(720px, 82vh);
+    border: 1px solid rgba(5, 5, 5, 0.14);
+    background: #ffffff;
+  }
+
+  :global(.source-social-embed figcaption) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.65rem;
+    width: min(100%, 540px);
+    margin: 0;
+    color: rgba(5, 5, 5, 0.58);
+    font: 700 0.74rem/1.45 var(--font-body);
+  }
+
+  :global(.source-social-embed figcaption a) {
+    color: rgba(5, 5, 5, 0.72);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
   .more-stories {
     padding-bottom: clamp(2rem, 5vw, 4rem);
   }
@@ -754,6 +953,12 @@ const portableTextComponents = {
     aspect-ratio: 4 / 3;
     background: var(--soft);
     object-fit: cover;
+  }
+
+  .related-grid img[data-media-orientation="portrait"] {
+    aspect-ratio: 4 / 5;
+    background: #111111;
+    object-fit: contain;
   }
 
   .related-grid div {
