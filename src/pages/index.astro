@@ -1,1247 +1,1352 @@
 ---
+import type { SanityDocument } from "@sanity/client";
+import { sanityClient } from "sanity:client";
 import Layout from "../layouts/Layout.astro";
-import {
-  heroVideos,
-  navItems,
-  partners,
-  services,
-  stats,
-  testimonials,
-  whatsappHref,
-  workCards,
-} from "../data/viralSite";
+import { navItems, viralPostItems, whatsappHref } from "../data/viralSite";
+
+interface BlogPost extends SanityDocument {
+  title: string;
+  slug: { current: string };
+  publishedAt?: string;
+  excerpt?: string;
+  author?: { name?: string };
+  categories?: { title?: string }[];
+  mainImage?: {
+    asset?: {
+      url?: string;
+    };
+  };
+}
+
+interface BlogCategory extends SanityDocument {
+  title: string;
+  description?: string;
+}
+
+const POSTS_QUERY = `*[
+  _type == "post"
+  && defined(slug.current)
+]|order(publishedAt desc)[0...18]{
+  _id,
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  author->{name},
+  categories[]->{title},
+  mainImage {
+    asset-> {
+      url
+    }
+  }
+}`;
+
+const CATEGORIES_QUERY = `*[
+  _type == "category"
+  && defined(title)
+]|order(title asc){
+  _id,
+  title,
+  description
+}`;
+
+const [posts, studioCategories] = await Promise.all([
+  sanityClient.fetch<BlogPost[]>(POSTS_QUERY),
+  sanityClient.fetch<BlogCategory[]>(CATEGORIES_QUERY),
+]);
+
+const toFilterValue = (category: string) =>
+  category
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+const preferredCategoryOrder = [
+  "SG Daily Happenings",
+  "SG Food",
+  "SG Events",
+  "SG Explore",
+  "TH Daily Happenings",
+  "TH Food",
+  "TH Events",
+  "TH Explore",
+];
+
+const sortedCategoryTitles = studioCategories
+  .map((category) => category.title?.trim())
+  .filter((title): title is string => Boolean(title))
+  .sort((a, b) => {
+    const aIndex = preferredCategoryOrder.indexOf(a);
+    const bIndex = preferredCategoryOrder.indexOf(b);
+    if (aIndex !== -1 || bIndex !== -1) {
+      return (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
+        (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex);
+    }
+    return a.localeCompare(b);
+  });
+
+const categoryNav = ["Latest", ...sortedCategoryTitles];
+
+const topicHighlights = studioCategories
+  .filter((category) => category.title?.trim() && category.description?.trim())
+  .map((category) => [
+    category.title.trim(),
+    category.description!.trim(),
+  ] as const);
+
+const categoryTitleByFilter = new Map(
+  studioCategories
+    .map((category) => category.title?.trim())
+    .filter((title): title is string => Boolean(title))
+    .map((title) => [toFilterValue(title), title]),
+);
+
+const getStudioCategory = (title: string) =>
+  categoryTitleByFilter.get(toFilterValue(title));
+
+const resolveCategory = (fallback: string, alternatives: string[] = []) => {
+  for (const title of [fallback, ...alternatives]) {
+    const studioTitle = getStudioCategory(title);
+    if (studioTitle) return studioTitle;
+  }
+  return fallback;
+};
+
+const formatDate = (date?: string) =>
+  date
+    ? new Date(date).toLocaleDateString("en-SG", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "Viral Asia";
+
+const inferCategory = (post: BlogPost) => {
+  const explicitCategory = post.categories?.find((category) => category.title)
+    ?.title?.trim();
+  if (explicitCategory) {
+    const studioCategory = getStudioCategory(explicitCategory);
+    if (studioCategory) return studioCategory;
+  }
+
+  const title = post.title.toLowerCase();
+  if (title.includes("lok lok") || title.includes("cafe") || title.includes("pork")) {
+    return resolveCategory("Food", ["SG Food"]);
+  }
+  if (title.includes("jb") || title.includes("johor") || title.includes("batam") || title.includes("travel")) {
+    return resolveCategory("Travel", ["SG Explore"]);
+  }
+  if (title.includes("festival") || title.includes("event") || title.includes("pop-up") || title.includes("opening")) {
+    return resolveCategory("Events", ["SG Events"]);
+  }
+  if (title.includes("club") || title.includes("show") || title.includes("nightlife")) {
+    return resolveCategory("Entertainment");
+  }
+  if (title.includes("deal") || title.includes("promo") || title.includes("discount") || title.includes("sale")) {
+    return resolveCategory("Deals");
+  }
+  if (title.includes("beauty") || title.includes("fitness") || title.includes("wellness") || title.includes("health")) {
+    return resolveCategory("Wellness");
+  }
+  if (title.includes("home") || title.includes("property")) {
+    return resolveCategory("Property", ["SG Explore", "SG Daily Happenings"]);
+  }
+  if (title.includes("testing")) return "Studio";
+  if (explicitCategory) {
+    return resolveCategory(explicitCategory, ["SG Daily Happenings"]);
+  }
+  return resolveCategory("Lifestyle", ["SG Daily Happenings"]);
+};
+
+const inferCampaignCategory = (post: (typeof viralPostItems)[number]) => {
+  const title = post.title.toLowerCase();
+  if (title.includes("fishball") || title.includes("lok lok") || title.includes("cuisine") || title.includes("cafe")) {
+    return resolveCategory("Food", ["SG Food"]);
+  }
+  if (title.includes("sentosa")) {
+    return resolveCategory("Travel", ["SG Explore"]);
+  }
+  if (post.category === "news") {
+    return resolveCategory("Happenings", ["SG Daily Happenings"]);
+  }
+  return resolveCategory("Brand Stories", ["SG Daily Happenings"]);
+};
+
+const getImage = (post?: BlogPost, width = 1200) =>
+  post?.mainImage?.asset?.url
+    ? `${post.mainImage.asset.url}?w=${width}&auto=format`
+    : undefined;
+
+const cleanPosts = posts.filter(
+  (post) => post.slug?.current && post.title && !/test/i.test(post.title),
+);
+const featuredPost =
+  cleanPosts.find((post) => !/test/i.test(post.title)) ?? cleanPosts[0];
+const storyPosts = cleanPosts.filter((post) => post._id !== featuredPost?._id);
+const topPosts = storyPosts.slice(0, 3);
+const latestPosts =
+  storyPosts.length > 3 ? storyPosts.slice(3, 11) : storyPosts;
+const sidePosts =
+  storyPosts.length > 8 ? storyPosts.slice(8, 12) : storyPosts.slice(0, 4);
+const campaignPosts = viralPostItems.slice(0, 6);
+const fallbackImages = campaignPosts.map((post) => post.cover);
+
+const postHref = (post: BlogPost) => `/blog/${post.slug.current}`;
+const postImage = (post?: BlogPost, width = 1200, fallbackIndex = 0) =>
+  getImage(post, width) || fallbackImages[fallbackIndex % fallbackImages.length];
+
+const defaultHero = {
+  eyebrow: "SG Daily Happenings",
+  title: "Latest happenings in Singapore",
+};
+const defaultCta = {
+  eyebrow: "build viral stories and craft effective campaigns",
+  title: "build viral stories and craft effective campaigns",
+  button: "plan a campaign",
+};
+
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "Latest happenings in Singapore",
+  url: "/",
+  publisher: {
+    "@type": "Organization",
+    name: "Viral Asia",
+    logo: "/company/ViralAsia.png",
+  },
+  blogPost: cleanPosts.slice(0, 10).map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    datePublished: post.publishedAt,
+    url: postHref(post),
+    articleSection: inferCategory(post),
+    image: getImage(post),
+  })),
+};
 ---
 
-<Layout title="Viral Asia - Singapore Social Media Agency">
-  <main class="landing">
-    <header class="topbar">
-      <a class="brand" href="/" aria-label="Viral Asia home">
-        <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
-      </a>
-      <nav aria-label="Primary navigation">
-        {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
-      </nav>
-      <a class="cta cta-top" href={whatsappHref}>
-        Get free consultation
-        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
-      </a>
-    </header>
+<Layout title="Latest happenings in Singapore | Viral Asia">
+  <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
-    <section class="hero">
-      <div class="hero-copy">
-        <h1>
-          <span class="hero-line">We make</span>
-          <span class="hero-line hero-red"
-            ><span class="sg-flag-text">SG</span> business</span
-          >
-          <span class="hero-line">go viral.</span>
-        </h1>
-        <p>
-          Singapore's social media agency for short video, creators and digital
-          campaigns.
-        </p>
-        <ul class="checklist" aria-label="Key results">
-          <li>500M+ views generated</li>
-          <li>100+ brands served</li>
-          <li>Singapore homegrown team</li>
-          <li>Full-service campaigns</li>
-        </ul>
-        <a class="cta cta-main" href={whatsappHref}>
-          Get free consultation
-          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+  <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">
+    <div class="sticky-top" data-sticky-header>
+      <div class="topbar">
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-controls="blog-menu"
+          aria-expanded="false"
+          data-menu-toggle
+        >
+          <span class="menu-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span>Menu</span>
+        </button>
+
+        <a class="brand" href="/" aria-label="Viral Asia home">
+          <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
         </a>
+
+        <a class="header-cta" href={whatsappHref}>Enquire now</a>
       </div>
 
-      <div class="hero-board" aria-label="Viral video examples">
-        <div class="video-mosaic">
+      <nav class="site-nav" id="blog-menu" aria-label="Primary navigation" data-menu-panel hidden>
+        <div>
+          {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+          <a href={whatsappHref}>Contact</a>
+        </div>
+      </nav>
+
+      <nav class="category-strip" aria-label="Filter categories" data-category-filter>
+        <div>
+          {categoryNav.map((category, index) => (
+            <button
+              type="button"
+              data-filter={toFilterValue(category)}
+              aria-pressed={index === 0 ? "true" : "false"}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </nav>
+    </div>
+
+    <header class="news-header">
+      <div class="masthead">
+        <p data-hero-eyebrow>{defaultHero.eyebrow}</p>
+        <h1 data-hero-title>{defaultHero.title}</h1>
+      </div>
+    </header>
+
+    <section class="top-stories" aria-labelledby="top-stories-heading" data-filter-section>
+      <div class="section-label">
+        <h2 id="top-stories-heading">Top Stories</h2>
+      </div>
+
+      <div class="top-grid">
+        {
+          featuredPost && (
+            <article
+              class="lead-story"
+              data-filter-card
+              data-category={toFilterValue(inferCategory(featuredPost))}
+              data-emdash-featured-post
+            >
+              <a href={postHref(featuredPost)}>
+                <img src={postImage(featuredPost, 1400, 0)} alt={featuredPost.title} loading="eager" />
+                <div>
+                  <span>{inferCategory(featuredPost)}</span>
+                  <h3>{featuredPost.title}</h3>
+                  <p>
+                    {featuredPost.excerpt ||
+                      "Read the latest Viral Asia story shaped for fast, visual, Singapore-first audiences."}
+                  </p>
+                  <time>{formatDate(featuredPost.publishedAt)}</time>
+                </div>
+              </a>
+            </article>
+          )
+        }
+
+        <div class="side-stack" data-emdash-entry-list>
           {
-            heroVideos.map(([image, views, title, slug]) => (
-              <a class="mini-video" href={`/redirect/${slug}/`}>
-                <img src={image} alt={title} loading="eager" />
-                <span class="play" aria-hidden="true" />
-                <strong>{views}</strong>
+            topPosts.map((post, index) => (
+              <article
+                class="compact-story"
+                data-filter-card
+                data-category={toFilterValue(inferCategory(post))}
+                data-emdash-entry
+              >
+                <a href={postHref(post)}>
+                  <img src={postImage(post, 700, index + 1)} alt={post.title} loading="lazy" />
+                  <div>
+                    <span>{inferCategory(post)}</span>
+                    <h3>{post.title}</h3>
+                    <time>{formatDate(post.publishedAt)}</time>
+                  </div>
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="content-feed" aria-labelledby="latest-heading" data-filter-section data-primary-filter-section>
+      <div class="main-feed">
+        <div class="section-label">
+          <h2 id="latest-heading">Latest Happenings</h2>
+        </div>
+
+        <div class="article-list" data-emdash-entry-list>
+          {
+            latestPosts.map((post, index) => (
+              <article
+                class="list-story"
+                data-filter-card
+                data-primary-filter-card
+                data-category={toFilterValue(inferCategory(post))}
+                data-emdash-entry
+              >
+                <a href={postHref(post)}>
+                  <img src={postImage(post, 760, index + 5)} alt={post.title} loading="lazy" />
+                  <div>
+                    <span>{inferCategory(post)}</span>
+                    <h3>{post.title}</h3>
+                    {post.excerpt && <p>{post.excerpt}</p>}
+                    <div class="story-meta">
+                      <time>{formatDate(post.publishedAt)}</time>
+                      <strong>{post.author?.name || "Viral Asia"}</strong>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+
+      <aside class="rail-feed" aria-label="More reads">
+        <div class="rail-panel">
+          <h2>Brand Features</h2>
+          {
+            campaignPosts.slice(0, 4).map((post) => (
+              <a
+                class="trend-row"
+                href={`/redirect/${post.slug}/`}
+                data-filter-card
+                data-category={toFilterValue(inferCampaignCategory(post))}
+              >
+                <img src={post.cover} alt={post.title} loading="lazy" />
+                <div>
+                  <span>{post.category === "news" ? "Happenings signal" : "Brand story"}</span>
+                  <strong>{post.title}</strong>
+                  <p>{post.combinedViewsLabel} estimated cross-platform views</p>
+                </div>
               </a>
             ))
           }
         </div>
-        <div class="hero-stat">
-          <strong>500M+</strong>
-          <span>Views generated for our clients</span>
+
+        <div class="rail-panel">
+          <h2>More Reads</h2>
+          {
+            sidePosts.length > 0 ? (
+              sidePosts.map((post) => (
+                <a class="text-row" href={postHref(post)}>
+                  <span>{inferCategory(post)}</span>
+                  <strong>{post.title}</strong>
+                  <time>{formatDate(post.publishedAt)}</time>
+                </a>
+              ))
+            ) : (
+              <p class="empty-copy">More Sanity posts will appear here once they are published.</p>
+            )
+          }
         </div>
-      </div>
+      </aside>
     </section>
 
-    <section class="brand-strip" aria-label="Trusted clients">
-      <h2>Trusted by 100+ leading brands in Singapore</h2>
-      <div class="logo-grid">
-        {
-          partners.map(([image, name]) => (
-            <img src={`/logos/${image}`} alt={name} loading="lazy" />
-          ))
-        }
-      </div>
-      <p>and many more</p>
-    </section>
+    {
+      topicHighlights.length > 0 && (
+        <section class="topic-band" aria-label="Editorial categories" data-filter-section>
+          {topicHighlights.map(([category, description]) => (
+            <div data-filter-card data-category={toFilterValue(category)}>
+              <span>{category}</span>
+              <h2>{description}</h2>
+            </div>
+          ))}
+        </section>
+      )
+    }
 
-    <section class="stats-bar" aria-label="Viral Asia results">
-      {
-        stats.map(([value, label]) => (
-          <div>
-            <span class="stat-icon" aria-hidden="true" />
-            <strong>{value}</strong>
-            <p>{label}</p>
-          </div>
-        ))
-      }
-      <a class="cta cta-small" href={whatsappHref}>
-        Talk to us now
-        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
-      </a>
-    </section>
-
-    <section class="work" id="work">
-      <h2>Recent <span>viral work</span> that broke the internet</h2>
-      <div class="work-grid">
-        {
-          workCards.map(([image, title, account, views]) => (
-            <article class="work-card">
-              <div class="work-image">
-                <img src={image} alt={title} />
-                <span class="play play-large" aria-hidden="true" />
-                <strong>{views}</strong>
-              </div>
-              <h3>{title}</h3>
-              <p>{account}</p>
-            </article>
-          ))
-        }
-      </div>
-      <a class="cta cta-wide" href="/work">View more of our work</a>
-    </section>
-
-    <section class="why" id="about">
-      <div class="why-list">
-        <h2>Why choose <span>Viral Asia?</span></h2>
-        <ul class="checklist">
-          <li>
-            <strong>Singapore homegrown company</strong><br />We understand
-            local buyers.
-          </li>
-          <li>
-            <strong>Data-driven strategy</strong><br />We do not guess, we test.
-          </li>
-          <li>
-            <strong>Full-service solution</strong><br />From content to
-            advertising.
-          </li>
-          <li>
-            <strong>Fast turnaround time</strong><br />Quick response, quick
-            results.
-          </li>
-          <li>
-            <strong>Proven track record</strong><br />Results speak for
-            themselves.
-          </li>
-        </ul>
-      </div>
-
-      <figure class="team-card">
-        <img
-          src="/images/professional_team.jpg"
-          alt="Viral Asia team planning a campaign"
-        />
-        <figcaption>
-          <strong>We are Singapore homegrown</strong>
-          <span>A local team helping local brands get seen.</span>
-        </figcaption>
-      </figure>
-
-      <div class="quotes">
-        <h2>What our clients say</h2>
-        {
-          testimonials.slice(0, 2).map((testimonial) => (
-            <blockquote>
-              <p>{testimonial.quote}</p>
-              <cite>
-                {testimonial.name}
-                <span>{testimonial.role}</span>
-              </cite>
-            </blockquote>
-          ))
-        }
-        <a class="cta cta-small" href="/clients">More testimonials</a>
-      </div>
-    </section>
-
-    <section class="services" id="services">
-      <h2>Our services</h2>
-      <div class="service-grid">
-        {
-          services.map((service) => (
-            <article>
-              <img
-                class="service-thumb"
-                src={service.image}
-                alt=""
-                loading="lazy"
-                aria-hidden="true"
-              />
-              <h3>{service.title}</h3>
-              <p>{service.body}</p>
-            </article>
-          ))
-        }
-      </div>
-    </section>
-
-    <section class="offer">
+    <section class="blog-cta">
       <div>
-        <h2>Limited time offer</h2>
-        <p>Get 20% off your first campaign.</p>
+        <p data-cta-eyebrow>{defaultCta.eyebrow}</p>
+        <h2 data-cta-title>{defaultCta.title}</h2>
       </div>
-      <div
-        class="timer"
-        data-countdown
-        aria-label="Offer countdown"
-        aria-live="polite"
-      >
-        <span><strong data-countdown-value="days">03</strong>Days</span>
-        <span><strong data-countdown-value="hours">14</strong>Hours</span>
-        <span><strong data-countdown-value="minutes">23</strong>Mins</span>
-        <span><strong data-countdown-value="seconds">45</strong>Secs</span>
-      </div>
-      <a class="cta cta-discount" href={whatsappHref}>
-        Claim your discount
-        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
-      </a>
+      <a href={whatsappHref} data-cta-button>{defaultCta.button}</a>
     </section>
 
-    <footer class="footer" id="contact">
-      <div class="footer-cta">
-        <h2>Ready to make your brand go viral?</h2>
-        <p>Let's plan the next campaign.</p>
-        <a class="cta cta-main" href={whatsappHref}>
-          Get free consultation
-          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+    <p class="filter-empty" data-filter-empty>More stories in this category will appear here once they are published.</p>
+
+    <script is:inline>
+      (() => {
+        const initMenu = () => {
+          const header = document.querySelector("[data-sticky-header]");
+          const toggle = document.querySelector("[data-menu-toggle]");
+          const panel = document.querySelector("[data-menu-panel]");
+          if (!header || !toggle || !panel) return;
+
+          const setMenuState = (isOpen) => {
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            panel.hidden = !isOpen;
+            header.toggleAttribute("data-menu-open", isOpen);
+          };
+
+          toggle.addEventListener("click", () => {
+            setMenuState(toggle.getAttribute("aria-expanded") !== "true");
+          });
+
+          panel.addEventListener("click", (event) => {
+            if (event.target.closest("a")) setMenuState(false);
+          });
+
+          document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") setMenuState(false);
+          });
+
+          document.addEventListener("click", (event) => {
+            if (!header.contains(event.target)) setMenuState(false);
+          });
+        };
+
+        const initCategoryFilters = () => {
+          const filterRoot = document.querySelector("[data-category-filter]");
+          const filterButtons = Array.from(
+            document.querySelectorAll("[data-category-filter] button[data-filter]"),
+          );
+          const filterCards = Array.from(
+            document.querySelectorAll("[data-filter-card][data-category]"),
+          );
+          const emptyMessage = document.querySelector("[data-filter-empty]");
+          const heroEyebrow = document.querySelector("[data-hero-eyebrow]");
+          const heroTitle = document.querySelector("[data-hero-title]");
+          const ctaEyebrow = document.querySelector("[data-cta-eyebrow]");
+          const ctaTitle = document.querySelector("[data-cta-title]");
+          const ctaButton = document.querySelector("[data-cta-button]");
+          const filterSections = Array.from(
+            document.querySelectorAll("[data-filter-section]"),
+          );
+
+          const getCountryLabel = (filter) => {
+            const countryCode = (filter || "").split("-")[0];
+            const countries = { sg: "Singapore", th: "Thailand" };
+            return countries[countryCode] || countryCode.toLowerCase();
+          };
+
+          const getHappeningsEyebrow = (filter) => {
+            const countryCode = (filter || "").split("-")[0].toUpperCase();
+            return `${countryCode} Daily Happenings`;
+          };
+
+          const updatePageCopy = (filter) => {
+            const isLatest = filter === "latest";
+            const isHappenings = filter.includes("happenings");
+            const countryLabel = isLatest ? "Singapore" : getCountryLabel(filter);
+            const countryCode = isLatest
+              ? "SG"
+              : (filter || "").split("-")[0].toUpperCase();
+            const categoryType = (filter || "").split("-").slice(1).join("-");
+
+            let nextEyebrow = "SG Daily Happenings";
+            let nextTitle = "Latest happenings in Singapore";
+
+            if (isHappenings) {
+              nextEyebrow = getHappeningsEyebrow(filter);
+              nextTitle = `Latest happenings in ${countryLabel}`;
+            } else if (!isLatest) {
+              const categoryLabels = {
+                food: "Food",
+                events: "Events",
+                explore: "Explore",
+              };
+              const categoryLabel = categoryLabels[categoryType] || categoryType;
+              nextEyebrow = `${countryCode} ${categoryLabel}`;
+              nextTitle = categoryType === "explore"
+                ? `Explore ${countryLabel}`
+                : `Latest ${categoryLabel.toLowerCase()} in ${countryLabel}`;
+            }
+
+            if (heroEyebrow) heroEyebrow.textContent = nextEyebrow;
+            if (heroTitle) heroTitle.textContent = nextTitle;
+            document.title = `${nextTitle} | Viral Asia`;
+
+            if (isHappenings) {
+              if (ctaEyebrow) ctaEyebrow.textContent = "have a story to share?";
+              if (ctaTitle) ctaTitle.textContent = "write in to us @ hello@viralasia.co or whatsapp us at 90906912";
+              if (ctaButton) ctaButton.textContent = "share a story";
+            } else {
+              if (ctaEyebrow) ctaEyebrow.textContent = "build viral stories and craft effective campaigns";
+              if (ctaTitle) ctaTitle.textContent = "build viral stories and craft effective campaigns";
+              if (ctaButton) ctaButton.textContent = "plan a campaign";
+            }
+          };
+
+          const applyCategoryFilter = (filter, shouldPush = true) => {
+            const normalizedFilter = filter || "latest";
+            let activeButton = null;
+            let visibleCount = 0;
+
+            updatePageCopy(normalizedFilter);
+
+            filterButtons.forEach((button) => {
+              const isActive = button.dataset.filter === normalizedFilter;
+              button.setAttribute(
+                "aria-pressed",
+                String(isActive),
+              );
+              if (isActive) activeButton = button;
+            });
+
+            filterCards.forEach((card) => {
+              const category = card.dataset.category || "";
+              const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
+              card.hidden = !shouldShow;
+              if (shouldShow) visibleCount += 1;
+            });
+
+            filterSections.forEach((section) => {
+              const sectionCards = Array.from(
+                section.hasAttribute("data-primary-filter-section")
+                  ? section.querySelectorAll("[data-primary-filter-card][data-category]")
+                  : section.querySelectorAll("[data-filter-card][data-category]"),
+              );
+              const visibleSectionCards = sectionCards.filter((card) => !card.hidden);
+              section.toggleAttribute(
+                "data-filter-empty-section",
+                normalizedFilter !== "latest" && visibleSectionCards.length === 0,
+              );
+            });
+
+            emptyMessage?.setAttribute("data-visible", String(visibleCount === 0));
+            activeButton?.scrollIntoView({ block: "nearest", inline: "center" });
+
+            if (shouldPush) {
+              const nextUrl = new URL(window.location.href);
+              if (normalizedFilter === "latest") {
+                nextUrl.searchParams.delete("category");
+              } else {
+                nextUrl.searchParams.set("category", normalizedFilter);
+              }
+              window.history.replaceState({}, "", nextUrl);
+            }
+          };
+
+          filterRoot?.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-filter]");
+            if (!button) return;
+            applyCategoryFilter(button.dataset.filter || "latest");
+          });
+
+          const initialFilter = new URL(window.location.href).searchParams.get("category");
+          if (initialFilter) applyCategoryFilter(initialFilter, false);
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+              initMenu();
+              initCategoryFilters();
+            },
+            { once: true },
+          );
+        } else {
+          initMenu();
+          initCategoryFilters();
+        }
+      })();
+    </script>
+
+    <footer class="news-footer">
+      <div>
+        <a href="/" aria-label="Viral Asia home">
+          <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
         </a>
-        <small>Or call us: (+65) 9090 6912</small>
       </div>
-      <div>
-        <h3>Mailing Address</h3>
-        <p>11 mosque street #02-01</p>
-        <h3>Email Address</h3>
-        <p>hello@viralasia.co</p>
-      </div>
-      <div>
-        <h3>Follow us</h3>
-        <div class="socials" aria-label="Social links">
-          <a
-            href="https://www.tiktok.com/@thesgdaily"
-            target="_blank"
-            rel="noopener noreferrer">TikTok</a
-          >
-          <a
-            href="https://www.instagram.com/thesgdaily/"
-            target="_blank"
-            rel="noopener noreferrer">Instagram</a
-          >
-          <a
-            href="https://www.facebook.com/thesgdaily8/"
-            target="_blank"
-            rel="noopener noreferrer">Facebook</a
-          >
-        </div>
-      </div>
-      <div>
-        <h3>Scan to chat</h3>
-        <a
-          class="qr"
-          href={whatsappHref}
-          aria-label="Chat with Viral Asia on WhatsApp"
-        >
-          <img
-            src="/images/whatsapp-qr.png"
-            alt="WhatsApp QR code for Viral Asia"
-            loading="lazy"
-          />
-        </a>
-      </div>
+
+      <nav aria-label="Footer navigation">
+        <a href="/work">Our Work</a>
+        <a href="/services">Services</a>
+        <a href="/about">About Us</a>
+        <a href={whatsappHref}>Contact</a>
+      </nav>
     </footer>
   </main>
 </Layout>
 
-<script>
-  const countdown = document.querySelector("[data-countdown]");
-
-  if (countdown) {
-    const values = {
-      days: countdown.querySelector('[data-countdown-value="days"]'),
-      hours: countdown.querySelector('[data-countdown-value="hours"]'),
-      minutes: countdown.querySelector('[data-countdown-value="minutes"]'),
-      seconds: countdown.querySelector('[data-countdown-value="seconds"]'),
-    };
-
-    const dayMs = 24 * 60 * 60 * 1000;
-    const sgtOffsetMs = 8 * 60 * 60 * 1000;
-
-    const getNextSundayEndSgt = (now) => {
-      const sgtNow = new Date(now.getTime() + sgtOffsetMs);
-      const daysUntilSunday = (7 - sgtNow.getUTCDay()) % 7;
-      const deadlineSgtMs =
-        Date.UTC(
-          sgtNow.getUTCFullYear(),
-          sgtNow.getUTCMonth(),
-          sgtNow.getUTCDate() + daysUntilSunday,
-          23,
-          59,
-          59,
-        ) - sgtOffsetMs;
-
-      return deadlineSgtMs > now.getTime()
-        ? deadlineSgtMs
-        : deadlineSgtMs + 7 * dayMs;
-    };
-
-    const pad = (value) => String(value).padStart(2, "0");
-
-    const renderCountdown = () => {
-      const now = new Date();
-      const remaining = Math.max(0, getNextSundayEndSgt(now) - now.getTime());
-
-      const days = Math.floor(remaining / dayMs);
-      const hours = Math.floor((remaining % dayMs) / (60 * 60 * 1000));
-      const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-      const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
-
-      values.days.textContent = pad(days);
-      values.hours.textContent = pad(hours);
-      values.minutes.textContent = pad(minutes);
-      values.seconds.textContent = pad(seconds);
-    };
-
-    renderCountdown();
-    window.setInterval(renderCountdown, 1000);
-  }
-</script>
-
 <style>
   :global(body) {
-    background: #050505;
+    background: #ffffff;
   }
 
-  .landing {
-    --red: #e91515;
-    --yellow: #ffe100;
-    --lime: #9cff00;
-    --line: rgba(255, 255, 255, 0.18);
+  .blog-page {
+    --red: #ed1c24;
+    --red-dark: #b80f16;
+    --ink: #111111;
+    --muted: #666666;
+    --line: #dedede;
+    --paper: #ffffff;
+    --soft: #f5f5f5;
     min-height: 100dvh;
-    overflow: hidden;
-    background:
-      radial-gradient(
-        circle at 58% 10%,
-        rgba(233, 21, 21, 0.2),
-        transparent 26rem
-      ),
-      #050505;
-    color: white;
-    font-family: var(--font-display);
-    letter-spacing: 0;
-    text-transform: uppercase;
+    overflow-x: clip;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
   }
 
-  .landing p,
-  .landing li,
-  .landing small,
-  .landing cite,
-  .landing a,
-  .landing blockquote {
-    font-family: var(--font-body);
-    text-transform: none;
+  .news-header {
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
   }
 
   .topbar {
     display: grid;
-    grid-template-columns: 160px 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
-    max-width: 1280px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 1rem 1.5rem 0.75rem;
+    min-height: 4rem;
+    padding: 0.7rem 1.25rem;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
-    text-decoration: none;
-  }
-
-  h2 span {
-    color: var(--red);
+    justify-self: center;
+    min-width: 0;
   }
 
   .brand img {
     display: block;
-    width: 7.3rem;
-    max-width: 100%;
+    width: 5.8rem;
     height: auto;
   }
 
-  nav {
-    display: flex;
-    justify-content: center;
-    gap: clamp(0.9rem, 2.2vw, 2rem);
+  .menu-toggle,
+  .site-nav a,
+  .header-cta,
+  .category-strip button,
+  .section-label h2,
+  .story-meta,
+  .lead-story span,
+  .compact-story span,
+  .list-story span,
+  .trend-row span,
+  .text-row span,
+  .topic-band span,
+  .blog-cta p {
+    font: 900 0.74rem/1 var(--font-body);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
   }
 
-  nav a {
-    color: white;
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.02em;
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 0.6rem;
+    width: max-content;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0.5rem 0;
+  }
+
+  .menu-icon {
+    display: grid;
+    gap: 0.22rem;
+    width: 1.4rem;
+  }
+
+  .menu-icon span {
+    display: block;
+    height: 2px;
+    background: currentColor;
+    transform-origin: center;
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(1) {
+    transform: translateY(0.38rem) rotate(45deg);
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .sticky-top[data-menu-open] .menu-icon span:nth-child(3) {
+    transform: translateY(-0.38rem) rotate(-45deg);
+  }
+
+  .site-nav {
+    border-top: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .site-nav[hidden] {
+    display: none;
+  }
+
+  .site-nav div {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 1.25rem 1px;
+    background: var(--line);
+  }
+
+  .site-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 3.1rem;
+    background: #ffffff;
+    color: var(--ink);
+    padding: 0.9rem 0.85rem;
     text-decoration: none;
-    text-transform: uppercase;
     white-space: nowrap;
   }
 
-  .cta {
+  .site-nav a:hover {
+    color: var(--red);
+  }
+
+  .header-cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.5rem;
-    border-radius: 4px;
-    border: 2px solid rgba(255, 255, 255, 0.12);
+    justify-self: end;
+    border-radius: 3px;
     background: var(--red);
-    box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 0.82rem;
-    font-weight: 900;
-    padding: 0.65rem 1.2rem;
+    color: #ffffff;
+    min-height: 2.4rem;
+    padding: 0.72rem 0.95rem;
     text-decoration: none;
-    text-transform: uppercase;
-    transition:
-      transform 180ms ease,
-      filter 180ms ease;
     white-space: nowrap;
   }
 
-  .cta:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
-  }
-
-  .cta:active {
-    transform: translateY(1px);
-  }
-
-  .cta img {
-    width: 1rem;
-    height: 1rem;
-    margin-left: 0.5rem;
-    filter: invert(1);
-  }
-
-  .cta-main,
-  .cta-top {
+  .masthead {
     background: var(--red);
-    color: white;
+    color: #ffffff;
+    padding: clamp(1.8rem, 4vw, 3.8rem) 1.25rem;
+    text-align: center;
   }
 
-  .cta-wide {
-    width: min(22rem, 100%);
-    margin: 1.5rem auto 0;
-  }
-
-  .cta-small {
-    min-height: 2.2rem;
-    padding-inline: 1rem;
-  }
-
-  .cta-discount {
-    background: var(--yellow);
-    color: #050505;
-  }
-
-  .cta-discount img {
-    filter: none;
-  }
-
-  .hero {
-    display: grid;
-    grid-template-columns: 0.72fr 1fr;
-    gap: 1.2rem;
-    max-width: 1280px;
-    min-height: 360px;
-    margin: 0 auto;
-    padding: 1rem 1.5rem 1.25rem;
-  }
-
-  .hero-copy {
-    align-self: center;
-    padding-bottom: 0.5rem;
-  }
-
-  h1,
-  h2,
-  h3,
-  p {
-    margin: 0;
-  }
-
-  h1 {
-    font-size: clamp(3.25rem, 5.8vw, 6.5rem);
-    line-height: 0.84;
-    text-wrap: balance;
-    text-shadow: 0 6px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  .hero-line {
-    display: block;
-  }
-
-  .hero-red {
-    color: var(--red);
-  }
-
-  .sg-flag-text {
-    position: relative;
-    display: inline-block;
-    color: var(--red);
-  }
-
-  .sg-flag-text::after {
-    content: "";
-    position: absolute;
-    top: 0.12em;
-    left: 0.08em;
-    width: 0.72em;
-    height: 0.48em;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'%3E%3Ccircle cx='28' cy='28' r='22' fill='%23fff'/%3E%3Ccircle cx='38' cy='28' r='22' fill='%23e91515'/%3E%3Cg fill='%23fff' transform='translate(76 13) scale(1.15)'%3E%3Cpath d='M0-7 2-2.1h5.3L3.1 1.1 4.7 6.2 0 3.2-4.7 6.2-3.1 1.1-7.3-2.1H-2z'/%3E%3Cpath d='M15 11 17 15.9h5.3L18.1 19.1 19.7 24.2 15 21.2 10.3 24.2 11.9 19.1 7.7 15.9H13z'/%3E%3Cpath d='M7 31 9 35.9h5.3L10.1 39.1 11.7 44.2 7 41.2 2.3 44.2 3.9 39.1-0.3 35.9H5z'/%3E%3Cpath d='M-7 31-5 35.9H0.3L-3.9 39.1-2.3 44.2-7 41.2-11.7 44.2-10.1 39.1-14.3 35.9H-9z'/%3E%3Cpath d='M-15 11-13 15.9h5.3L-11.9 19.1-10.3 24.2-15 21.2-19.7 24.2-18.1 19.1-22.3 15.9H-17z'/%3E%3C/g%3E%3C/svg%3E")
-      center / contain no-repeat;
-    pointer-events: none;
-  }
-
-  .hero-copy p {
-    max-width: 31rem;
-    margin-top: 0.75rem;
-    color: #f5f5f5;
-    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
-    line-height: 1.1;
+  .masthead p {
+    margin: 0 0 0.65rem;
+    color: rgba(255, 255, 255, 0.84);
+    font: 900 0.82rem/1 var(--font-body);
+    letter-spacing: 0.05em;
     text-transform: none;
   }
 
-  .checklist {
-    display: grid;
-    gap: 0.28rem;
-    margin: 0.95rem 0 0.9rem;
-    padding: 0;
-    list-style: none;
+  .masthead h1 {
+    max-width: 960px;
+    margin: 0 auto;
+    font:
+      900 clamp(2.8rem, 8vw, 7rem) / 0.88 var(--font-display);
+    letter-spacing: 0;
+    text-transform: none;
+    text-wrap: balance;
   }
 
-  .checklist li {
-    position: relative;
-    padding-left: 1.6rem;
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 800;
-  }
-
-  .checklist li::before {
-    content: "";
-    position: absolute;
-    top: 0.12rem;
-    left: 0;
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid var(--lime);
-    border-radius: 4px;
-    background: linear-gradient(135deg, transparent 48%, var(--lime) 50%);
-  }
-
-  .hero-board {
-    position: relative;
-    isolation: isolate;
-    align-self: stretch;
-    min-width: 0;
-  }
-
-  .video-mosaic {
-    position: relative;
-    z-index: 0;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.5rem;
-    width: 100%;
-    min-width: 0;
-    height: 100%;
-  }
-
-  .mini-video,
-  .work-image {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 6px;
-    background: #111;
-  }
-
-  .mini-video {
+  .masthead span {
     display: block;
-    min-width: 0;
-    aspect-ratio: 4 / 5;
-    color: white;
+    max-width: 660px;
+    margin: 0.9rem auto 0;
+    color: rgba(255, 255, 255, 0.88);
+    font: 700 1rem/1.5 var(--font-body);
+  }
+
+  .category-strip {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .category-strip div {
+    display: flex;
+    gap: 0.3rem;
+    max-width: 1180px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 0.75rem 1.25rem;
+    scrollbar-width: none;
+  }
+
+  .category-strip div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-strip button {
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 0.58rem 0.72rem;
+    transition:
+      background 160ms ease,
+      color 160ms ease;
+    white-space: nowrap;
+  }
+
+  .category-strip button:hover,
+  .category-strip button[aria-pressed="true"] {
+    background: var(--red);
+    color: #ffffff;
+  }
+
+  [data-filter-card][hidden],
+  [data-filter-section][data-filter-empty-section] {
+    display: none !important;
+  }
+
+  .top-stories,
+  .content-feed,
+  .topic-band,
+  .blog-cta,
+  .filter-empty {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-right: 1.25rem;
+    padding-left: 1.25rem;
+  }
+
+  .top-stories {
+    padding-top: clamp(1.6rem, 4vw, 2.8rem);
+    padding-bottom: clamp(1.8rem, 4vw, 3rem);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+    border-bottom: 4px solid var(--red);
+  }
+
+  .section-label h2 {
+    margin: 0;
+    background: var(--red);
+    color: #ffffff;
+    padding: 0.62rem 0.82rem 0.58rem;
+  }
+
+  .top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+    gap: 1.1rem;
+  }
+
+  .lead-story a,
+  .compact-story a,
+  .list-story a,
+  .trend-row,
+  .text-row {
+    color: var(--ink);
     text-decoration: none;
   }
 
-  .mini-video img,
-  .work-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(1.1) contrast(1.05);
-  }
-
-  .mini-video::after,
-  .work-image::after,
-  .team-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 42%, rgba(0, 0, 0, 0.72));
-    pointer-events: none;
-  }
-
-  .mini-video strong,
-  .work-image strong {
-    position: absolute;
-    bottom: 0.45rem;
-    left: 0.45rem;
-    z-index: 1;
-    font:
-      900 0.95rem/1 Arial,
-      Helvetica,
-      sans-serif;
-  }
-
-  .play {
-    position: absolute;
-    left: 0.45rem;
-    bottom: 1.55rem;
-    z-index: 1;
-    width: 0;
-    height: 0;
-    border-top: 0.45rem solid transparent;
-    border-bottom: 0.45rem solid transparent;
-    border-left: 0.72rem solid white;
-    filter: drop-shadow(0 1px 3px black);
-  }
-
-  .play-large {
-    left: 50%;
-    bottom: 50%;
-    border-top-width: 1rem;
-    border-bottom-width: 1rem;
-    border-left-width: 1.5rem;
-    transform: translate(-40%, 50%);
-  }
-
-  .hero-stat {
-    position: absolute;
-    inset: 33% 9% auto auto;
-    z-index: 5;
-    width: min(25rem, 56%);
-    color: var(--yellow);
-    text-shadow: 0 6px 18px black;
-    pointer-events: none;
-  }
-
-  .hero-stat strong {
-    display: block;
-    font-size: clamp(4rem, 8vw, 7rem);
-    line-height: 0.8;
-  }
-
-  .hero-stat span {
-    display: block;
-    color: white;
-    font-size: clamp(1.8rem, 3.4vw, 3.5rem);
-    line-height: 0.9;
-  }
-
-  .brand-strip {
-    background: #f4f4f4;
-    color: #050505;
-    padding: 0.7rem 1.5rem 0.55rem;
-    text-align: center;
-  }
-
-  .brand-strip h2 {
-    font-size: clamp(1.1rem, 2vw, 1.55rem);
-  }
-
-  .logo-grid {
+  .lead-story a {
     display: grid;
-    grid-template-columns: repeat(9, minmax(0, 1fr));
-    gap: 0.7rem 1.35rem;
-    max-width: 1180px;
-    margin: 0.65rem auto 0.25rem;
-    align-items: center;
-  }
-
-  .logo-grid img {
-    width: 100%;
-    max-height: 1.9rem;
-    object-fit: contain;
-    filter:
-      drop-shadow(0 0 1px rgba(0, 0, 0, 0.72))
-      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.22));
-  }
-
-  .brand-strip p {
-    text-align: right;
-    max-width: 1180px;
-    margin: 0 auto;
-    color: #111;
-    font-size: 0.85rem;
-  }
-
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr) auto;
     gap: 1rem;
-    align-items: center;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0.85rem 1.5rem;
-    border-bottom: 2px solid rgba(233, 21, 21, 0.9);
   }
 
-  .stats-bar div {
-    display: grid;
-    grid-template-columns: 3.6rem 1fr;
-    column-gap: 0.75rem;
-    align-items: center;
-    min-width: 0;
-  }
-
-  .stat-icon {
-    position: relative;
-    grid-row: span 2;
-    width: 2.9rem;
-    height: 2.9rem;
-    border: 2px solid rgba(255, 225, 0, 0.9);
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 50% 50%, var(--red) 0 22%, transparent 24%),
-      conic-gradient(from 45deg, var(--lime) 0 25%, transparent 25% 100%),
-      #111;
-  }
-
-  .stat-icon::after {
-    content: "";
-    position: absolute;
-    inset: 0.72rem;
-    border: 2px solid rgba(255, 255, 255, 0.72);
-    border-radius: inherit;
-  }
-
-  .stats-bar strong {
-    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
-    line-height: 0.9;
-  }
-
-  .stats-bar p {
-    color: white;
-    font-size: 0.86rem;
-    line-height: 1.1;
-  }
-
-  .work {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0.75rem 1.5rem 1.05rem;
-    text-align: center;
-  }
-
-  .work h2,
-  .services h2 {
-    font-size: clamp(1.7rem, 3vw, 2.5rem);
-    line-height: 1;
-  }
-
-  .work-grid {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0.75rem;
+  .lead-story img {
     width: 100%;
-    min-width: 0;
-    margin-top: 0.8rem;
-    text-align: left;
-  }
-
-  .work-card {
-    min-width: 0;
-  }
-
-  .work-image {
-    aspect-ratio: 9 / 12.6;
-  }
-
-  .work-card h3 {
-    margin-top: 0.55rem;
-    color: white;
-    font-size: 0.95rem;
-    line-height: 1;
-  }
-
-  .work-card p {
-    margin-top: 0.3rem;
-    color: #cfcfcf;
-    font-size: 0.8rem;
-    line-height: 1.2;
-  }
-
-  .why {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr 0.78fr;
-    gap: 1.5rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0.85rem 1.5rem 1.05rem;
-    border-top: 2px solid rgba(233, 21, 21, 0.9);
-  }
-
-  .why h2,
-  .offer h2,
-  .footer h2 {
-    font-size: clamp(1.7rem, 3.2vw, 2.8rem);
-    line-height: 0.95;
-  }
-
-  .why-list .checklist {
-    margin-top: 1rem;
-  }
-
-  .why-list strong {
-    font-family: var(--font-body);
-    text-transform: none;
-  }
-
-  .team-card {
-    position: relative;
-    min-height: 15.5rem;
-    margin: 0;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 3px;
-  }
-
-  .team-card img {
-    width: 100%;
-    height: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--soft);
     object-fit: cover;
   }
 
-  .team-card figcaption {
-    position: absolute;
-    inset: auto 1.3rem 1.3rem;
-    z-index: 1;
-  }
-
-  .team-card strong {
+  .lead-story span,
+  .compact-story span,
+  .list-story span,
+  .trend-row span,
+  .text-row span,
+  .topic-band span {
     display: block;
-    max-width: 8ch;
-    font-size: clamp(2.3rem, 4vw, 4rem);
-    line-height: 0.88;
+    color: var(--red);
   }
 
-  .team-card span {
-    display: block;
-    max-width: 25rem;
-    margin-top: 0.7rem;
-    font-family: var(--font-body);
-    font-size: 1.1rem;
-    line-height: 1.15;
-    text-transform: none;
+  .lead-story h3 {
+    margin: 0.45rem 0 0;
+    font: 900 clamp(2rem, 4vw, 3.6rem) / 0.95 var(--font-body);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 
-  .quotes h2 {
-    color: var(--yellow);
-    font-size: clamp(1.8rem, 3vw, 2.7rem);
-    line-height: 0.95;
+  .lead-story p {
+    max-width: 720px;
+    margin: 0.65rem 0 0.7rem;
+    color: var(--muted);
+    font: 500 1.05rem/1.48 var(--font-body);
   }
 
-  blockquote {
-    margin: 0.8rem 0 0;
-    padding: 0.75rem;
-    background: linear-gradient(135deg, #1b1b1b, #090909);
-    border-left: 0.45rem solid var(--yellow);
+  .lead-story time,
+  .compact-story time,
+  .text-row time {
+    color: #777777;
+    font: 800 0.72rem/1 var(--font-body);
+    text-transform: uppercase;
   }
 
-  blockquote p {
-    color: white;
-    font-size: 0.84rem;
-    line-height: 1.35;
-  }
-
-  cite {
-    display: block;
-    margin-top: 0.8rem;
-    color: white;
-    font-size: 0.78rem;
-    font-style: normal;
-    font-weight: 800;
-  }
-
-  cite span {
-    display: block;
-    color: #c8c8c8;
-    font-weight: 500;
-  }
-
-  .quotes .cta {
-    margin-top: 0.9rem;
-  }
-
-  .services {
-    background: #f4f4f4;
-    color: #050505;
-    padding: 0.65rem 1.5rem 0.9rem;
-    text-align: center;
-  }
-
-  .service-grid {
+  .side-stack {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 1rem;
-    width: 100%;
-    min-width: 0;
-    max-width: 1180px;
-    margin: 0.7rem auto 0;
-    text-align: left;
   }
 
-  .service-grid article {
+  .compact-story a {
     display: grid;
-    grid-template-columns: 3.1rem 1fr;
-    column-gap: 0.75rem;
+    grid-template-columns: 42% 1fr;
+    gap: 0.85rem;
     align-items: start;
-    min-width: 0;
-  }
-
-  .service-thumb {
-    grid-row: span 2;
-    width: 3.1rem;
-    aspect-ratio: 1;
-    border: 2px solid #111;
-    border-radius: 6px;
-    object-fit: cover;
-    filter: saturate(1.08) contrast(1.06);
-  }
-
-  .service-grid h3 {
-    font-size: 0.9rem;
-    line-height: 0.95;
-  }
-
-  .service-grid p {
-    margin-top: 0.35rem;
-    color: #111;
-    font-size: 0.75rem;
-    line-height: 1.25;
-  }
-
-  .offer {
-    display: grid;
-    grid-template-columns: 1.1fr auto auto;
-    align-items: center;
-    gap: 1.5rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0.85rem 1.5rem;
-    background:
-      linear-gradient(110deg, var(--red) 0 37%, transparent 37.2%), #050505;
     border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
   }
 
-  .offer p {
-    margin-top: 0.4rem;
-    font-size: 1rem;
-    font-weight: 900;
+  .compact-story img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--soft);
+    object-fit: cover;
   }
 
-  .timer {
-    display: flex;
-    gap: 0.55rem;
+  .compact-story h3 {
+    margin: 0.35rem 0 0.55rem;
+    font: 900 1.08rem/1.12 var(--font-body);
+    text-wrap: pretty;
   }
 
-  .timer span {
+  .content-feed {
     display: grid;
-    min-width: 3.4rem;
-    padding: 0.45rem;
-    border-radius: 4px;
-    background: var(--red);
-    font:
-      800 0.62rem/1 Arial,
-      Helvetica,
-      sans-serif;
-    text-align: center;
-  }
-
-  .timer strong {
-    font:
-      900 2rem/1 var(--font-display),
-      sans-serif;
-  }
-
-  .footer {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 0.95fr 0.75fr;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.36fr);
     gap: 1.6rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 1.1rem 1.5rem;
+    padding-top: 0.6rem;
+    padding-bottom: clamp(2rem, 5vw, 4rem);
   }
 
-  .footer-cta {
-    margin: -1.5rem 0 -1.5rem -1.5rem;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, var(--red), #820000);
+  .article-list {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line);
   }
 
-  .footer h3 {
-    font-size: 1.45rem;
-    line-height: 1;
+  .list-story a {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 1rem;
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 0;
   }
 
-  .footer p,
-  .footer small {
-    display: block;
-    margin-top: 0.8rem;
-    color: white;
-    font-size: 0.9rem;
-    line-height: 1.45;
+  .list-story img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--soft);
+    object-fit: cover;
   }
 
-  .footer .cta {
-    margin-top: 1rem;
+  .list-story h3 {
+    margin: 0.35rem 0 0.5rem;
+    font: 900 clamp(1.2rem, 2.2vw, 1.7rem) / 1.05 var(--font-body);
+    text-wrap: pretty;
   }
 
-  .socials {
+  .list-story p {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font: 500 0.96rem/1.45 var(--font-body);
+  }
+
+  .story-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-top: 1rem;
+    gap: 0.5rem;
+    color: #777777;
   }
 
-  .socials a {
-    border-radius: 999px;
-    background: #1e1e1e;
-    color: white;
-    font-size: 0.72rem;
-    font-weight: 900;
-    padding: 0.45rem 0.7rem;
-    text-decoration: none;
+  .story-meta strong {
+    color: #777777;
   }
 
-  .qr {
+  .story-meta strong::before {
+    margin-right: 0.5rem;
+    color: var(--red);
+    content: "/";
+  }
+
+  .rail-feed {
     display: grid;
-    place-items: center;
-    width: 7.2rem;
-    aspect-ratio: 1;
-    margin-top: 0.8rem;
-    border: 0.35rem solid white;
-    background: white;
-    box-shadow: 0 0.5rem 0 rgba(0, 0, 0, 0.45);
-    text-decoration: none;
+    align-self: start;
+    gap: 1rem;
   }
 
-  .qr img {
+  .rail-panel {
+    border: 1px solid var(--line);
+    background: #ffffff;
+  }
+
+  .rail-panel h2 {
+    margin: 0;
+    background: var(--ink);
+    color: #ffffff;
+    font: 900 1.2rem/1 var(--font-body);
+    padding: 0.85rem 0.9rem;
+    text-transform: uppercase;
+  }
+
+  .trend-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 0.8rem;
+    border-top: 1px solid var(--line);
+    padding: 0.9rem;
+  }
+
+  .trend-row:first-of-type,
+  .text-row:first-of-type {
+    border-top: 0;
+  }
+
+  .trend-row img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    aspect-ratio: 1;
+    background: var(--soft);
+    object-fit: cover;
   }
 
-  @media (max-width: 760px) {
-    .topbar {
-      grid-template-columns: 1fr auto;
+  .trend-row strong,
+  .text-row strong {
+    display: block;
+    margin: 0.3rem 0;
+    font: 900 0.96rem/1.15 var(--font-body);
+  }
+
+  .trend-row p,
+  .empty-copy {
+    margin: 0;
+    color: var(--muted);
+    font: 500 0.85rem/1.35 var(--font-body);
+  }
+
+  .text-row {
+    display: block;
+    border-top: 1px solid var(--line);
+    padding: 0.9rem;
+  }
+
+  .topic-band {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    padding-bottom: clamp(2rem, 5vw, 3.8rem);
+  }
+
+  .topic-band div {
+    background: var(--soft);
+    padding: clamp(1.1rem, 3vw, 1.8rem);
+  }
+
+  .topic-band h2 {
+    margin: 0.45rem 0 0;
+    font: 900 clamp(1.15rem, 2.4vw, 1.65rem) / 1.02 var(--font-body);
+  }
+
+  .blog-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-top: 5px solid var(--red);
+    padding-top: clamp(1.4rem, 3vw, 2rem);
+    padding-bottom: clamp(2rem, 5vw, 4rem);
+  }
+
+  .blog-cta p {
+    margin: 0 0 0.45rem;
+    color: var(--red);
+    text-transform: none;
+  }
+
+  .blog-cta h2 {
+    max-width: 760px;
+    margin: 0;
+    font: 600 1.06rem/1.55 var(--font-body);
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .blog-cta a {
+    flex: 0 0 auto;
+    border-radius: 3px;
+    background: var(--red);
+    color: #ffffff;
+    font: 900 0.8rem/1 var(--font-body);
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .lead-story a:hover h3,
+  .compact-story a:hover h3,
+  .list-story a:hover h3,
+  .trend-row:hover strong,
+  .text-row:hover strong {
+    color: var(--red-dark);
+  }
+
+  .filter-empty {
+    display: none;
+    padding-bottom: 2rem;
+    color: var(--muted);
+    font: 800 0.95rem/1.5 var(--font-body);
+  }
+
+  .filter-empty[data-visible="true"] {
+    display: block;
+  }
+
+  .news-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    border-top: 1px solid var(--line);
+    background: var(--ink);
+    color: #ffffff;
+    padding: 1.3rem max(1.25rem, calc((100vw - 1180px) / 2 + 1.25rem));
+  }
+
+  .news-footer img {
+    width: 7.2rem;
+    height: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .news-footer p {
+    margin: 0.55rem 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font: 600 0.9rem/1.35 var(--font-body);
+  }
+
+  .news-footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.9rem;
+  }
+
+  .news-footer a {
+    color: #ffffff;
+    font: 900 0.72rem/1 var(--font-body);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .news-footer a:hover {
+    color: var(--red);
+  }
+
+  @media (max-width: 980px) {
+    .site-nav div {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    .topbar nav {
-      order: 3;
-      grid-column: 1 / -1;
-      justify-content: space-between;
-    }
-
-    .hero,
-    .why,
-    .offer,
-    .footer {
+    .top-grid,
+    .content-feed {
       grid-template-columns: 1fr;
     }
 
-    .hero {
-      min-height: 0;
-      padding-inline: 1rem;
-    }
-
-    .hero-stat {
-      inset: 35% 6% auto auto;
-    }
-
-    .stats-bar {
-      grid-template-columns: repeat(2, 1fr);
-      padding-inline: 1rem;
-    }
-
-    .logo-grid,
-    .service-grid,
-    .work-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .offer,
-    .footer-cta {
-      margin: 0;
-      background: #050505;
-    }
-  }
-
-  @media (max-width: 680px) {
-    .topbar {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .topbar nav {
-      width: 100%;
-      overflow-x: auto;
-      justify-content: flex-start;
-      gap: 0.65rem;
-      padding-bottom: 0.25rem;
-      scrollbar-width: none;
-    }
-
-    .topbar nav a {
-      font-size: 0.66rem;
-    }
-
-    .topbar nav::-webkit-scrollbar {
-      display: none;
-    }
-
-    .cta-top {
-      display: none;
-    }
-
-    h1 {
-      max-width: 100%;
-      font-size: clamp(2.7rem, 11.6vw, 3.35rem);
-    }
-
-    .hero-copy p {
-      max-width: 100%;
-      font-size: 0.95rem;
-    }
-
-    .video-mosaic {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.4rem;
-      height: auto;
-    }
-
-    .stats-bar,
-    .logo-grid,
-    .service-grid,
-    .work-grid {
+    .side-stack {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .work h2,
-    .services h2 {
-      font-size: 1.7rem;
-      text-align: left;
+    .rail-feed {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .stats-bar {
-      gap: 0.8rem;
-    }
-
-    .stats-bar div {
-      grid-template-columns: 2.6rem 1fr;
-      column-gap: 0.55rem;
-    }
-
-    .stats-bar strong {
-      font-size: 1.75rem;
-    }
-
-    .stats-bar p {
-      font-size: 0.72rem;
-    }
-
-    .stat-icon {
-      width: 2.25rem;
-      height: 2.25rem;
-    }
-
-    .stat-icon::after {
-      inset: 0.55rem;
-    }
-
-    .stats-bar .cta {
-      grid-column: 1 / -1;
-      width: 100%;
-    }
-
-    .work,
-    .services {
-      padding-inline: 1rem;
-    }
-
-    .work-grid,
-    .service-grid {
-      gap: 0.55rem;
-    }
-
-    .service-grid article {
-      grid-template-columns: 2.7rem 1fr;
-      column-gap: 0.55rem;
-    }
-
-    .service-thumb {
-      width: 2.7rem;
-    }
-
-    .hero-stat {
-      position: absolute;
-      inset: 35% 5% auto auto;
-      width: min(15.5rem, 72%);
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      border: 0;
-      border-radius: 0;
-    }
-
-    .hero-stat strong {
-      font-size: clamp(2.9rem, 13.5vw, 3.35rem);
-    }
-
-    .hero-stat span {
-      font-size: clamp(1rem, 5vw, 1.25rem);
-      max-width: 12rem;
-    }
-
-    .footer {
-      padding-bottom: 2rem;
+    .topic-band {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      scroll-behavior: auto !important;
-      transition-duration: 0.01ms !important;
+  @media (max-width: 700px) {
+    .topbar {
+      gap: 0.8rem;
+      grid-template-columns: minmax(4.5rem, 1fr) auto minmax(4.5rem, 1fr);
+      min-height: 3.65rem;
+      padding: 0.8rem 0.9rem;
+    }
+
+    .brand img {
+      width: 5.1rem;
+    }
+
+    .header-cta {
+      min-height: 2.15rem;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .menu-toggle > span:last-child {
+      display: none;
+    }
+
+    .site-nav div {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .masthead {
+      padding: 1.7rem 0.9rem 2rem;
+      text-align: left;
+    }
+
+    .masthead h1,
+    .masthead span {
+      margin-right: 0;
+      margin-left: 0;
+    }
+
+    .category-strip div,
+    .top-stories,
+    .content-feed,
+    .topic-band,
+    .blog-cta,
+    .filter-empty {
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .side-stack,
+    .rail-feed,
+    .topic-band {
+      grid-template-columns: 1fr;
+    }
+
+    .compact-story a,
+    .list-story a,
+    .trend-row {
+      grid-template-columns: 112px 1fr;
+    }
+
+    .lead-story h3 {
+      font-size: clamp(1.65rem, 8vw, 2.25rem);
+    }
+
+    .list-story p {
+      display: none;
+    }
+
+    .blog-cta {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .news-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      padding-right: 0.9rem;
+      padding-left: 0.9rem;
+    }
+
+    .news-footer nav {
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .compact-story a,
+    .list-story a,
+    .trend-row {
+      grid-template-columns: 96px 1fr;
+      gap: 0.75rem;
+    }
+
+    .compact-story h3,
+    .list-story h3 {
+      font-size: 1rem;
+    }
+
+    .story-meta strong {
+      display: none;
     }
   }
 </style>

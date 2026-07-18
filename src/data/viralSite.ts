@@ -6,10 +6,10 @@ export const whatsappHref =
 
 export const navItems = [
   ["Home", "/"],
+  ["Engage", "/engage"],
   ["Our Work", "/work"],
   ["Services", "/services"],
   ["Clients", "/clients"],
-  ["Blog", "/blog"],
   ["About Us", "/about"],
 ] as const;
 

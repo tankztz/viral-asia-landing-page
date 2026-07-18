@@ -1,0 +1,1247 @@
+---
+import Layout from "../layouts/Layout.astro";
+import {
+  heroVideos,
+  navItems,
+  partners,
+  services,
+  stats,
+  testimonials,
+  whatsappHref,
+  workCards,
+} from "../data/viralSite";
+---
+
+<Layout title="Viral Asia - Singapore Social Media Agency">
+  <main class="landing">
+    <header class="topbar">
+      <a class="brand" href="/engage" aria-label="Viral Asia engage page">
+        <img src="/images/viral-asia-logo-transparent.png" alt="Viral Asia" />
+      </a>
+      <nav aria-label="Primary navigation">
+        {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
+      </nav>
+      <a class="cta cta-top" href={whatsappHref}>
+        Get free consultation
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>
+          <span class="hero-line">We make</span>
+          <span class="hero-line hero-red"
+            ><span class="sg-flag-text">SG</span> business</span
+          >
+          <span class="hero-line">go viral.</span>
+        </h1>
+        <p>
+          Singapore's social media agency for short video, creators and digital
+          campaigns.
+        </p>
+        <ul class="checklist" aria-label="Key results">
+          <li>500M+ views generated</li>
+          <li>100+ brands served</li>
+          <li>Singapore homegrown team</li>
+          <li>Full-service campaigns</li>
+        </ul>
+        <a class="cta cta-main" href={whatsappHref}>
+          Get free consultation
+          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+        </a>
+      </div>
+
+      <div class="hero-board" aria-label="Viral video examples">
+        <div class="video-mosaic">
+          {
+            heroVideos.map(([image, views, title, slug]) => (
+              <a class="mini-video" href={`/redirect/${slug}/`}>
+                <img src={image} alt={title} loading="eager" />
+                <span class="play" aria-hidden="true" />
+                <strong>{views}</strong>
+              </a>
+            ))
+          }
+        </div>
+        <div class="hero-stat">
+          <strong>500M+</strong>
+          <span>Views generated for our clients</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="brand-strip" aria-label="Trusted clients">
+      <h2>Trusted by 100+ leading brands in Singapore</h2>
+      <div class="logo-grid">
+        {
+          partners.map(([image, name]) => (
+            <img src={`/logos/${image}`} alt={name} loading="lazy" />
+          ))
+        }
+      </div>
+      <p>and many more</p>
+    </section>
+
+    <section class="stats-bar" aria-label="Viral Asia results">
+      {
+        stats.map(([value, label]) => (
+          <div>
+            <span class="stat-icon" aria-hidden="true" />
+            <strong>{value}</strong>
+            <p>{label}</p>
+          </div>
+        ))
+      }
+      <a class="cta cta-small" href={whatsappHref}>
+        Talk to us now
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
+    </section>
+
+    <section class="work" id="work">
+      <h2>Recent <span>viral work</span> that broke the internet</h2>
+      <div class="work-grid">
+        {
+          workCards.map(([image, title, account, views]) => (
+            <article class="work-card">
+              <div class="work-image">
+                <img src={image} alt={title} />
+                <span class="play play-large" aria-hidden="true" />
+                <strong>{views}</strong>
+              </div>
+              <h3>{title}</h3>
+              <p>{account}</p>
+            </article>
+          ))
+        }
+      </div>
+      <a class="cta cta-wide" href="/work">View more of our work</a>
+    </section>
+
+    <section class="why" id="about">
+      <div class="why-list">
+        <h2>Why choose <span>Viral Asia?</span></h2>
+        <ul class="checklist">
+          <li>
+            <strong>Singapore homegrown company</strong><br />We understand
+            local buyers.
+          </li>
+          <li>
+            <strong>Data-driven strategy</strong><br />We do not guess, we test.
+          </li>
+          <li>
+            <strong>Full-service solution</strong><br />From content to
+            advertising.
+          </li>
+          <li>
+            <strong>Fast turnaround time</strong><br />Quick response, quick
+            results.
+          </li>
+          <li>
+            <strong>Proven track record</strong><br />Results speak for
+            themselves.
+          </li>
+        </ul>
+      </div>
+
+      <figure class="team-card">
+        <img
+          src="/images/professional_team.jpg"
+          alt="Viral Asia team planning a campaign"
+        />
+        <figcaption>
+          <strong>We are Singapore homegrown</strong>
+          <span>A local team helping local brands get seen.</span>
+        </figcaption>
+      </figure>
+
+      <div class="quotes">
+        <h2>What our clients say</h2>
+        {
+          testimonials.slice(0, 2).map((testimonial) => (
+            <blockquote>
+              <p>{testimonial.quote}</p>
+              <cite>
+                {testimonial.name}
+                <span>{testimonial.role}</span>
+              </cite>
+            </blockquote>
+          ))
+        }
+        <a class="cta cta-small" href="/clients">More testimonials</a>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <h2>Our services</h2>
+      <div class="service-grid">
+        {
+          services.map((service) => (
+            <article>
+              <img
+                class="service-thumb"
+                src={service.image}
+                alt=""
+                loading="lazy"
+                aria-hidden="true"
+              />
+              <h3>{service.title}</h3>
+              <p>{service.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="offer">
+      <div>
+        <h2>Limited time offer</h2>
+        <p>Get 20% off your first campaign.</p>
+      </div>
+      <div
+        class="timer"
+        data-countdown
+        aria-label="Offer countdown"
+        aria-live="polite"
+      >
+        <span><strong data-countdown-value="days">03</strong>Days</span>
+        <span><strong data-countdown-value="hours">14</strong>Hours</span>
+        <span><strong data-countdown-value="minutes">23</strong>Mins</span>
+        <span><strong data-countdown-value="seconds">45</strong>Secs</span>
+      </div>
+      <a class="cta cta-discount" href={whatsappHref}>
+        Claim your discount
+        <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+      </a>
+    </section>
+
+    <footer class="footer" id="contact">
+      <div class="footer-cta">
+        <h2>Ready to make your brand go viral?</h2>
+        <p>Let's plan the next campaign.</p>
+        <a class="cta cta-main" href={whatsappHref}>
+          Get free consultation
+          <img src="/icons/whatsapp.svg" alt="" aria-hidden="true" />
+        </a>
+        <small>Or call us: (+65) 9090 6912</small>
+      </div>
+      <div>
+        <h3>Mailing Address</h3>
+        <p>11 mosque street #02-01</p>
+        <h3>Email Address</h3>
+        <p>hello@viralasia.co</p>
+      </div>
+      <div>
+        <h3>Follow us</h3>
+        <div class="socials" aria-label="Social links">
+          <a
+            href="https://www.tiktok.com/@thesgdaily"
+            target="_blank"
+            rel="noopener noreferrer">TikTok</a
+          >
+          <a
+            href="https://www.instagram.com/thesgdaily/"
+            target="_blank"
+            rel="noopener noreferrer">Instagram</a
+          >
+          <a
+            href="https://www.facebook.com/thesgdaily8/"
+            target="_blank"
+            rel="noopener noreferrer">Facebook</a
+          >
+        </div>
+      </div>
+      <div>
+        <h3>Scan to chat</h3>
+        <a
+          class="qr"
+          href={whatsappHref}
+          aria-label="Chat with Viral Asia on WhatsApp"
+        >
+          <img
+            src="/images/whatsapp-qr.png"
+            alt="WhatsApp QR code for Viral Asia"
+            loading="lazy"
+          />
+        </a>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  const countdown = document.querySelector("[data-countdown]");
+
+  if (countdown) {
+    const values = {
+      days: countdown.querySelector('[data-countdown-value="days"]'),
+      hours: countdown.querySelector('[data-countdown-value="hours"]'),
+      minutes: countdown.querySelector('[data-countdown-value="minutes"]'),
+      seconds: countdown.querySelector('[data-countdown-value="seconds"]'),
+    };
+
+    const dayMs = 24 * 60 * 60 * 1000;
+    const sgtOffsetMs = 8 * 60 * 60 * 1000;
+
+    const getNextSundayEndSgt = (now) => {
+      const sgtNow = new Date(now.getTime() + sgtOffsetMs);
+      const daysUntilSunday = (7 - sgtNow.getUTCDay()) % 7;
+      const deadlineSgtMs =
+        Date.UTC(
+          sgtNow.getUTCFullYear(),
+          sgtNow.getUTCMonth(),
+          sgtNow.getUTCDate() + daysUntilSunday,
+          23,
+          59,
+          59,
+        ) - sgtOffsetMs;
+
+      return deadlineSgtMs > now.getTime()
+        ? deadlineSgtMs
+        : deadlineSgtMs + 7 * dayMs;
+    };
+
+    const pad = (value) => String(value).padStart(2, "0");
+
+    const renderCountdown = () => {
+      const now = new Date();
+      const remaining = Math.max(0, getNextSundayEndSgt(now) - now.getTime());
+
+      const days = Math.floor(remaining / dayMs);
+      const hours = Math.floor((remaining % dayMs) / (60 * 60 * 1000));
+      const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      const seconds = Math.floor((remaining % (60 * 1000)) / 1000);
+
+      values.days.textContent = pad(days);
+      values.hours.textContent = pad(hours);
+      values.minutes.textContent = pad(minutes);
+      values.seconds.textContent = pad(seconds);
+    };
+
+    renderCountdown();
+    window.setInterval(renderCountdown, 1000);
+  }
+</script>
+
+<style>
+  :global(body) {
+    background: #050505;
+  }
+
+  .landing {
+    --red: #e91515;
+    --yellow: #ffe100;
+    --lime: #9cff00;
+    --line: rgba(255, 255, 255, 0.18);
+    min-height: 100dvh;
+    overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 58% 10%,
+        rgba(233, 21, 21, 0.2),
+        transparent 26rem
+      ),
+      #050505;
+    color: white;
+    font-family: var(--font-display);
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .landing p,
+  .landing li,
+  .landing small,
+  .landing cite,
+  .landing a,
+  .landing blockquote {
+    font-family: var(--font-body);
+    text-transform: none;
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 0.75rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  h2 span {
+    color: var(--red);
+  }
+
+  .brand img {
+    display: block;
+    width: 7.3rem;
+    max-width: 100%;
+    height: auto;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.9rem, 2.2vw, 2rem);
+  }
+
+  nav a {
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    background: var(--red);
+    box-shadow: 0 0.45rem 0 rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 900;
+    padding: 0.65rem 1.2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      transform 180ms ease,
+      filter 180ms ease;
+    white-space: nowrap;
+  }
+
+  .cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  .cta:active {
+    transform: translateY(1px);
+  }
+
+  .cta img {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    filter: invert(1);
+  }
+
+  .cta-main,
+  .cta-top {
+    background: var(--red);
+    color: white;
+  }
+
+  .cta-wide {
+    width: min(22rem, 100%);
+    margin: 1.5rem auto 0;
+  }
+
+  .cta-small {
+    min-height: 2.2rem;
+    padding-inline: 1rem;
+  }
+
+  .cta-discount {
+    background: var(--yellow);
+    color: #050505;
+  }
+
+  .cta-discount img {
+    filter: none;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 0.72fr 1fr;
+    gap: 1.2rem;
+    max-width: 1280px;
+    min-height: 360px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 1.25rem;
+  }
+
+  .hero-copy {
+    align-self: center;
+    padding-bottom: 0.5rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(3.25rem, 5.8vw, 6.5rem);
+    line-height: 0.84;
+    text-wrap: balance;
+    text-shadow: 0 6px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .hero-line {
+    display: block;
+  }
+
+  .hero-red {
+    color: var(--red);
+  }
+
+  .sg-flag-text {
+    position: relative;
+    display: inline-block;
+    color: var(--red);
+  }
+
+  .sg-flag-text::after {
+    content: "";
+    position: absolute;
+    top: 0.12em;
+    left: 0.08em;
+    width: 0.72em;
+    height: 0.48em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 80'%3E%3Ccircle cx='28' cy='28' r='22' fill='%23fff'/%3E%3Ccircle cx='38' cy='28' r='22' fill='%23e91515'/%3E%3Cg fill='%23fff' transform='translate(76 13) scale(1.15)'%3E%3Cpath d='M0-7 2-2.1h5.3L3.1 1.1 4.7 6.2 0 3.2-4.7 6.2-3.1 1.1-7.3-2.1H-2z'/%3E%3Cpath d='M15 11 17 15.9h5.3L18.1 19.1 19.7 24.2 15 21.2 10.3 24.2 11.9 19.1 7.7 15.9H13z'/%3E%3Cpath d='M7 31 9 35.9h5.3L10.1 39.1 11.7 44.2 7 41.2 2.3 44.2 3.9 39.1-0.3 35.9H5z'/%3E%3Cpath d='M-7 31-5 35.9H0.3L-3.9 39.1-2.3 44.2-7 41.2-11.7 44.2-10.1 39.1-14.3 35.9H-9z'/%3E%3Cpath d='M-15 11-13 15.9h5.3L-11.9 19.1-10.3 24.2-15 21.2-19.7 24.2-18.1 19.1-22.3 15.9H-17z'/%3E%3C/g%3E%3C/svg%3E")
+      center / contain no-repeat;
+    pointer-events: none;
+  }
+
+  .hero-copy p {
+    max-width: 31rem;
+    margin-top: 0.75rem;
+    color: #f5f5f5;
+    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    line-height: 1.1;
+    text-transform: none;
+  }
+
+  .checklist {
+    display: grid;
+    gap: 0.28rem;
+    margin: 0.95rem 0 0.9rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checklist li {
+    position: relative;
+    padding-left: 1.6rem;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  .checklist li::before {
+    content: "";
+    position: absolute;
+    top: 0.12rem;
+    left: 0;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--lime);
+    border-radius: 4px;
+    background: linear-gradient(135deg, transparent 48%, var(--lime) 50%);
+  }
+
+  .hero-board {
+    position: relative;
+    isolation: isolate;
+    align-self: stretch;
+    min-width: 0;
+  }
+
+  .video-mosaic {
+    position: relative;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .mini-video,
+  .work-image {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 6px;
+    background: #111;
+  }
+
+  .mini-video {
+    display: block;
+    min-width: 0;
+    aspect-ratio: 4 / 5;
+    color: white;
+    text-decoration: none;
+  }
+
+  .mini-video img,
+  .work-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.1) contrast(1.05);
+  }
+
+  .mini-video::after,
+  .work-image::after,
+  .team-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 42%, rgba(0, 0, 0, 0.72));
+    pointer-events: none;
+  }
+
+  .mini-video strong,
+  .work-image strong {
+    position: absolute;
+    bottom: 0.45rem;
+    left: 0.45rem;
+    z-index: 1;
+    font:
+      900 0.95rem/1 Arial,
+      Helvetica,
+      sans-serif;
+  }
+
+  .play {
+    position: absolute;
+    left: 0.45rem;
+    bottom: 1.55rem;
+    z-index: 1;
+    width: 0;
+    height: 0;
+    border-top: 0.45rem solid transparent;
+    border-bottom: 0.45rem solid transparent;
+    border-left: 0.72rem solid white;
+    filter: drop-shadow(0 1px 3px black);
+  }
+
+  .play-large {
+    left: 50%;
+    bottom: 50%;
+    border-top-width: 1rem;
+    border-bottom-width: 1rem;
+    border-left-width: 1.5rem;
+    transform: translate(-40%, 50%);
+  }
+
+  .hero-stat {
+    position: absolute;
+    inset: 33% 9% auto auto;
+    z-index: 5;
+    width: min(25rem, 56%);
+    color: var(--yellow);
+    text-shadow: 0 6px 18px black;
+    pointer-events: none;
+  }
+
+  .hero-stat strong {
+    display: block;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 0.8;
+  }
+
+  .hero-stat span {
+    display: block;
+    color: white;
+    font-size: clamp(1.8rem, 3.4vw, 3.5rem);
+    line-height: 0.9;
+  }
+
+  .brand-strip {
+    background: #f4f4f4;
+    color: #050505;
+    padding: 0.7rem 1.5rem 0.55rem;
+    text-align: center;
+  }
+
+  .brand-strip h2 {
+    font-size: clamp(1.1rem, 2vw, 1.55rem);
+  }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    gap: 0.7rem 1.35rem;
+    max-width: 1180px;
+    margin: 0.65rem auto 0.25rem;
+    align-items: center;
+  }
+
+  .logo-grid img {
+    width: 100%;
+    max-height: 1.9rem;
+    object-fit: contain;
+    filter:
+      drop-shadow(0 0 1px rgba(0, 0, 0, 0.72))
+      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.22));
+  }
+
+  .brand-strip p {
+    text-align: right;
+    max-width: 1180px;
+    margin: 0 auto;
+    color: #111;
+    font-size: 0.85rem;
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 2px solid rgba(233, 21, 21, 0.9);
+  }
+
+  .stats-bar div {
+    display: grid;
+    grid-template-columns: 3.6rem 1fr;
+    column-gap: 0.75rem;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .stat-icon {
+    position: relative;
+    grid-row: span 2;
+    width: 2.9rem;
+    height: 2.9rem;
+    border: 2px solid rgba(255, 225, 0, 0.9);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, var(--red) 0 22%, transparent 24%),
+      conic-gradient(from 45deg, var(--lime) 0 25%, transparent 25% 100%),
+      #111;
+  }
+
+  .stat-icon::after {
+    content: "";
+    position: absolute;
+    inset: 0.72rem;
+    border: 2px solid rgba(255, 255, 255, 0.72);
+    border-radius: inherit;
+  }
+
+  .stats-bar strong {
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    line-height: 0.9;
+  }
+
+  .stats-bar p {
+    color: white;
+    font-size: 0.86rem;
+    line-height: 1.1;
+  }
+
+  .work {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.75rem 1.5rem 1.05rem;
+    text-align: center;
+  }
+
+  .work h2,
+  .services h2 {
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+    min-width: 0;
+    margin-top: 0.8rem;
+    text-align: left;
+  }
+
+  .work-card {
+    min-width: 0;
+  }
+
+  .work-image {
+    aspect-ratio: 9 / 12.6;
+  }
+
+  .work-card h3 {
+    margin-top: 0.55rem;
+    color: white;
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .work-card p {
+    margin-top: 0.3rem;
+    color: #cfcfcf;
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .why {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr 0.78fr;
+    gap: 1.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem 1.05rem;
+    border-top: 2px solid rgba(233, 21, 21, 0.9);
+  }
+
+  .why h2,
+  .offer h2,
+  .footer h2 {
+    font-size: clamp(1.7rem, 3.2vw, 2.8rem);
+    line-height: 0.95;
+  }
+
+  .why-list .checklist {
+    margin-top: 1rem;
+  }
+
+  .why-list strong {
+    font-family: var(--font-body);
+    text-transform: none;
+  }
+
+  .team-card {
+    position: relative;
+    min-height: 15.5rem;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 3px;
+  }
+
+  .team-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .team-card figcaption {
+    position: absolute;
+    inset: auto 1.3rem 1.3rem;
+    z-index: 1;
+  }
+
+  .team-card strong {
+    display: block;
+    max-width: 8ch;
+    font-size: clamp(2.3rem, 4vw, 4rem);
+    line-height: 0.88;
+  }
+
+  .team-card span {
+    display: block;
+    max-width: 25rem;
+    margin-top: 0.7rem;
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    line-height: 1.15;
+    text-transform: none;
+  }
+
+  .quotes h2 {
+    color: var(--yellow);
+    font-size: clamp(1.8rem, 3vw, 2.7rem);
+    line-height: 0.95;
+  }
+
+  blockquote {
+    margin: 0.8rem 0 0;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #1b1b1b, #090909);
+    border-left: 0.45rem solid var(--yellow);
+  }
+
+  blockquote p {
+    color: white;
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+
+  cite {
+    display: block;
+    margin-top: 0.8rem;
+    color: white;
+    font-size: 0.78rem;
+    font-style: normal;
+    font-weight: 800;
+  }
+
+  cite span {
+    display: block;
+    color: #c8c8c8;
+    font-weight: 500;
+  }
+
+  .quotes .cta {
+    margin-top: 0.9rem;
+  }
+
+  .services {
+    background: #f4f4f4;
+    color: #050505;
+    padding: 0.65rem 1.5rem 0.9rem;
+    text-align: center;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+    width: 100%;
+    min-width: 0;
+    max-width: 1180px;
+    margin: 0.7rem auto 0;
+    text-align: left;
+  }
+
+  .service-grid article {
+    display: grid;
+    grid-template-columns: 3.1rem 1fr;
+    column-gap: 0.75rem;
+    align-items: start;
+    min-width: 0;
+  }
+
+  .service-thumb {
+    grid-row: span 2;
+    width: 3.1rem;
+    aspect-ratio: 1;
+    border: 2px solid #111;
+    border-radius: 6px;
+    object-fit: cover;
+    filter: saturate(1.08) contrast(1.06);
+  }
+
+  .service-grid h3 {
+    font-size: 0.9rem;
+    line-height: 0.95;
+  }
+
+  .service-grid p {
+    margin-top: 0.35rem;
+    color: #111;
+    font-size: 0.75rem;
+    line-height: 1.25;
+  }
+
+  .offer {
+    display: grid;
+    grid-template-columns: 1.1fr auto auto;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    background:
+      linear-gradient(110deg, var(--red) 0 37%, transparent 37.2%), #050505;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .offer p {
+    margin-top: 0.4rem;
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  .timer {
+    display: flex;
+    gap: 0.55rem;
+  }
+
+  .timer span {
+    display: grid;
+    min-width: 3.4rem;
+    padding: 0.45rem;
+    border-radius: 4px;
+    background: var(--red);
+    font:
+      800 0.62rem/1 Arial,
+      Helvetica,
+      sans-serif;
+    text-align: center;
+  }
+
+  .timer strong {
+    font:
+      900 2rem/1 var(--font-display),
+      sans-serif;
+  }
+
+  .footer {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 0.95fr 0.75fr;
+    gap: 1.6rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.1rem 1.5rem;
+  }
+
+  .footer-cta {
+    margin: -1.5rem 0 -1.5rem -1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--red), #820000);
+  }
+
+  .footer h3 {
+    font-size: 1.45rem;
+    line-height: 1;
+  }
+
+  .footer p,
+  .footer small {
+    display: block;
+    margin-top: 0.8rem;
+    color: white;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .footer .cta {
+    margin-top: 1rem;
+  }
+
+  .socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1rem;
+  }
+
+  .socials a {
+    border-radius: 999px;
+    background: #1e1e1e;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 900;
+    padding: 0.45rem 0.7rem;
+    text-decoration: none;
+  }
+
+  .qr {
+    display: grid;
+    place-items: center;
+    width: 7.2rem;
+    aspect-ratio: 1;
+    margin-top: 0.8rem;
+    border: 0.35rem solid white;
+    background: white;
+    box-shadow: 0 0.5rem 0 rgba(0, 0, 0, 0.45);
+    text-decoration: none;
+  }
+
+  .qr img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  @media (max-width: 760px) {
+    .topbar {
+      grid-template-columns: 1fr auto;
+    }
+
+    .topbar nav {
+      order: 3;
+      grid-column: 1 / -1;
+      justify-content: space-between;
+    }
+
+    .hero,
+    .why,
+    .offer,
+    .footer {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      min-height: 0;
+      padding-inline: 1rem;
+    }
+
+    .hero-stat {
+      inset: 35% 6% auto auto;
+    }
+
+    .stats-bar {
+      grid-template-columns: repeat(2, 1fr);
+      padding-inline: 1rem;
+    }
+
+    .logo-grid,
+    .service-grid,
+    .work-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .offer,
+    .footer-cta {
+      margin: 0;
+      background: #050505;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .topbar nav {
+      width: 100%;
+      overflow-x: auto;
+      justify-content: flex-start;
+      gap: 0.65rem;
+      padding-bottom: 0.25rem;
+      scrollbar-width: none;
+    }
+
+    .topbar nav a {
+      font-size: 0.66rem;
+    }
+
+    .topbar nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cta-top {
+      display: none;
+    }
+
+    h1 {
+      max-width: 100%;
+      font-size: clamp(2.7rem, 11.6vw, 3.35rem);
+    }
+
+    .hero-copy p {
+      max-width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .video-mosaic {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.4rem;
+      height: auto;
+    }
+
+    .stats-bar,
+    .logo-grid,
+    .service-grid,
+    .work-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .work h2,
+    .services h2 {
+      font-size: 1.7rem;
+      text-align: left;
+    }
+
+    .stats-bar {
+      gap: 0.8rem;
+    }
+
+    .stats-bar div {
+      grid-template-columns: 2.6rem 1fr;
+      column-gap: 0.55rem;
+    }
+
+    .stats-bar strong {
+      font-size: 1.75rem;
+    }
+
+    .stats-bar p {
+      font-size: 0.72rem;
+    }
+
+    .stat-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    .stat-icon::after {
+      inset: 0.55rem;
+    }
+
+    .stats-bar .cta {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .work,
+    .services {
+      padding-inline: 1rem;
+    }
+
+    .work-grid,
+    .service-grid {
+      gap: 0.55rem;
+    }
+
+    .service-grid article {
+      grid-template-columns: 2.7rem 1fr;
+      column-gap: 0.55rem;
+    }
+
+    .service-thumb {
+      width: 2.7rem;
+    }
+
+    .hero-stat {
+      position: absolute;
+      inset: 35% 5% auto auto;
+      width: min(15.5rem, 72%);
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .hero-stat strong {
+      font-size: clamp(2.9rem, 13.5vw, 3.35rem);
+    }
+
+    .hero-stat span {
+      font-size: clamp(1rem, 5vw, 1.25rem);
+      max-width: 12rem;
+    }
+
+    .footer {
+      padding-bottom: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

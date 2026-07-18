@@ -10,6 +10,7 @@
     "build:staging": "PUBLIC_SITE_ENV=staging astro build",
     "sanity:seed-categories": "node scripts/seed-blog-categories.mjs",
     "content:snapshot": "node scripts/extract-content-snapshot.mjs",
+    "verify:route-migration": "node scripts/verify-route-migration.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
