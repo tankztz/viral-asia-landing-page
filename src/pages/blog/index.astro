@@ -498,16 +498,42 @@ const blogSchema = {
           };
 
           const updatePageCopy = (filter) => {
+            const isLatest = filter === "latest";
             const isHappenings = filter.includes("happenings");
+            const countryLabel = isLatest ? "Singapore" : getCountryLabel(filter);
+            const countryCode = isLatest
+              ? "SG"
+              : (filter || "").split("-")[0].toUpperCase();
+            const categoryType = (filter || "").split("-").slice(1).join("-");
+
+            let nextEyebrow = "SG Daily Happenings";
+            let nextTitle = "Latest happenings in Singapore";
+
             if (isHappenings) {
-              if (heroEyebrow) heroEyebrow.textContent = getHappeningsEyebrow(filter);
-              if (heroTitle) heroTitle.textContent = `Latest happenings in ${getCountryLabel(filter)}`;
+              nextEyebrow = getHappeningsEyebrow(filter);
+              nextTitle = `Latest happenings in ${countryLabel}`;
+            } else if (!isLatest) {
+              const categoryLabels = {
+                food: "Food",
+                events: "Events",
+                explore: "Explore",
+              };
+              const categoryLabel = categoryLabels[categoryType] || categoryType;
+              nextEyebrow = `${countryCode} ${categoryLabel}`;
+              nextTitle = categoryType === "explore"
+                ? `Explore ${countryLabel}`
+                : `Latest ${categoryLabel.toLowerCase()} in ${countryLabel}`;
+            }
+
+            if (heroEyebrow) heroEyebrow.textContent = nextEyebrow;
+            if (heroTitle) heroTitle.textContent = nextTitle;
+            document.title = `${nextTitle} | Viral Asia`;
+
+            if (isHappenings) {
               if (ctaEyebrow) ctaEyebrow.textContent = "have a story to share?";
               if (ctaTitle) ctaTitle.textContent = "write in to us @ hello@viralasia.co or whatsapp us at 90906912";
               if (ctaButton) ctaButton.textContent = "share a story";
             } else {
-              if (heroEyebrow) heroEyebrow.textContent = "SG Daily Happenings";
-              if (heroTitle) heroTitle.textContent = "Latest happenings in Singapore";
               if (ctaEyebrow) ctaEyebrow.textContent = "build viral stories and craft effective campaigns";
               if (ctaTitle) ctaTitle.textContent = "build viral stories and craft effective campaigns";
               if (ctaButton) ctaButton.textContent = "plan a campaign";
