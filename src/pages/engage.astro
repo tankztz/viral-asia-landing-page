@@ -1,6 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import {
+  canonicalUrl,
+  organizationJsonLd,
+  siteDescriptions,
+} from "../config/site";
+import {
   heroVideos,
   navItems,
   partners,
@@ -10,9 +15,46 @@ import {
   whatsappHref,
   workCards,
 } from "../data/viralSite";
+
+const engageSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    organizationJsonLd,
+    {
+      "@type": "ProfessionalService",
+      name: "Viral Asia",
+      url: canonicalUrl("/engage/"),
+      description: siteDescriptions.engage,
+      image: canonicalUrl("/company/ViralAsia.png"),
+      telephone: "+65 9090 6912",
+      email: "hello@viralasia.co",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "11 Mosque Street #02-01",
+        addressCountry: "SG",
+      },
+      areaServed: {
+        "@type": "Country",
+        name: "Singapore",
+      },
+      serviceType: [
+        "Social media marketing",
+        "Short video production",
+        "Influencer marketing",
+        "Creator campaigns",
+      ],
+    },
+  ],
+};
 ---
 
-<Layout title="Viral Asia - Singapore Social Media Agency">
+<Layout
+  title="Viral Asia - Singapore Social Media Agency"
+  description={siteDescriptions.engage}
+  canonicalUrl={canonicalUrl("/engage/")}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(engageSchema)} />
+
   <main class="landing">
     <header class="topbar">
       <a class="brand" href="/engage" aria-label="Viral Asia engage page">

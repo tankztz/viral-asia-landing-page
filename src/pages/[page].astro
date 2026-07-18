@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { canonicalUrl, siteDescriptions } from "../config/site";
 import {
   allClientLogos,
   beforeAfter,
@@ -19,6 +20,14 @@ export function getStaticPaths() {
 }
 
 const { content } = Astro.props;
+const page = Astro.params.page as keyof typeof pageContent;
+const descriptionByPage = {
+  work: siteDescriptions.work,
+  services: siteDescriptions.services,
+  clients: siteDescriptions.clients,
+  about: siteDescriptions.about,
+  contact: siteDescriptions.contact,
+} as const;
 
 const getLinkLabel = (href: string) => {
   if (href.startsWith("mailto:")) return "Email us";
@@ -27,7 +36,11 @@ const getLinkLabel = (href: string) => {
 };
 ---
 
-<Layout title={`${content.title} - Viral Asia`}>
+<Layout
+  title={`${content.title} - Viral Asia`}
+  description={descriptionByPage[page]}
+  canonicalUrl={canonicalUrl(`/${page}/`)}
+>
   <main class="subpage">
     <header class="topbar">
       <a class="brand" href="/engage" aria-label="Viral Asia engage page">

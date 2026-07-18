@@ -2,6 +2,11 @@
 import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "sanity:client";
 import Layout from "../layouts/Layout.astro";
+import {
+  canonicalUrl,
+  organizationJsonLd,
+  siteDescriptions,
+} from "../config/site";
 import { navItems, viralPostItems, whatsappHref } from "../data/viralSite";
 
 interface BlogPost extends SanityDocument {
@@ -209,26 +214,43 @@ const defaultCta = {
 
 const blogSchema = {
   "@context": "https://schema.org",
-  "@type": "Blog",
-  name: "Latest happenings in Singapore",
-  url: "/",
-  publisher: {
-    "@type": "Organization",
-    name: "Viral Asia",
-    logo: "/company/ViralAsia.png",
-  },
-  blogPost: cleanPosts.slice(0, 10).map((post) => ({
-    "@type": "BlogPosting",
-    headline: post.title,
-    datePublished: post.publishedAt,
-    url: postHref(post),
-    articleSection: inferCategory(post),
-    image: getImage(post),
-  })),
+  "@graph": [
+    organizationJsonLd,
+    {
+      "@type": "WebSite",
+      name: "Viral Asia",
+      url: canonicalUrl("/"),
+      description: siteDescriptions.home,
+      publisher: {
+        "@id": `${canonicalUrl("/")}#organization`,
+      },
+    },
+    {
+      "@type": "Blog",
+      name: "Latest happenings in Singapore",
+      url: canonicalUrl("/"),
+      description: siteDescriptions.home,
+      publisher: {
+        "@id": `${canonicalUrl("/")}#organization`,
+      },
+      blogPost: cleanPosts.slice(0, 10).map((post) => ({
+        "@type": "BlogPosting",
+        headline: post.title,
+        datePublished: post.publishedAt,
+        url: canonicalUrl(postHref(post)),
+        articleSection: inferCategory(post),
+        image: getImage(post),
+      })),
+    },
+  ],
 };
 ---
 
-<Layout title="Latest happenings in Singapore | Viral Asia">
+<Layout
+  title="Latest happenings in Singapore | Viral Asia"
+  description={siteDescriptions.home}
+  canonicalUrl={canonicalUrl("/")}
+>
   <script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 
   <main class="blog-page" data-emdash-site="viral-asia" data-emdash-collection="posts">

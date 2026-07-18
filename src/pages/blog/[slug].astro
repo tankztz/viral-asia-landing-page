@@ -4,6 +4,7 @@ import { sanityClient } from "sanity:client";
 import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import PortableSanityImage from "../../components/PortableSanityImage.astro";
+import { canonicalUrl as buildCanonicalUrl } from "../../config/site";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
 
 interface BlogPost extends SanityDocument {
@@ -20,6 +21,7 @@ interface BlogPost extends SanityDocument {
   };
   body?: unknown[];
   readingMinutes?: number;
+  _updatedAt?: string;
 }
 
 export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
@@ -42,6 +44,7 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
       url
     }
   },
+  _updatedAt,
   body,
   "readingMinutes": round(length(pt::text(body)) / 900)
 }`;
@@ -117,7 +120,12 @@ const heroImage = getImage(post);
 const fallbackImage = viralPostItems[0]?.cover;
 const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
 const articleDescription = post?.excerpt;
-const schemaDescription = post?.excerpt || post?.title;
+const schemaDescription =
+  post?.excerpt && post.excerpt.length >= 50
+    ? post.excerpt
+    : post?.title
+      ? `${post.title}. Read the latest Viral Asia story covering Singapore and regional happenings.`
+      : undefined;
 const canonicalUrl = post?.slug?.current
   ? `https://viralasia.co/blog/${post.slug.current}/`
   : undefined;
@@ -138,12 +146,13 @@ const articleSchema = post && {
   publisher: {
     "@type": "Organization",
     name: "Viral Asia",
-    logo: "/company/ViralAsia.png",
+    logo: buildCanonicalUrl("/company/ViralAsia.png"),
   },
   articleSection: primaryCategory,
   image: heroImage,
   mainEntityOfPage: canonicalUrl,
   url: canonicalUrl,
+  dateModified: post._updatedAt || post.publishedAt,
 };
 
 const portableTextComponents = {
