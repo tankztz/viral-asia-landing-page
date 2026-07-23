@@ -20,7 +20,7 @@ interface BlogPost extends SanityDocument {
   publishedAt?: string;
   excerpt?: string;
   author?: { name?: string };
-  categories?: { title?: string }[];
+  categories?: { _id?: string; title?: string }[];
   mainImage?: {
     asset?: {
       url?: string;
@@ -31,6 +31,7 @@ interface BlogPost extends SanityDocument {
   };
   body?: unknown[];
   readingMinutes?: number;
+  categoryScore?: number;
   _updatedAt?: string;
 }
 
@@ -48,7 +49,7 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   publishedAt,
   excerpt,
   author->{name},
-  categories[]->{title},
+  categories[]->{_id, title},
   mainImage {
     asset-> {
       url,
@@ -67,14 +68,14 @@ const RELATED_POSTS_QUERY = `*[
   && defined(slug.current)
   && slug.current != $slug
   && !(_id in path("drafts.**"))
-]|order(publishedAt desc)[0...6]{
+]{
   _id,
   title,
   slug,
   publishedAt,
   excerpt,
   author->{name},
-  categories[]->{title},
+  categories[]->{_id, title},
   mainImage {
     asset-> {
       url,
@@ -82,13 +83,18 @@ const RELATED_POSTS_QUERY = `*[
         dimensions
       }
     }
-  }
-}`;
+  },
+  "categoryScore": count((categories[]._ref)[@ in $categoryIds])
+}|order(categoryScore desc, publishedAt desc)[0...6]`;
 
 const post = await sanityClient.fetch<BlogPost>(POST_QUERY, Astro.params);
+const categoryIds =
+  post?.categories
+    ?.map((category) => category._id)
+    .filter((id): id is string => Boolean(id)) || [];
 const relatedPosts = await sanityClient.fetch<BlogPost[]>(
   RELATED_POSTS_QUERY,
-  Astro.params,
+  { ...Astro.params, categoryIds },
 );
 
 const formatDate = (date?: string) =>
@@ -733,11 +739,16 @@ const portableTextComponents = {
     color: var(--red);
   }
 
+  .headline-block {
+    min-width: 0;
+  }
+
   .headline-block h1 {
     margin: 0;
     max-width: 15ch;
     font: 900 clamp(2.5rem, 5.1vw, 4.9rem) / 0.94 var(--font-body);
     letter-spacing: -0.035em;
+    overflow-wrap: break-word;
     text-wrap: balance;
   }
 
@@ -938,6 +949,7 @@ const portableTextComponents = {
   .related-grid a {
     display: grid;
     min-height: 100%;
+    min-width: 0;
     border: 1px solid var(--line);
     background: #ffffff;
     color: var(--ink);
@@ -956,9 +968,9 @@ const portableTextComponents = {
   }
 
   .related-grid img[data-media-orientation="portrait"] {
-    aspect-ratio: 4 / 5;
-    background: #111111;
-    object-fit: contain;
+    background: var(--soft);
+    object-fit: cover;
+    object-position: center center;
   }
 
   .related-grid div {
@@ -974,6 +986,7 @@ const portableTextComponents = {
   .related-grid h3 {
     margin: 0;
     font: 900 1.18rem/1.08 var(--font-body);
+    overflow-wrap: break-word;
     text-wrap: pretty;
   }
 
@@ -1098,8 +1111,17 @@ const portableTextComponents = {
     }
 
     .header-cta {
+      min-width: 0;
       min-height: 2.15rem;
       padding: 0.6rem 0.75rem;
+      font-size: 0;
+    }
+
+    .header-cta::after {
+      content: "Enquire";
+      font: 900 0.68rem/1 var(--font-body);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
 
     .menu-toggle > span:last-child {
@@ -1122,7 +1144,10 @@ const portableTextComponents = {
 
     .headline-block h1 {
       max-width: 100%;
-      font-size: clamp(2rem, 9vw, 3rem);
+      font-size: clamp(1.6rem, 7vw, 2.25rem);
+      overflow-wrap: normal;
+      text-wrap: initial;
+      word-break: normal;
     }
 
     .article-rail {

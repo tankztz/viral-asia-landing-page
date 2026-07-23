@@ -16,7 +16,7 @@ interface BlogPost extends SanityDocument {
   publishedAt?: string;
   excerpt?: string;
   author?: { name?: string };
-  categories?: { title?: string }[];
+  categories?: { _id?: string; title?: string }[];
   mainImage?: {
     asset?: {
       url?: string;
@@ -35,7 +35,7 @@ interface BlogCategory extends SanityDocument {
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...18]{
+]|order(publishedAt desc)[0...36]{
   _id,
   title,
   slug,
@@ -208,9 +208,39 @@ const getImageOrientation = (post?: BlogPost) => {
 const cleanPosts = posts.filter(
   (post) => post.slug?.current && post.title && !/test/i.test(post.title),
 );
+const isSingaporeCategory = (category?: string) => {
+  const filterValue = category ? toFilterValue(category) : "";
+  return filterValue.startsWith("sg-") || filterValue.includes("singapore");
+};
+const isThailandCategory = (category?: string) => {
+  const filterValue = category ? toFilterValue(category) : "";
+  return (
+    filterValue.startsWith("th-") ||
+    filterValue.includes("thailand") ||
+    filterValue.includes("thai")
+  );
+};
+const isSingaporePost = (post: BlogPost) => {
+  const categoryTitles =
+    post.categories
+      ?.map((category) => category.title?.trim())
+      .filter((title): title is string => Boolean(title)) || [];
+  const hasSingaporeCategory = categoryTitles.some(isSingaporeCategory);
+  const hasThailandCategory = categoryTitles.some(isThailandCategory);
+
+  if (hasSingaporeCategory) return true;
+  if (hasThailandCategory) return false;
+  return !isThailandCategory(inferCategory(post));
+};
+const singaporePosts = cleanPosts.filter(isSingaporePost);
+const latestSingaporePosts =
+  singaporePosts.length > 0 ? singaporePosts : cleanPosts;
 const featuredPost =
-  cleanPosts.find((post) => !/test/i.test(post.title)) ?? cleanPosts[0];
-const storyPosts = cleanPosts.filter((post) => post._id !== featuredPost?._id);
+  latestSingaporePosts.find((post) => !/test/i.test(post.title)) ??
+  latestSingaporePosts[0];
+const storyPosts = latestSingaporePosts.filter(
+  (post) => post._id !== featuredPost?._id,
+);
 const topPosts = storyPosts.slice(0, 3);
 const latestPosts =
   storyPosts.length > 3 ? storyPosts.slice(3, 11) : storyPosts;
@@ -243,7 +273,7 @@ const blogSchema = {
     name: "Viral Asia",
     logo: "/company/ViralAsia.png",
   },
-  blogPost: cleanPosts.slice(0, 10).map((post) => ({
+  blogPost: latestSingaporePosts.slice(0, 10).map((post) => ({
     "@type": "BlogPosting",
     headline: post.title,
     datePublished: post.publishedAt,
@@ -959,6 +989,7 @@ const blogSchema = {
   .list-story a,
   .trend-row,
   .text-row {
+    min-width: 0;
     color: var(--ink);
     text-decoration: none;
   }
@@ -976,9 +1007,9 @@ const blogSchema = {
   }
 
   .lead-story img[data-media-orientation="portrait"] {
-    aspect-ratio: 4 / 5;
-    background: #111111;
-    object-fit: contain;
+    background: var(--soft);
+    object-fit: cover;
+    object-position: center center;
   }
 
   .lead-story span,
@@ -995,6 +1026,7 @@ const blogSchema = {
     margin: 0.45rem 0 0;
     font: 900 clamp(2rem, 4vw, 3.6rem) / 0.95 var(--font-body);
     letter-spacing: -0.02em;
+    overflow-wrap: break-word;
     text-wrap: balance;
   }
 
@@ -1035,14 +1067,15 @@ const blogSchema = {
   }
 
   .compact-story img[data-media-orientation="portrait"] {
-    aspect-ratio: 4 / 5;
-    background: #111111;
-    object-fit: contain;
+    background: var(--soft);
+    object-fit: cover;
+    object-position: center center;
   }
 
   .compact-story h3 {
     margin: 0.35rem 0 0.55rem;
     font: 900 1.08rem/1.12 var(--font-body);
+    overflow-wrap: break-word;
     text-wrap: pretty;
   }
 
@@ -1076,14 +1109,15 @@ const blogSchema = {
   }
 
   .list-story img[data-media-orientation="portrait"] {
-    aspect-ratio: 4 / 5;
-    background: #111111;
-    object-fit: contain;
+    background: var(--soft);
+    object-fit: cover;
+    object-position: center center;
   }
 
   .list-story h3 {
     margin: 0.35rem 0 0.5rem;
     font: 900 clamp(1.2rem, 2.2vw, 1.7rem) / 1.05 var(--font-body);
+    overflow-wrap: break-word;
     text-wrap: pretty;
   }
 
@@ -1155,6 +1189,7 @@ const blogSchema = {
     display: block;
     margin: 0.3rem 0;
     font: 900 0.96rem/1.15 var(--font-body);
+    overflow-wrap: break-word;
   }
 
   .trend-row p,
@@ -1319,8 +1354,17 @@ const blogSchema = {
     }
 
     .header-cta {
+      min-width: 0;
       min-height: 2.15rem;
       padding: 0.6rem 0.75rem;
+      font-size: 0;
+    }
+
+    .header-cta::after {
+      content: "Enquire";
+      font: 900 0.68rem/1 var(--font-body);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
 
     .menu-toggle > span:last-child {
@@ -1367,7 +1411,10 @@ const blogSchema = {
     }
 
     .lead-story h3 {
-      font-size: clamp(1.65rem, 8vw, 2.25rem);
+      font-size: clamp(1.28rem, 6.1vw, 1.65rem);
+      overflow-wrap: normal;
+      text-wrap: initial;
+      word-break: normal;
     }
 
     .list-story p {
