@@ -999,6 +999,13 @@ const blogSchema = {
     gap: 1rem;
   }
 
+  .lead-story a > div,
+  .compact-story a > div,
+  .list-story a > div,
+  .trend-row > div {
+    min-width: 0;
+  }
+
   .lead-story img {
     width: 100%;
     aspect-ratio: 16 / 9;
@@ -1007,6 +1014,7 @@ const blogSchema = {
   }
 
   .lead-story img[data-media-orientation="portrait"] {
+    aspect-ratio: 1;
     background: var(--soft);
     object-fit: cover;
     object-position: center center;
@@ -1067,6 +1075,7 @@ const blogSchema = {
   }
 
   .compact-story img[data-media-orientation="portrait"] {
+    aspect-ratio: 1;
     background: var(--soft);
     object-fit: cover;
     object-position: center center;
@@ -1109,6 +1118,7 @@ const blogSchema = {
   }
 
   .list-story img[data-media-orientation="portrait"] {
+    aspect-ratio: 1;
     background: var(--soft);
     object-fit: cover;
     object-position: center center;
