@@ -251,6 +251,7 @@ const latestPosts =
   storyPosts.length > 3 ? storyPosts.slice(3, 11) : storyPosts;
 const sidePosts =
   storyPosts.length > 8 ? storyPosts.slice(8, 12) : storyPosts.slice(0, 4);
+const categoryArchivePosts = cleanPosts.filter((post) => !isSingaporePost(post));
 const campaignPosts = viralPostItems.slice(0, 6);
 const fallbackImages = campaignPosts.map((post) => post.cover);
 
@@ -507,6 +508,52 @@ const blogSchema = {
       </aside>
     </section>
 
+    <section
+      class="content-feed category-archive"
+      aria-labelledby="category-archive-heading"
+      data-filter-section
+      data-primary-filter-section
+      data-category-archive-section
+      hidden
+    >
+      <div class="main-feed">
+        <div class="section-label">
+          <h2 id="category-archive-heading">Latest Stories</h2>
+        </div>
+
+        <div class="article-list" data-emdash-entry-list>
+          {categoryArchivePosts.map((post, index) => (
+            <article
+              class="list-story"
+              data-filter-card
+              data-primary-filter-card
+              data-category-archive="true"
+              data-category={toFilterValue(inferCategory(post))}
+              data-emdash-entry
+            >
+              <a href={postHref(post)}>
+                <img
+                  src={postImage(post, 760, index + 13)}
+                  alt={post.title}
+                  data-media-orientation={getImageOrientation(post)}
+                  loading="lazy"
+                />
+                <div>
+                  <span>{inferCategory(post)}</span>
+                  <h3>{post.title}</h3>
+                  {post.excerpt && <p>{post.excerpt}</p>}
+                  <div class="story-meta">
+                    <time>{formatDate(post.publishedAt)}</time>
+                    <strong>{post.author?.name || "Viral Asia"}</strong>
+                  </div>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
     {
       topicHighlights.length > 0 && (
         <section class="topic-band" aria-label="Editorial categories" data-filter-section>
@@ -577,6 +624,9 @@ const blogSchema = {
           const ctaButton = document.querySelector("[data-cta-button]");
           const filterSections = Array.from(
             document.querySelectorAll("[data-filter-section]"),
+          );
+          const categoryArchiveSections = Array.from(
+            document.querySelectorAll("[data-category-archive-section]"),
           );
 
           const getCountryLabel = (filter) => {
@@ -651,9 +701,15 @@ const blogSchema = {
 
             filterCards.forEach((card) => {
               const category = card.dataset.category || "";
-              const shouldShow = normalizedFilter === "latest" || category === normalizedFilter;
+              const shouldShow = normalizedFilter === "latest"
+                ? card.dataset.categoryArchive !== "true"
+                : category === normalizedFilter;
               card.hidden = !shouldShow;
               if (shouldShow) visibleCount += 1;
+            });
+
+            categoryArchiveSections.forEach((section) => {
+              section.hidden = normalizedFilter === "latest";
             });
 
             filterSections.forEach((section) => {
