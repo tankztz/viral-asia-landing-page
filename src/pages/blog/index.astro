@@ -35,7 +35,7 @@ interface BlogCategory extends SanityDocument {
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-]|order(publishedAt desc)[0...36]{
+]|order(publishedAt desc){
   _id,
   title,
   slug,
@@ -246,7 +246,14 @@ const latestPosts =
   storyPosts.length > 3 ? storyPosts.slice(3, 11) : storyPosts;
 const sidePosts =
   storyPosts.length > 8 ? storyPosts.slice(8, 12) : storyPosts.slice(0, 4);
-const categoryArchivePosts = cleanPosts.filter((post) => !isSingaporePost(post));
+const primaryPostIds = new Set(
+  [featuredPost, ...topPosts, ...latestPosts]
+    .map((post) => post?._id)
+    .filter((id): id is string => Boolean(id)),
+);
+const categoryArchivePosts = cleanPosts.filter(
+  (post) => !primaryPostIds.has(post._id),
+);
 const campaignPosts = viralPostItems.slice(0, 6);
 const fallbackImages = campaignPosts.map((post) => post.cover);
 
@@ -999,6 +1006,7 @@ const blogSchema = {
   }
 
   [data-filter-card][hidden],
+  [data-category-archive-section][hidden],
   [data-filter-section][data-filter-empty-section] {
     display: none !important;
   }
