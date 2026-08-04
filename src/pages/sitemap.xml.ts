@@ -1,9 +1,10 @@
 import type { APIRoute } from "astro";
 import { sanityClient } from "sanity:client";
 import { canonicalUrl } from "../config/site";
+import { discoverContentRoutes } from "../lib/content-routes.mjs";
 
 interface SitemapPost {
-  slug: { current: string };
+  path: string;
   publishedAt?: string;
   _updatedAt?: string;
 }
@@ -36,21 +37,13 @@ const urlEntry = (loc: string, lastmod?: string) => {
 };
 
 export const GET: APIRoute = async () => {
-  const posts = await sanityClient.fetch<SitemapPost[]>(`*[
-    _type == "post"
-    && defined(slug.current)
-    && !(_id in path("drafts.**"))
-  ]|order(publishedAt desc){
-    slug,
-    publishedAt,
-    _updatedAt
-  }`);
+  const { posts } = await discoverContentRoutes(sanityClient);
 
   const entries = [
     ...STATIC_PATHS.map((path) => urlEntry(canonicalUrl(path))),
-    ...posts.map((post) =>
+    ...posts.map((post: SitemapPost) =>
       urlEntry(
-        canonicalUrl(`/blog/${post.slug.current}/`),
+        canonicalUrl(post.path),
         formatDate(post._updatedAt || post.publishedAt),
       ),
     ),

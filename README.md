@@ -46,6 +46,12 @@ npm run build:staging
 npm run preview
 ```
 
+Pull-request validation (staging build, local preview, route/content/SEO checks):
+
+```bash
+npm run validate:pr
+```
+
 ## Project Boundaries
 
 - `src/pages` contains public routes.

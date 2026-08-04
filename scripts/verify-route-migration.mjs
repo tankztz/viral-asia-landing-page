@@ -1,6 +1,19 @@
-const baseUrl = (process.argv[2] || "https://viralasia.co").replace(/\/$/, "");
+import { readFile } from "node:fs/promises";
+import { createClient } from "@sanity/client";
+import {
+  SANITY_CONFIG,
+  discoverContentRoutes,
+} from "../src/lib/content-routes.mjs";
 
+const baseUrl = (process.argv[2] || "https://viralasia.co").replace(/\/$/, "");
+const canonicalBaseUrl = (process.argv[3] || baseUrl).replace(/\/$/, "");
+const shouldExpectEdgeRedirects = baseUrl === canonicalBaseUrl;
+const manifest = await discoverContentRoutes(createClient(SANITY_CONFIG));
 const checks = [];
+
+console.log(
+  `Discovered ${manifest.articleCount} published articles and ${manifest.categoryCount} categories`,
+);
 
 const addCheck = async (name, fn) => {
   try {
@@ -23,6 +36,11 @@ const fetchText = async (path) => {
 
 const fetchManual = (path) =>
   fetch(`${baseUrl}${path}`, { redirect: "manual" });
+
+await addCheck("Sanity content routes are discoverable", async () => {
+  assert(manifest.articleCount > 0, "Sanity has no published article routes");
+  assert(manifest.categoryCount > 0, "Sanity has no categories with slugs");
+});
 
 await addCheck("root renders the content homepage", async () => {
   const { response, text } = await fetchText("/");
@@ -58,39 +76,42 @@ await addCheck("engage renders the marketing homepage", async () => {
   );
 });
 
-await addCheck("blog index redirects to root", async () => {
-  const response = await fetchManual("/blog");
-  assert(
-    [301, 302, 307, 308].includes(response.status),
-    `/blog returned ${response.status}, expected a redirect`,
-  );
-  const location = response.headers.get("location") || "";
-  assert(location === "/" || location === `${baseUrl}/`, `/blog redirects to ${location}`);
+await addCheck("blog index redirect remains configured", async () => {
+  if (!shouldExpectEdgeRedirects) {
+    const redirects = await readFile("public/_redirects", "utf8");
+    assert(/^\/blog \/ 301$/m.test(redirects), "_redirects is missing /blog -> /");
+    assert(/^\/blog\/ \/ 301$/m.test(redirects), "_redirects is missing /blog/ -> /");
+    return;
+  }
+
+  for (const path of ["/blog", "/blog/"]) {
+    const response = await fetchManual(path);
+    assert(
+      [301, 302, 307, 308].includes(response.status),
+      `${path} returned ${response.status}, expected a redirect`,
+    );
+    const location = response.headers.get("location") || "";
+    assert(
+      location === "/" || location === `${baseUrl}/`,
+      `${path} redirects to ${location}`,
+    );
+  }
 });
 
-await addCheck("blog trailing slash redirects to root", async () => {
-  const response = await fetchManual("/blog/");
-  assert(
-    [301, 302, 307, 308].includes(response.status),
-    `/blog/ returned ${response.status}, expected a redirect`,
-  );
-  const location = response.headers.get("location") || "";
-  assert(location === "/" || location === `${baseUrl}/`, `/blog/ redirects to ${location}`);
-});
-
-await addCheck("article pages remain available under /blog/slug", async () => {
-  const { response, text } = await fetchText(
-    "/blog/sgd19-lok-lok-buffet-in-singapore-the-ultimate-late-night-feast/",
-  );
-  assert(response.ok, `article returned ${response.status}`);
-  assert(
-    text.includes("$19 Lok Lok Buffet in Singapore"),
-    "article page content did not render",
-  );
-  assert(
-    text.includes("https://viralasia.co/blog/sgd19-lok-lok-buffet-in-singapore-the-ultimate-late-night-feast/"),
-    "article canonical under /blog/slug is missing",
-  );
+await addCheck("every published article remains available under /blog/slug", async () => {
+  for (const post of manifest.posts) {
+    const path = post.path;
+    const { response, text } = await fetchText(path);
+    assert(response.ok, `${path} returned ${response.status}`);
+    assert(
+      text.includes(`data-emdash-entry="${post.slug}"`),
+      `${path} did not render the discovered article`,
+    );
+    assert(
+      text.includes(`${canonicalBaseUrl}${path}`),
+      `${path} is missing its canonical URL`,
+    );
+  }
 });
 
 await addCheck("service pages keep marketing logo routing to Engage", async () => {
@@ -113,4 +134,6 @@ if (failed.length > 0) {
   process.exit(1);
 }
 
-console.log(`\nRoute migration verification passed for ${baseUrl}`);
+console.log(
+  `\nRoute migration verification passed for ${baseUrl}: ${manifest.articleCount} article routes validated; ${manifest.categoryCount} categories discovered`,
+);

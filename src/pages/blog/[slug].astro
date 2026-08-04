@@ -7,6 +7,7 @@ import PortableSanityImage from "../../components/PortableSanityImage.astro";
 import SocialEmbed from "../../components/SocialEmbed.astro";
 import { canonicalUrl as buildCanonicalUrl } from "../../config/site";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
+import { PUBLISHED_POST_FILTER } from "../../lib/content-routes.mjs";
 
 interface ImageDimensions {
   width?: number;
@@ -36,13 +37,13 @@ interface BlogPost extends SanityDocument {
 }
 
 export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
-  const SLUGS_QUERY = `*[_type == "post" && defined(slug.current)]{
+  const SLUGS_QUERY = `*[${PUBLISHED_POST_FILTER}]{
     "params": {"slug": slug.current}
   }`;
   return await sanityClient.fetch(SLUGS_QUERY);
 }
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
+const POST_QUERY = `*[${PUBLISHED_POST_FILTER} && slug.current == $slug][0]{
   _id,
   title,
   slug,
@@ -64,10 +65,8 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
 }`;
 
 const RELATED_POSTS_QUERY = `*[
-  _type == "post"
-  && defined(slug.current)
+  ${PUBLISHED_POST_FILTER}
   && slug.current != $slug
-  && !(_id in path("drafts.**"))
 ]{
   _id,
   title,
@@ -185,7 +184,7 @@ const articleSchema = post && {
     logo: buildCanonicalUrl("/company/ViralAsia.png"),
   },
   articleSection: primaryCategory,
-  image: heroImage,
+  image: heroImage || (fallbackImage ? buildCanonicalUrl(fallbackImage) : undefined),
   mainEntityOfPage: canonicalUrl,
   url: canonicalUrl,
   dateModified: post._updatedAt || post.publishedAt,

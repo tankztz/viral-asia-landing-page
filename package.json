@@ -8,11 +8,13 @@
     "start": "astro dev",
     "build": "astro build",
     "build:staging": "PUBLIC_SITE_ENV=staging astro build",
+    "validate:pr": "node scripts/validate-pr.mjs",
     "sanity:seed-categories": "node scripts/seed-blog-categories.mjs",
     "content:snapshot": "node scripts/extract-content-snapshot.mjs",
     "verify:route-migration": "node scripts/verify-route-migration.mjs",
     "verify:category-inventory": "node scripts/verify-category-inventory.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
+    "test:content-routes": "node --test scripts/content-routes.test.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
