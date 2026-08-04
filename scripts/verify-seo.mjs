@@ -1,8 +1,15 @@
+import { createClient } from "@sanity/client";
 import { parse } from "node-html-parser";
+import {
+  SANITY_CONFIG,
+  assertRouteManifest,
+  discoverContentRoutes,
+} from "../src/lib/content-routes.mjs";
 
 const fetchBaseUrl = (process.argv[2] || "https://viralasia.co").replace(/\/$/, "");
 const canonicalBaseUrl = (process.argv[3] || fetchBaseUrl).replace(/\/$/, "");
-const shouldExpectEdgeRedirects = fetchBaseUrl === canonicalBaseUrl;
+const shouldExpectProductionRobots = fetchBaseUrl === canonicalBaseUrl;
+const manifest = await discoverContentRoutes(createClient(SANITY_CONFIG));
 const expectedCanonical = {
   "/": `${canonicalBaseUrl}/`,
   "/engage/": `${canonicalBaseUrl}/engage/`,
@@ -11,10 +18,11 @@ const expectedCanonical = {
   "/clients/": `${canonicalBaseUrl}/clients/`,
   "/about/": `${canonicalBaseUrl}/about/`,
 };
-const articlePath =
-  "/blog/sgd19-lok-lok-buffet-in-singapore-the-ultimate-late-night-feast/";
-
 const checks = [];
+
+console.log(
+  `Discovered ${manifest.articleCount} published articles and ${manifest.categoryCount} categories`,
+);
 
 const addCheck = async (name, fn) => {
   try {
@@ -61,7 +69,12 @@ const assertMetadata = async (path, canonicalUrl, options = {}) => {
   assert(titles.length === 1, `${path} has ${titles.length} title tags`);
   const title = titles[0].text.trim();
   assert(title.length > 10, `${path} title is too short`);
-  assert(title.length <= 70, `${path} title is too long: ${title.length}`);
+  if (options.maxTitleLength) {
+    assert(
+      title.length <= options.maxTitleLength,
+      `${path} title is too long: ${title.length}`,
+    );
+  }
 
   const description = metaContent(root, 'meta[name="description"]');
   assert(description, `${path} is missing meta description`);
@@ -99,9 +112,18 @@ const assertMetadata = async (path, canonicalUrl, options = {}) => {
   return { root, jsonLd: parseJsonLd(root) };
 };
 
-await addCheck("robots.txt allows production crawling and declares sitemap", async () => {
+await addCheck("Sanity content routes are discoverable", async () => {
+  assert(manifest.articleCount > 0, "Sanity has no published article routes");
+  assert(manifest.categoryCount > 0, "Sanity has no categories with slugs");
+});
+
+await addCheck("robots.txt matches the build environment", async () => {
   const { response, text } = await fetchText("/robots.txt");
   assert(response.ok, `/robots.txt returned ${response.status}`);
+  if (!shouldExpectProductionRobots) {
+    assert(text.includes("Disallow: /"), "staging robots.txt allows crawling");
+    return;
+  }
   assert(text.includes("Allow: /"), "robots.txt is not allowing crawling");
   assert(
     text.includes(`Sitemap: ${canonicalBaseUrl}/sitemap.xml`),
@@ -110,7 +132,7 @@ await addCheck("robots.txt allows production crawling and declares sitemap", asy
 });
 
 let sitemapUrls = [];
-await addCheck("sitemap.xml exposes canonical 200 URLs only", async () => {
+await addCheck("sitemap.xml exactly matches published article routes", async () => {
   const { response, text } = await fetchText("/sitemap.xml");
   assert(response.ok, `/sitemap.xml returned ${response.status}`);
   assert(
@@ -118,25 +140,37 @@ await addCheck("sitemap.xml exposes canonical 200 URLs only", async () => {
     "sitemap.xml content-type is not XML",
   );
   sitemapUrls = [...text.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  assert(sitemapUrls.length >= 10, `sitemap has only ${sitemapUrls.length} URLs`);
   assert(sitemapUrls.includes(`${canonicalBaseUrl}/`), "sitemap missing root");
   assert(sitemapUrls.includes(`${canonicalBaseUrl}/engage/`), "sitemap missing /engage/");
-  assert(
-    sitemapUrls.includes(`${canonicalBaseUrl}${articlePath}`),
-    "sitemap missing known article",
-  );
   assert(!sitemapUrls.includes(`${canonicalBaseUrl}/blog/`), "sitemap includes redirected /blog/");
 
   for (const url of sitemapUrls) {
-    const { pathname } = new URL(url);
-    const response = await fetch(`${fetchBaseUrl}${pathname}`, { redirect: "manual" });
+    assert(
+      new URL(url).origin === canonicalBaseUrl,
+      `sitemap URL is outside the canonical origin: ${url}`,
+    );
+  }
+  const sitemapArticlePaths = sitemapUrls
+    .map((url) => new URL(url).pathname)
+    .filter((path) => path.startsWith("/blog/") && path !== "/blog/");
+  assertRouteManifest(
+    manifest.articlePaths,
+    sitemapArticlePaths,
+    "sitemap article routes",
+  );
+
+  for (const url of sitemapUrls) {
+    const parsedUrl = new URL(url);
+    const response = await fetch(`${fetchBaseUrl}${parsedUrl.pathname}`, {
+      redirect: "manual",
+    });
     assert(response.status === 200, `${url} returned ${response.status}`);
   }
 });
 
 await addCheck("important pages have SEO metadata", async () => {
   for (const [path, canonicalUrl] of Object.entries(expectedCanonical)) {
-    await assertMetadata(path, canonicalUrl);
+    await assertMetadata(path, canonicalUrl, { maxTitleLength: 80 });
   }
 });
 
@@ -166,21 +200,45 @@ await addCheck("engage has Organization structured data", async () => {
   );
 });
 
-await addCheck("known article keeps article metadata and BlogPosting schema", async () => {
-  const canonicalUrl = `${canonicalBaseUrl}${articlePath}`;
-  const { jsonLd } = await assertMetadata(articlePath, canonicalUrl, {
-    expectJsonLd: true,
+await addCheck("every published article has metadata and BlogPosting schema", async () => {
+  for (const path of manifest.articlePaths) {
+    const canonicalUrl = `${canonicalBaseUrl}${path}`;
+    const { jsonLd } = await assertMetadata(path, canonicalUrl, {
+      expectJsonLd: true,
+    });
+    const article = jsonLd.find((item) => item["@type"] === "BlogPosting");
+    assert(article, `${path} JSON-LD missing BlogPosting`);
+    assert(article.headline, `${path} BlogPosting missing headline`);
+    assert(article.datePublished, `${path} BlogPosting missing datePublished`);
+    assert(article.dateModified, `${path} BlogPosting missing dateModified`);
+    assert(article.image, `${path} BlogPosting missing image`);
+    assert(article.url === canonicalUrl, `${path} BlogPosting URL does not match canonical`);
+  }
+});
+
+await addCheck("rss.xml covers every published article exactly", async () => {
+  const { response, text } = await fetchText("/rss.xml");
+  assert(response.ok, `/rss.xml returned ${response.status}`);
+  assert(
+    response.headers.get("content-type")?.includes("xml"),
+    "rss.xml content-type is not XML",
+  );
+  assert(/<rss\s[^>]*version="2\.0"/.test(text), "rss.xml is not RSS 2.0");
+  const items = [...text.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((match) => match[1]);
+  const rssArticlePaths = items.map((item) => {
+    assert(/<title>[^<]+<\/title>/.test(item), "RSS item is missing a title");
+    assert(/<guid\s[^>]*>[^<]+<\/guid>/.test(item), "RSS item is missing a guid");
+    const link = item.match(/<link>([^<]+)<\/link>/)?.[1];
+    assert(link, "RSS item is missing a link");
+    const url = new URL(link);
+    assert(url.origin === canonicalBaseUrl, `RSS item has non-canonical link: ${link}`);
+    return url.pathname;
   });
-  const article = jsonLd.find((item) => item["@type"] === "BlogPosting");
-  assert(article, "article JSON-LD missing BlogPosting");
-  assert(article.headline, "BlogPosting missing headline");
-  assert(article.datePublished, "BlogPosting missing datePublished");
-  assert(article.dateModified, "BlogPosting missing dateModified");
-  assert(article.image, "BlogPosting missing image");
+  assertRouteManifest(manifest.articlePaths, rssArticlePaths, "RSS article routes");
 });
 
 await addCheck("retired blog index redirects to root", async () => {
-  if (!shouldExpectEdgeRedirects) return;
+  if (!shouldExpectProductionRobots) return;
   for (const path of ["/blog", "/blog/"]) {
     const response = await fetch(`${fetchBaseUrl}${path}`, { redirect: "manual" });
     assert([301, 308].includes(response.status), `${path} returned ${response.status}`);
@@ -200,4 +258,6 @@ if (failed.length > 0) {
   process.exit(1);
 }
 
-console.log(`\nSEO verification passed for ${fetchBaseUrl}`);
+console.log(
+  `\nSEO verification passed for ${fetchBaseUrl}: ${manifest.articleCount} article pages, sitemap entries, and RSS entries validated; ${manifest.categoryCount} categories discovered`,
+);

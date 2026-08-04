@@ -1,0 +1,20 @@
+{
+  "posts": [
+    {
+      "_id": "post-a",
+      "title": "First story",
+      "slug": "first-story",
+      "categories": [{ "title": "SG Food", "slug": "sg-food" }]
+    },
+    {
+      "_id": "post-b",
+      "title": "Second story",
+      "slug": "second-story",
+      "categories": [{ "title": "SG Events", "slug": "sg-events" }]
+    }
+  ],
+  "categories": [
+    { "_id": "category-a", "title": "SG Food", "slug": "sg-food" },
+    { "_id": "category-b", "title": "SG Events", "slug": "sg-events" }
+  ]
+}

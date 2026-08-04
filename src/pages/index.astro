@@ -21,7 +21,7 @@ interface BlogPost extends SanityDocument {
   publishedAt?: string;
   excerpt?: string;
   author?: { name?: string };
-  categories?: { _id?: string; title?: string }[];
+  categories?: { _id?: string; title?: string; slug?: { current?: string } }[];
   mainImage?: {
     asset?: {
       url?: string;
@@ -34,12 +34,14 @@ interface BlogPost extends SanityDocument {
 
 interface BlogCategory extends SanityDocument {
   title: string;
+  slug: { current: string };
   description?: string;
 }
 
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
+  && !(_id in path("drafts.**"))
 ]|order(publishedAt desc){
   _id,
   title,
@@ -47,7 +49,7 @@ const POSTS_QUERY = `*[
   publishedAt,
   excerpt,
   author->{name},
-  categories[]->{title},
+  categories[]->{title, slug},
   mainImage {
     asset-> {
       url,
@@ -61,9 +63,12 @@ const POSTS_QUERY = `*[
 const CATEGORIES_QUERY = `*[
   _type == "category"
   && defined(title)
+  && defined(slug.current)
+  && !(_id in path("drafts.**"))
 ]|order(title asc){
   _id,
   title,
+  slug,
   description
 }`;
 
@@ -91,24 +96,28 @@ const preferredCategoryOrder = [
   "TH Explore",
 ];
 
-const sortedCategoryTitles = studioCategories
-  .map((category) => category.title?.trim())
-  .filter((title): title is string => Boolean(title))
-  .sort((a, b) => {
-    const aIndex = preferredCategoryOrder.indexOf(a);
-    const bIndex = preferredCategoryOrder.indexOf(b);
-    if (aIndex !== -1 || bIndex !== -1) {
-      return (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
-        (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex);
-    }
-    return a.localeCompare(b);
-  });
+const sortedCategories = studioCategories.sort((a, b) => {
+  const aIndex = preferredCategoryOrder.indexOf(a.title);
+  const bIndex = preferredCategoryOrder.indexOf(b.title);
+  if (aIndex !== -1 || bIndex !== -1) {
+    return (aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex) -
+      (bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex);
+  }
+  return a.title.localeCompare(b.title);
+});
 
-const categoryNav = ["Latest", ...sortedCategoryTitles];
+const categoryNav = [
+  { title: "Latest", slug: "latest" },
+  ...sortedCategories.map((category) => ({
+    title: category.title.trim(),
+    slug: category.slug.current,
+  })),
+];
 
 const topicHighlights = studioCategories
   .filter((category) => category.title?.trim() && category.description?.trim())
   .map((category) => [
+    category.slug.current,
     category.title.trim(),
     category.description!.trim(),
   ] as const);
@@ -210,9 +219,7 @@ const getImageOrientation = (post?: BlogPost) => {
   return "square";
 };
 
-const cleanPosts = posts.filter(
-  (post) => post.slug?.current && post.title && !/test/i.test(post.title),
-);
+const cleanPosts = posts.filter((post) => post.slug?.current && post.title);
 const isSingaporeCategory = (category?: string) => {
   const filterValue = category ? toFilterValue(category) : "";
   return filterValue.startsWith("sg-") || filterValue.includes("singapore");
@@ -263,6 +270,11 @@ const campaignPosts = viralPostItems.slice(0, 6);
 const fallbackImages = campaignPosts.map((post) => post.cover);
 
 const postHref = (post: BlogPost) => `/blog/${post.slug.current}`;
+const postCategoryFilters = (post: BlogPost) =>
+  post.categories
+    ?.map((category) => category.slug?.current)
+    .filter((slug): slug is string => Boolean(slug))
+    .join(" ") || toFilterValue(inferCategory(post));
 const postImage = (post?: BlogPost, width = 1200, fallbackIndex = 0) =>
   getImage(post, width) || fallbackImages[fallbackIndex % fallbackImages.length];
 
@@ -354,10 +366,10 @@ const blogSchema = {
           {categoryNav.map((category, index) => (
             <button
               type="button"
-              data-filter={toFilterValue(category)}
+              data-filter={category.slug}
               aria-pressed={index === 0 ? "true" : "false"}
             >
-              {category}
+              {category.title}
             </button>
           ))}
         </div>
@@ -382,7 +394,7 @@ const blogSchema = {
             <article
               class="lead-story"
               data-filter-card
-              data-category={toFilterValue(inferCategory(featuredPost))}
+              data-category={postCategoryFilters(featuredPost)}
               data-emdash-featured-post
             >
               <a href={postHref(featuredPost)}>
@@ -412,7 +424,7 @@ const blogSchema = {
               <article
                 class="compact-story"
                 data-filter-card
-                data-category={toFilterValue(inferCategory(post))}
+                data-category={postCategoryFilters(post)}
                 data-emdash-entry
               >
                 <a href={postHref(post)}>
@@ -448,7 +460,7 @@ const blogSchema = {
                 class="list-story"
                 data-filter-card
                 data-primary-filter-card
-                data-category={toFilterValue(inferCategory(post))}
+                data-category={postCategoryFilters(post)}
                 data-emdash-entry
               >
                 <a href={postHref(post)}>
@@ -535,7 +547,7 @@ const blogSchema = {
               data-filter-card
               data-primary-filter-card
               data-category-archive="true"
-              data-category={toFilterValue(inferCategory(post))}
+              data-category={postCategoryFilters(post)}
               data-emdash-entry
             >
               <a href={postHref(post)}>
@@ -564,8 +576,8 @@ const blogSchema = {
     {
       topicHighlights.length > 0 && (
         <section class="topic-band" aria-label="Editorial categories" data-filter-section>
-          {topicHighlights.map(([category, description]) => (
-            <div data-filter-card data-category={toFilterValue(category)}>
+          {topicHighlights.map(([slug, category, description]) => (
+            <div data-filter-card data-category={slug}>
               <span>{category}</span>
               <h2>{description}</h2>
             </div>
@@ -707,10 +719,10 @@ const blogSchema = {
             });
 
             filterCards.forEach((card) => {
-              const category = card.dataset.category || "";
+              const categories = (card.dataset.category || "").split(/\s+/);
               const shouldShow = normalizedFilter === "latest"
                 ? card.dataset.categoryArchive !== "true"
-                : category === normalizedFilter;
+                : categories.includes(normalizedFilter);
               card.hidden = !shouldShow;
               if (shouldShow) visibleCount += 1;
             });
