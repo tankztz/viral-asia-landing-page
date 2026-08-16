@@ -714,13 +714,10 @@ const blogSchema = {
             activeButton?.scrollIntoView({ block: "nearest", inline: "center" });
 
             if (shouldPush) {
-              const nextUrl = new URL(window.location.href);
-              if (normalizedFilter === "latest") {
-                nextUrl.searchParams.delete("category");
-              } else {
-                nextUrl.searchParams.set("category", normalizedFilter);
-              }
-              window.history.replaceState({}, "", nextUrl);
+              const nextPath = normalizedFilter === "latest"
+                ? (window.location.pathname.startsWith("/blog") ? "/blog" : "/")
+                : `${window.location.pathname.startsWith("/blog") ? "/blog/category" : "/category"}/${encodeURIComponent(normalizedFilter)}`;
+              window.history.replaceState({}, "", nextPath);
             }
           };
 
@@ -730,7 +727,7 @@ const blogSchema = {
             applyCategoryFilter(button.dataset.filter || "latest");
           });
 
-          const initialFilter = new URL(window.location.href).searchParams.get("category");
+          const initialFilter = (window.location.pathname.match(/\/category\/([^/]+)\/?$/) || [])[1] || new URL(window.location.href).searchParams.get("category");
           if (initialFilter) applyCategoryFilter(initialFilter, false);
         };
 
