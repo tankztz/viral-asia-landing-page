@@ -733,18 +733,19 @@ const portableTextComponents = {
     align-items: end;
   }
 
+  .headline-block {
+    min-width: 0;
+    grid-column: 1 / -1;
+  }
+
   .headline-block p {
     margin: 0 0 0.75rem;
     color: var(--red);
   }
 
-  .headline-block {
-    min-width: 0;
-  }
-
   .headline-block h1 {
     margin: 0;
-    max-width: 15ch;
+    max-width: 100%;
     font: 900 clamp(2.5rem, 5.1vw, 4.9rem) / 0.94 var(--font-body);
     letter-spacing: -0.035em;
     overflow-wrap: break-word;
@@ -780,6 +781,7 @@ const portableTextComponents = {
 
   figure {
     margin: 0;
+    grid-column: 1 / -1;
   }
 
   figure img {
