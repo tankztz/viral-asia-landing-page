@@ -59,7 +59,9 @@ npm run validate:pr
 - `public` contains static marketing assets and portfolio examples.
 - Sanity project `3an9f3n5`, dataset `production`, supplies blog content.
 - `viral-asia-blog` is a separate Sanity Studio project embedded in this
-  repository. It is not part of the root Astro build.
+  repository. It is not part of the root Astro build, so install and lint it
+  separately with `npm ci --prefix viral-asia-blog` and
+  `npm run lint --prefix viral-asia-blog`.
 - `/studio` is also currently bundled into the root Astro site. This duplicate
   Studio integration should be removed during the decoupling phase.
 
