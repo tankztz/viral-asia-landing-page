@@ -57,7 +57,8 @@ const POSTS_QUERY = `*[
         dimensions
       }
     }
-  }
+  },
+  _createdAt
 }`;
 
 const CATEGORIES_QUERY = `*[
@@ -314,7 +315,7 @@ const blogSchema = {
       blogPost: latestSingaporePosts.slice(0, 10).map((post) => ({
         "@type": "BlogPosting",
         headline: post.title,
-        datePublished: post.publishedAt,
+        datePublished: post.publishedAt || post._createdAt,
         url: canonicalUrl(postHref(post)),
         articleSection: inferCategory(post),
         image: getImage(post),
