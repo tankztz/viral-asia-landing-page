@@ -235,7 +235,10 @@ const isSingaporePost = (post: BlogPost) => {
 const singaporePosts = cleanPosts.filter(isSingaporePost);
 const latestSingaporePosts =
   singaporePosts.length > 0 ? singaporePosts : cleanPosts;
+const featuredSlug =
+  "this-dating-app-lets-users-attend-private-dating-events-without-revealing-their-identities";
 const featuredPost =
+  latestSingaporePosts.find((post) => post.slug.current === featuredSlug) ??
   latestSingaporePosts.find((post) => !/test/i.test(post.title)) ??
   latestSingaporePosts[0];
 const storyPosts = latestSingaporePosts.filter(
