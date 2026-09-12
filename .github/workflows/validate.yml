@@ -17,3 +17,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run validate:pr
+      - run: npm ci --prefix viral-asia-blog
+      - run: npm run lint --prefix viral-asia-blog
