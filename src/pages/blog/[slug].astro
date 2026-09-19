@@ -60,6 +60,7 @@ const POST_QUERY = `*[${PUBLISHED_POST_FILTER} && slug.current == $slug][0]{
     }
   },
   _updatedAt,
+  _createdAt,
   body,
   "readingMinutes": round(length(pt::text(body)) / 900)
 }`;
@@ -155,9 +156,11 @@ const heroImage = getImage(post);
 const fallbackImage = viralPostItems[0]?.cover;
 const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
 const articleDescription = post?.excerpt;
+const truncateMeta = (text: string | undefined, max = 180): string | undefined =>
+  text && text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 const schemaDescription =
   post?.excerpt && post.excerpt.length >= 50
-    ? post.excerpt
+    ? truncateMeta(post.excerpt)
     : post?.title
       ? `${post.title}. Read the latest Viral Asia story covering Singapore and regional happenings.`
       : undefined;
@@ -173,7 +176,7 @@ const articleSchema = post && {
   "@type": "BlogPosting",
   headline: post.title,
   description: schemaDescription,
-  datePublished: post.publishedAt,
+  datePublished: post.publishedAt || post._createdAt,
   author: {
     "@type": "Organization",
     name: post.author?.name || "Viral Asia",
