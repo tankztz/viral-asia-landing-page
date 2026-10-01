@@ -14,7 +14,7 @@
     "verify:route-migration": "node scripts/verify-route-migration.mjs",
     "verify:category-inventory": "node scripts/verify-category-inventory.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
-    "test:content-routes": "node --test scripts/content-routes.test.mjs",
+    "test:content-routes": "node --test scripts/*.test.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

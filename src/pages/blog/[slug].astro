@@ -1,13 +1,14 @@
 ---
 import type { SanityDocument } from "@sanity/client";
-import { sanityClient } from "sanity:client";
+import { getContentSnapshot } from "../../lib/build-content.mjs";
+import { relatedPostsFor } from "../../lib/content-snapshot.mjs";
+import { articleMetaDescription } from "../../lib/article-metadata.mjs";
 import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import PortableSanityImage from "../../components/PortableSanityImage.astro";
 import SocialEmbed from "../../components/SocialEmbed.astro";
 import { canonicalUrl as buildCanonicalUrl } from "../../config/site";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
-import { PUBLISHED_POST_FILTER } from "../../lib/content-routes.mjs";
 
 interface ImageDimensions {
   width?: number;
@@ -37,64 +38,14 @@ interface BlogPost extends SanityDocument {
 }
 
 export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
-  const SLUGS_QUERY = `*[${PUBLISHED_POST_FILTER}]{
-    "params": {"slug": slug.current}
-  }`;
-  return await sanityClient.fetch(SLUGS_QUERY);
+  const { posts } = await getContentSnapshot();
+  return posts.map((post) => ({ params: { slug: post.slug.current } }));
 }
 
-const POST_QUERY = `*[${PUBLISHED_POST_FILTER} && slug.current == $slug][0]{
-  _id,
-  title,
-  slug,
-  publishedAt,
-  excerpt,
-  author->{name},
-  categories[]->{_id, title},
-  mainImage {
-    asset-> {
-      url,
-      metadata {
-        dimensions
-      }
-    }
-  },
-  _updatedAt,
-  body,
-  "readingMinutes": round(length(pt::text(body)) / 900)
-}`;
-
-const RELATED_POSTS_QUERY = `*[
-  ${PUBLISHED_POST_FILTER}
-  && slug.current != $slug
-]{
-  _id,
-  title,
-  slug,
-  publishedAt,
-  excerpt,
-  author->{name},
-  categories[]->{_id, title},
-  mainImage {
-    asset-> {
-      url,
-      metadata {
-        dimensions
-      }
-    }
-  },
-  "categoryScore": count((categories[]._ref)[@ in $categoryIds])
-}|order(categoryScore desc, publishedAt desc)[0...6]`;
-
-const post = await sanityClient.fetch<BlogPost>(POST_QUERY, Astro.params);
-const categoryIds =
-  post?.categories
-    ?.map((category) => category._id)
-    .filter((id): id is string => Boolean(id)) || [];
-const relatedPosts = await sanityClient.fetch<BlogPost[]>(
-  RELATED_POSTS_QUERY,
-  { ...Astro.params, categoryIds },
-);
+const { posts } = await getContentSnapshot();
+const post: BlogPost = posts.find((entry) => entry.slug.current === Astro.params.slug);
+if (!post) throw new Error(`Missing article in content snapshot: ${Astro.params.slug}`);
+const relatedPosts: BlogPost[] = relatedPostsFor(posts, post);
 
 const formatDate = (date?: string) =>
   date
@@ -155,12 +106,7 @@ const heroImage = getImage(post);
 const fallbackImage = viralPostItems[0]?.cover;
 const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
 const articleDescription = post?.excerpt;
-const schemaDescription =
-  post?.excerpt && post.excerpt.length >= 50
-    ? post.excerpt
-    : post?.title
-      ? `${post.title}. Read the latest Viral Asia story covering Singapore and regional happenings.`
-      : undefined;
+const schemaDescription = articleMetaDescription(post);
 const canonicalUrl = post?.slug?.current
   ? `https://viralasia.co/blog/${post.slug.current}/`
   : undefined;

@@ -1,6 +1,6 @@
 ---
 import type { SanityDocument } from "@sanity/client";
-import { sanityClient } from "sanity:client";
+import { getContentSnapshot } from "../lib/build-content.mjs";
 import Layout from "../layouts/Layout.astro";
 import {
   canonicalUrl,
@@ -38,44 +38,8 @@ interface BlogCategory extends SanityDocument {
   description?: string;
 }
 
-const POSTS_QUERY = `*[
-  _type == "post"
-  && defined(slug.current)
-  && !(_id in path("drafts.**"))
-]|order(publishedAt desc){
-  _id,
-  title,
-  slug,
-  publishedAt,
-  excerpt,
-  author->{name},
-  categories[]->{title, slug},
-  mainImage {
-    asset-> {
-      url,
-      metadata {
-        dimensions
-      }
-    }
-  }
-}`;
-
-const CATEGORIES_QUERY = `*[
-  _type == "category"
-  && defined(title)
-  && defined(slug.current)
-  && !(_id in path("drafts.**"))
-]|order(title asc){
-  _id,
-  title,
-  slug,
-  description
-}`;
-
-const [posts, studioCategories] = await Promise.all([
-  sanityClient.fetch<BlogPost[]>(POSTS_QUERY),
-  sanityClient.fetch<BlogCategory[]>(CATEGORIES_QUERY),
-]);
+const { posts, categories }: { posts: BlogPost[]; categories: BlogCategory[] } = await getContentSnapshot();
+const studioCategories = categories.filter((category) => category.slug?.current);
 
 const toFilterValue = (category: string) =>
   category
@@ -98,7 +62,7 @@ const preferredCategoryOrder = [
   "Travel",
 ];
 
-const sortedCategories = studioCategories.sort((a, b) => {
+const sortedCategories = [...studioCategories].sort((a, b) => {
   const aIndex = preferredCategoryOrder.indexOf(a.title);
   const bIndex = preferredCategoryOrder.indexOf(b.title);
   if (aIndex !== -1 || bIndex !== -1) {
