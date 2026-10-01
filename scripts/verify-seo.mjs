@@ -209,7 +209,12 @@ await addCheck("every published article has metadata and BlogPosting schema", as
     const article = jsonLd.find((item) => item["@type"] === "BlogPosting");
     assert(article, `${path} JSON-LD missing BlogPosting`);
     assert(article.headline, `${path} BlogPosting missing headline`);
-    assert(article.datePublished, `${path} BlogPosting missing datePublished`);
+    const sourcePost = manifest.posts.find((post) => post.path === path);
+    // Legacy published documents can lack a publication date. Do not invent one.
+    assert(
+      (article.datePublished || null) === (sourcePost.publishedAt || null),
+      `${path} BlogPosting datePublished does not match Sanity`,
+    );
     assert(article.dateModified, `${path} BlogPosting missing dateModified`);
     assert(article.image, `${path} BlogPosting missing image`);
     assert(article.url === canonicalUrl, `${path} BlogPosting URL does not match canonical`);

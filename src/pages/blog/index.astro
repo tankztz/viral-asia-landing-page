@@ -1,6 +1,6 @@
 ---
 import type { SanityDocument } from "@sanity/client";
-import { sanityClient } from "sanity:client";
+import { getContentSnapshot } from "../../lib/build-content.mjs";
 import Layout from "../../layouts/Layout.astro";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
 
@@ -32,40 +32,7 @@ interface BlogCategory extends SanityDocument {
   description?: string;
 }
 
-const POSTS_QUERY = `*[
-  _type == "post"
-  && defined(slug.current)
-]|order(publishedAt desc){
-  _id,
-  title,
-  slug,
-  publishedAt,
-  excerpt,
-  author->{name},
-  categories[]->{title},
-  mainImage {
-    asset-> {
-      url,
-      metadata {
-        dimensions
-      }
-    }
-  }
-}`;
-
-const CATEGORIES_QUERY = `*[
-  _type == "category"
-  && defined(title)
-]|order(title asc){
-  _id,
-  title,
-  description
-}`;
-
-const [posts, studioCategories] = await Promise.all([
-  sanityClient.fetch<BlogPost[]>(POSTS_QUERY),
-  sanityClient.fetch<BlogCategory[]>(CATEGORIES_QUERY),
-]);
+const { posts, categories: studioCategories }: { posts: BlogPost[]; categories: BlogCategory[] } = await getContentSnapshot();
 
 const toFilterValue = (category: string) =>
   category

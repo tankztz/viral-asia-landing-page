@@ -33,7 +33,7 @@ const waitForPreview = async (url, preview) => {
 };
 
 await run("npm", ["run", "build:staging"]);
-await run(process.execPath, ["--test", "scripts/content-routes.test.mjs"]);
+await run("npm", ["run", "test:content-routes"]);
 
 let preview;
 try {

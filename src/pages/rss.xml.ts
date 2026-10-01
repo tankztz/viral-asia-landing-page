@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
-import { sanityClient } from "sanity:client";
+import { getContentSnapshot } from "../lib/build-content.mjs";
 import { canonicalUrl, siteDescriptions } from "../config/site";
-import { discoverContentRoutes } from "../lib/content-routes.mjs";
 
 interface RssPost {
   title: string;
@@ -19,7 +18,7 @@ const escapeXml = (value: string) =>
     .replace(/'/g, "&apos;");
 
 export const GET: APIRoute = async () => {
-  const { posts } = await discoverContentRoutes(sanityClient);
+  const { manifest: { posts } } = await getContentSnapshot();
   const items = posts.map((post: RssPost) => {
     const url = canonicalUrl(post.path);
     const published = post.publishedAt

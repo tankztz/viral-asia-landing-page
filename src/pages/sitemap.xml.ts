@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
-import { sanityClient } from "sanity:client";
+import { getContentSnapshot } from "../lib/build-content.mjs";
 import { canonicalUrl } from "../config/site";
-import { discoverContentRoutes } from "../lib/content-routes.mjs";
 
 interface SitemapPost {
   path: string;
@@ -37,7 +36,7 @@ const urlEntry = (loc: string, lastmod?: string) => {
 };
 
 export const GET: APIRoute = async () => {
-  const { posts } = await discoverContentRoutes(sanityClient);
+  const { manifest: { posts } } = await getContentSnapshot();
 
   const entries = [
     ...STATIC_PATHS.map((path) => urlEntry(canonicalUrl(path))),
