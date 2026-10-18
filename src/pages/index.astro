@@ -1,6 +1,7 @@
 ---
 import type { SanityDocument } from "@sanity/client";
 import { getContentSnapshot } from "../lib/build-content.mjs";
+import { selectFeaturedPost } from "../lib/featured-story.mjs";
 import Layout from "../layouts/Layout.astro";
 import {
   canonicalUrl,
@@ -213,12 +214,7 @@ const isSingaporePost = (post: BlogPost) => {
 const singaporePosts = cleanPosts.filter(isSingaporePost);
 const latestSingaporePosts =
   singaporePosts.length > 0 ? singaporePosts : cleanPosts;
-const featuredSlug =
-  "this-dating-app-lets-users-attend-private-dating-events-without-revealing-their-identities";
-const featuredPost =
-  latestSingaporePosts.find((post) => post.slug.current === featuredSlug) ??
-  latestSingaporePosts.find((post) => !/test/i.test(post.title)) ??
-  latestSingaporePosts[0];
+const featuredPost = selectFeaturedPost(latestSingaporePosts);
 const storyPosts = latestSingaporePosts.filter(
   (post) => post._id !== featuredPost?._id,
 );
