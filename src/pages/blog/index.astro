@@ -207,9 +207,8 @@ const featuredPost = selectFeaturedPost(latestSingaporePosts);
 const storyPosts = latestSingaporePosts.filter(
   (post) => post._id !== featuredPost?._id,
 );
-const topPosts = storyPosts.slice(0, 3);
-const latestPosts =
-  storyPosts.length > 3 ? storyPosts.slice(3, 11) : storyPosts;
+const topPosts = storyPosts.slice(0, 6);
+const latestPosts = storyPosts.slice(6, 11);
 const sidePosts =
   storyPosts.length > 8 ? storyPosts.slice(8, 12) : storyPosts.slice(0, 4);
 const primaryPostIds = new Set(
@@ -1082,6 +1081,7 @@ const blogSchema = {
 
   .side-stack {
     display: grid;
+    align-content: start;
     gap: 1rem;
   }
 
