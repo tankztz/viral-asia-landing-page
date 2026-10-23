@@ -1,7 +1,7 @@
 ---
 import type { SanityDocument } from "@sanity/client";
 import { getContentSnapshot } from "../../lib/build-content.mjs";
-import { selectFeaturedPost } from "../../lib/featured-story.mjs";
+import { selectFeaturedPost, selectSecondaryFeaturedPost } from "../../lib/featured-story.mjs";
 import Layout from "../../layouts/Layout.astro";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
 
@@ -204,15 +204,16 @@ const singaporePosts = cleanPosts.filter(isSingaporePost);
 const latestSingaporePosts =
   singaporePosts.length > 0 ? singaporePosts : cleanPosts;
 const featuredPost = selectFeaturedPost(latestSingaporePosts);
+const secondaryFeaturedPost = selectSecondaryFeaturedPost(latestSingaporePosts, featuredPost);
 const storyPosts = latestSingaporePosts.filter(
-  (post) => post._id !== featuredPost?._id,
+  (post) => post._id !== featuredPost?._id && post._id !== secondaryFeaturedPost?._id,
 );
 const topPosts = storyPosts.slice(0, 6);
 const latestPosts = storyPosts.slice(6, 11);
 const sidePosts =
   storyPosts.length > 8 ? storyPosts.slice(8, 12) : storyPosts.slice(0, 4);
 const primaryPostIds = new Set(
-  [featuredPost, ...topPosts, ...latestPosts]
+  [featuredPost, secondaryFeaturedPost, ...topPosts, ...latestPosts]
     .map((post) => post?._id)
     .filter((id): id is string => Boolean(id)),
 );
@@ -320,6 +321,7 @@ const blogSchema = {
       </div>
 
       <div class="top-grid">
+        <div class="lead-stack">
         {
           featuredPost && (
             <article
@@ -349,6 +351,26 @@ const blogSchema = {
           )
         }
 
+          {
+            secondaryFeaturedPost && (
+              <article class="compact-story" data-filter-card
+                data-category={toFilterValue(inferCategory(secondaryFeaturedPost))}
+                data-emdash-secondary-featured-post>
+                <a href={postHref(secondaryFeaturedPost)}>
+                  <img src={postImage(secondaryFeaturedPost, 700, 0)}
+                    alt={secondaryFeaturedPost.title}
+                    data-media-orientation={getImageOrientation(secondaryFeaturedPost)}
+                    loading="lazy" />
+                  <div>
+                    <span>{inferCategory(secondaryFeaturedPost)}</span>
+                    <h3>{secondaryFeaturedPost.title}</h3>
+                    <time>{formatDate(secondaryFeaturedPost.publishedAt)}</time>
+                  </div>
+                </a>
+              </article>
+            )
+          }
+        </div>
         <div class="side-stack" data-emdash-entry-list>
           {
             topPosts.map((post, index) => (
@@ -1023,6 +1045,17 @@ const blogSchema = {
   .lead-story a {
     display: grid;
     gap: 1rem;
+  }
+
+  .lead-stack {
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .lead-stack:not(:has(> article:not([hidden]))) {
+    display: none;
   }
 
   .lead-story a > div,
