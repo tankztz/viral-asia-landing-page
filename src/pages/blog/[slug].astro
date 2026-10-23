@@ -48,9 +48,7 @@ interface BlogPost extends SanityDocument {
   _updatedAt?: string;
 }
 
-export async function getStaticPaths(): Promise<
-  { params: { slug: string } }[]
-> {
+export async function getStaticPaths() {
   const { posts } = await getContentSnapshot();
   return posts.map((post) => ({ params: { slug: post.slug.current } }));
 }

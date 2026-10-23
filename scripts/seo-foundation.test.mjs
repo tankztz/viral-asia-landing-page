@@ -307,5 +307,13 @@ test("all changed Astro templates compile without errors", async () => {
       file,
     );
     assert.ok(result.code.length > 0, file);
+    // Astro can emit broken hoisted TypeScript without a diagnostic.
+    // Exercise the next build stage rather than accepting compilation alone.
+    const { transform: transformTs } = await import("esbuild");
+    await transformTs(result.code, {
+      loader: "ts",
+      format: "esm",
+      sourcefile: file,
+    });
   }
 });
