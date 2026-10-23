@@ -19,10 +19,32 @@ test("CAPS replaces Delilah as the main feature without relying on publication o
     "caps",
   );
 });
-test("Delilah is secondary only within the original slot and never duplicated as the lead", () => {
+test("Delilah returns to ordinary posts when its feature slot is disabled", () => {
+  const posts = [newer, dwell, caps];
+  assert.equal(
+    feature.selectSecondaryFeaturedPost(posts, caps, active),
+    undefined,
+  );
+  assert.equal(feature.selectFeaturedPost(posts, active), caps);
+  assert.equal(feature.selectFeaturedPost([newer, dwell], active), newer);
+  const featured = feature.selectFeaturedPost(posts, active);
+  const secondary = feature.selectSecondaryFeaturedPost(
+    posts,
+    featured,
+    active,
+  );
+  const regular = posts.filter(
+    (post) => post._id !== featured?._id && post._id !== secondary?._id,
+  );
+  assert(regular.includes(dwell));
+});
+test("disabled Delilah slot never returns a secondary feature", () => {
   assert.equal(typeof feature.selectSecondaryFeaturedPost, "function");
   const posts = [newer, dwell, caps];
-  assert.equal(feature.selectSecondaryFeaturedPost(posts, caps, active), dwell);
+  assert.equal(
+    feature.selectSecondaryFeaturedPost(posts, caps, active),
+    undefined,
+  );
   assert.equal(
     feature.selectSecondaryFeaturedPost(posts, dwell, active),
     undefined,

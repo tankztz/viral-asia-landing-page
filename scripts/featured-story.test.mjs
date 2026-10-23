@@ -13,7 +13,7 @@ const posts = [
   { _id: "legacy", title: "Existing feature", slug: { current: legacySlug } },
   { _id: "dwell", title: "Dwell feature", slug: { current: temporarySlug } },
 ];
-test("temporary feature stays ahead of newer stories during its slot", () => {
+test("cancelled temporary feature no longer overrides the normal lead", () => {
   assert.equal(
     typeof module.selectFeaturedPost,
     "function",
@@ -21,13 +21,13 @@ test("temporary feature stays ahead of newer stories during its slot", () => {
   );
   assert.equal(
     module.selectFeaturedPost(posts, Date.parse("2026-10-20T00:00:00Z"))._id,
-    "dwell",
+    "legacy",
   );
 });
 
-test("temporary feature ends at its exact expiry boundary", () => {
+test("cancelled temporary feature remains inactive across its old expiry", () => {
   const end = Date.parse(module.TEMPORARY_FEATURE.expiresAt);
-  assert.equal(module.selectFeaturedPost(posts, end - 1)._id, "dwell");
+  assert.equal(module.selectFeaturedPost(posts, end - 1)._id, "legacy");
   assert.equal(module.selectFeaturedPost(posts, end)._id, "legacy");
   assert.equal(module.selectFeaturedPost(posts, end + 1)._id, "legacy");
 });
@@ -50,7 +50,7 @@ test("slot lasts seven days and normal fallback remains available", () => {
   const end = Date.parse(module.TEMPORARY_FEATURE.expiresAt);
   assert.equal(end - start, 7 * 24 * 60 * 60 * 1000);
   assert.equal(module.selectFeaturedPost(posts, start - 1)._id, "legacy");
-  assert.equal(module.selectFeaturedPost(posts, start)._id, "dwell");
+  assert.equal(module.selectFeaturedPost(posts, start)._id, "legacy");
   assert.equal(
     module.selectFeaturedPost(posts.slice(0, 2), start)._id,
     "legacy",

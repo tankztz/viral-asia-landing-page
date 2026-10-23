@@ -1,4 +1,5 @@
 export const TEMPORARY_FEATURE = Object.freeze({
+  enabled: false,
   slug: "ex-tiktok-gm-delilah-chan-dwelldrop-local-shops",
   startsAt: "2026-10-18T08:30:13Z",
   expiresAt: "2026-10-25T08:30:13Z",
@@ -12,6 +13,7 @@ export const DEFAULT_FEATURE_SLUG =
 
 export function selectFeaturedPost(posts, now = Date.now()) {
   const active =
+    TEMPORARY_FEATURE.enabled &&
     now >= Date.parse(TEMPORARY_FEATURE.startsAt) &&
     now < Date.parse(TEMPORARY_FEATURE.expiresAt);
   const temporary = active
@@ -32,6 +34,7 @@ export function selectSecondaryFeaturedPost(
   now = Date.now(),
 ) {
   if (
+    !TEMPORARY_FEATURE.enabled ||
     now < Date.parse(TEMPORARY_FEATURE.startsAt) ||
     now >= Date.parse(TEMPORARY_FEATURE.expiresAt)
   )

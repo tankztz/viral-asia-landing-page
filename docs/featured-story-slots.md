@@ -1,25 +1,24 @@
-# Temporary homepage headline slots
+# Homepage headline placements
 
-Both `/` and `/blog/` select their Top Stories placements through `src/lib/featured-story.mjs`. `PRIMARY_FEATURE_SLUG` pins the CAPS article first. While the Dwell window is active, `selectSecondaryFeaturedPost` places Delilah directly beneath it in the left lead column, never again in the compact/latest lists. If CAPS is unavailable, Dwell can still be the primary lead during its original window. The existing older editorial/newest-story fallbacks remain available. The selectors do not change publication dates or unpublish articles.
+Both `/` and `/blog/` use `src/lib/featured-story.mjs` for Top Stories placement. `PRIMARY_FEATURE_SLUG` pins CAPS first. Delilah's temporary slot is explicitly disabled (`TEMPORARY_FEATURE.enabled = false`) at the user's request, so it is neither the main feature nor the secondary feature. The existing normal editorial/newest-story fallback remains available.
 
 ## Primary lead
 
 - Article: `singapore-expo-halloween-trading-card-show-caps-2026`
 - Source Reel: `De0pqCnxYVL`
 - Sanity document: `sgdaily-De0pqCnxYVL`
-- Delilah appears directly below it during the original Dwell slot. CAPS remains the lead when that slot expires.
 
-## Dwell slot
+## Delilah: ordinary post
 
 - Article: `ex-tiktok-gm-delilah-chan-dwelldrop-local-shops`
 - Sanity document: `dwell-delilah-chan-founder-feature`
-- Starts: `2026-10-18T08:30:13Z`
-- Ends (exclusive): `2026-10-25T08:30:13Z` / 25 October 2026, 16:30:13 Singapore
-- Duration: exactly seven days.
-- At expiry, the Delilah secondary pin ends. CAPS stays the primary lead; Delilah remains published and eligible for ordinary listings.
+- Returned to the regular post list on 23 October 2026; no special placement.
+- Publication date, URL, cover and article content are unchanged.
+- Original window (retained as inactive history): `2026-10-18T08:30:13Z` to `2026-10-25T08:30:13Z`.
+- Superseded expiry job `d0ce3c2873be` (End Dwell secondary feature slot) is paused; it must not make later layout changes for this cancelled slot.
 
-Astro serves static HTML. The date guard takes effect on a build, not merely as wall-clock time passes on the published HTML. A one-shot Hermes job, `d0ce3c2873be` (End Dwell secondary feature slot), is scheduled at expiry to run tests, trigger the Git/Cloudflare rebuild and verify CAPS stays first while the Delilah secondary pin disappears. Use `hermes-heavy-run` for any local build; prefer the remote Git-connected build if host headroom is inadequate. Normal later content builds also observe the expiry guard. If a later editorial request changes the slot, the expiry job must not overwrite the newer setting.
+The templates exclude only the actual selected features from regular lists. With the Delilah slot disabled, it returns to ordinary chronological/category listings. The empty secondary-card markup does not render. No article is unpublished and no publication date is altered to change ordering.
 
-Tests: `node --test scripts/featured-story.test.mjs`. They cover priority over newer posts, start/end boundaries, the seven-day duration, missing/empty fallback behaviour and integration in both templates.
+Tests: `node --test scripts/featured-story.test.mjs scripts/featured-order.test.mjs`. They cover CAPS priority, the cancelled temporary slot, normal fallback behaviour and regular-list eligibility.
 
-At publication, verify the Sanity article anonymously, the generated and live article, both live featured-post links, and the Cloudflare Pages check for the exact Git commit. Do not treat HTTP 200 alone as proof that the intended content is deployed.
+Use `hermes-heavy-run` for any local build; use the Git-connected remote build if local memory headroom is inadequate. Verify the Cloudflare Pages check for the exact pushed commit, then inspect both live routes: CAPS is the lead, no secondary feature is rendered, and Delilah remains accessible as an ordinary post.
