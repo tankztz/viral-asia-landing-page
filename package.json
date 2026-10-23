@@ -14,6 +14,10 @@
     "verify:route-migration": "node scripts/verify-route-migration.mjs",
     "verify:category-inventory": "node scripts/verify-category-inventory.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
+    "content:inventory": "node scripts/content-growth.mjs inventory",
+    "content:check": "node scripts/content-growth.mjs check",
+    "growth:search": "node scripts/content-growth.mjs measure",
+    "growth:cloudflare": "node scripts/cloudflare-growth.mjs",
     "test:content-routes": "node --test scripts/*.test.mjs",
     "preview": "astro preview",
     "astro": "astro"

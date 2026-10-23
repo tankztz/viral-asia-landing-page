@@ -7,7 +7,18 @@ import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import PortableSanityImage from "../../components/PortableSanityImage.astro";
 import SocialEmbed from "../../components/SocialEmbed.astro";
-import { canonicalUrl as buildCanonicalUrl } from "../../config/site";
+import {
+  canonicalUrl as buildCanonicalUrl,
+  organizationJsonLd,
+} from "../../config/site";
+import {
+  authorArchives,
+  authorEntity,
+  articleStructuredData,
+  breadcrumbSchema,
+  heroDimensions,
+  serializeJsonLd,
+} from "../../lib/seo-foundation.mjs";
 import { navItems, viralPostItems, whatsappHref } from "../../data/viralSite";
 
 interface ImageDimensions {
@@ -37,14 +48,19 @@ interface BlogPost extends SanityDocument {
   _updatedAt?: string;
 }
 
-export async function getStaticPaths(): Promise<{ params: { slug: string } }[]> {
+export async function getStaticPaths(): Promise<
+  { params: { slug: string } }[]
+> {
   const { posts } = await getContentSnapshot();
   return posts.map((post) => ({ params: { slug: post.slug.current } }));
 }
 
 const { posts } = await getContentSnapshot();
-const post: BlogPost = posts.find((entry) => entry.slug.current === Astro.params.slug);
-if (!post) throw new Error(`Missing article in content snapshot: ${Astro.params.slug}`);
+const post: BlogPost = posts.find(
+  (entry) => entry.slug.current === Astro.params.slug,
+);
+if (!post)
+  throw new Error(`Missing article in content snapshot: ${Astro.params.slug}`);
 const relatedPosts: BlogPost[] = relatedPostsFor(posts, post);
 
 const formatDate = (date?: string) =>
@@ -57,12 +73,17 @@ const formatDate = (date?: string) =>
     : "Viral Asia";
 
 const inferCategory = (entry: BlogPost) => {
-  const explicitCategory = entry.categories?.find((category) => category.title)
-    ?.title;
+  const explicitCategory = entry.categories?.find(
+    (category) => category.title,
+  )?.title;
   if (explicitCategory) return explicitCategory;
 
   const title = entry.title.toLowerCase();
-  if (title.includes("lok lok") || title.includes("cafe") || title.includes("pork")) {
+  if (
+    title.includes("lok lok") ||
+    title.includes("cafe") ||
+    title.includes("pork")
+  ) {
     return "Food";
   }
   if (title.includes("home") || title.includes("property")) return "Property";
@@ -90,7 +111,9 @@ const getImageOrientation = (entry?: BlogPost) => {
 };
 
 const primaryCategory = post ? inferCategory(post) : "Story";
-const isHappeningsArticle = primaryCategory.toLowerCase().includes("happenings");
+const isHappeningsArticle = primaryCategory
+  .toLowerCase()
+  .includes("happenings");
 const articleCta = isHappeningsArticle
   ? {
       eyebrow: "have a story to share?",
@@ -103,6 +126,10 @@ const articleCta = isHappeningsArticle
       button: "plan a campaign",
     };
 const heroImage = getImage(post);
+const heroSize = heroDimensions(post);
+const author = authorArchives(posts).find(
+  (entry) => entry.name === post.author?.name,
+);
 const fallbackImage = viralPostItems[0]?.cover;
 const readingMinutes = Math.max(post?.readingMinutes || 2, 2);
 const articleDescription = post?.excerpt;
@@ -114,27 +141,19 @@ const cleanRelatedPosts = relatedPosts.filter(
   (entry) => entry.slug?.current && entry.title && !/test/i.test(entry.title),
 );
 
-const articleSchema = post && {
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: post.title,
+const articleSchema = articleStructuredData(post, {
   description: schemaDescription,
-  datePublished: post.publishedAt,
-  author: {
-    "@type": "Organization",
-    name: post.author?.name || "Viral Asia",
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "Viral Asia",
-    logo: buildCanonicalUrl("/company/ViralAsia.png"),
-  },
-  articleSection: primaryCategory,
-  image: heroImage || (fallbackImage ? buildCanonicalUrl(fallbackImage) : undefined),
-  mainEntityOfPage: canonicalUrl,
-  url: canonicalUrl,
-  dateModified: post._updatedAt || post.publishedAt,
-};
+  author: authorEntity(author, buildCanonicalUrl),
+  publisher: organizationJsonLd,
+  section: primaryCategory,
+  image:
+    heroImage || (fallbackImage ? buildCanonicalUrl(fallbackImage) : undefined),
+  canonicalUrl,
+});
+const breadcrumbs = breadcrumbSchema([
+  { name: "Home", url: buildCanonicalUrl("/") },
+  { name: post.title, url: canonicalUrl },
+]);
 
 const portableTextComponents = {
   type: {
@@ -150,10 +169,20 @@ const portableTextComponents = {
   canonicalUrl={canonicalUrl}
   imageUrl={heroImage}
   type="article"
+  publishedTime={articleSchema.datePublished}
+  modifiedTime={articleSchema.dateModified}
 >
-  {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
+  <script
+    type="application/ld+json"
+    set:html={serializeJsonLd(articleSchema)}
+  />
+  <script type="application/ld+json" set:html={serializeJsonLd(breadcrumbs)} />
 
-  <main class="article-page" data-emdash-site="viral-asia" data-emdash-entry={post.slug.current}>
+  <main
+    class="article-page"
+    data-emdash-site="viral-asia"
+    data-emdash-entry={post.slug.current}
+  >
     <div class="sticky-top" data-sticky-header>
       <div class="topbar">
         <button
@@ -178,7 +207,13 @@ const portableTextComponents = {
         <a class="header-cta" href={whatsappHref}>Enquire now</a>
       </div>
 
-      <nav class="site-nav" id="blog-menu" aria-label="Primary navigation" data-menu-panel hidden>
+      <nav
+        class="site-nav"
+        id="blog-menu"
+        aria-label="Primary navigation"
+        data-menu-panel
+        hidden
+      >
         <div>
           {navItems.map(([label, href]) => <a href={href}>{label}</a>)}
           <a href={whatsappHref}>Contact</a>
@@ -201,9 +236,22 @@ const portableTextComponents = {
           <h1>{post.title}</h1>
           {articleDescription && <span>{articleDescription}</span>}
           <div class="article-meta">
-            <strong>{post.author?.name || "Viral Asia editorial"}</strong>
-            <time>{formatDate(post.publishedAt)}</time>
+            <strong
+              >{
+                author ? (
+                  <a href={author.path} rel="author">
+                    {author.name}
+                  </a>
+                ) : (
+                  "Viral Asia editorial"
+                )
+              }</strong
+            >
+            <time datetime={post.publishedAt}
+              >{formatDate(post.publishedAt)}</time
+            >
             <span>{readingMinutes} min read</span>
+            <a href="/editorial/">Editorial &amp; corrections</a>
           </div>
         </div>
 
@@ -212,8 +260,8 @@ const portableTextComponents = {
             src={heroImage || fallbackImage}
             alt={post.title}
             data-media-orientation={getImageOrientation(post)}
-            width="1400"
-            height="900"
+            width={heroSize.width}
+            height={heroSize.height}
             loading="eager"
           />
         </figure>
@@ -233,14 +281,25 @@ const portableTextComponents = {
         </aside>
 
         <div class="article-body" data-emdash-body>
-          {Array.isArray(post.body) && post.body.length > 0 ? (
-            <PortableText value={post.body} components={portableTextComponents} />
-          ) : (
-            <>
-              <p>This story is ready for publishing in Sanity, but the article body is currently empty.</p>
-              <p>Add content blocks in the Studio and the static Cloudflare build will render them here.</p>
-            </>
-          )}
+          {
+            Array.isArray(post.body) && post.body.length > 0 ? (
+              <PortableText
+                value={post.body}
+                components={portableTextComponents}
+              />
+            ) : (
+              <>
+                <p>
+                  This story is ready for publishing in Sanity, but the article
+                  body is currently empty.
+                </p>
+                <p>
+                  Add content blocks in the Studio and the static Cloudflare
+                  build will render them here.
+                </p>
+              </>
+            )
+          }
         </div>
       </div>
     </article>
@@ -313,7 +372,9 @@ const portableTextComponents = {
 
         const getTikTokVideoId = (sourceUrl) => {
           try {
-            return new URL(sourceUrl).pathname.match(/\/video\/(\d+)/)?.[1] || "";
+            return (
+              new URL(sourceUrl).pathname.match(/\/video\/(\d+)/)?.[1] || ""
+            );
           } catch {
             return "";
           }
@@ -327,7 +388,8 @@ const portableTextComponents = {
 
           links.forEach((link) => {
             const paragraph = link.closest("p");
-            if (!paragraph || paragraph.dataset.embedUpgraded === "true") return;
+            if (!paragraph || paragraph.dataset.embedUpgraded === "true")
+              return;
 
             const sourceUrl = link.href;
             const isInstagram = /instagram\.com/.test(sourceUrl);
@@ -395,7 +457,11 @@ const portableTextComponents = {
           });
 
           if (needsTikTok) {
-            loadEmbedScript("https://www.tiktok.com/embed.js", "tiktok-embed-script", () => {});
+            loadEmbedScript(
+              "https://www.tiktok.com/embed.js",
+              "tiktok-embed-script",
+              () => {},
+            );
           }
         };
 

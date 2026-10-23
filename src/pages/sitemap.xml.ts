@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getContentSnapshot } from "../lib/build-content.mjs";
 import { canonicalUrl } from "../config/site";
+import { authorArchives } from "../lib/seo-foundation.mjs";
 
 interface SitemapPost {
   path: string;
@@ -17,6 +18,7 @@ const STATIC_PATHS = [
   "/about/",
   "/contact/",
   "/bio/",
+  "/editorial/",
 ] as const;
 
 const escapeXml = (value: string) =>
@@ -31,15 +33,23 @@ const formatDate = (date?: string) =>
   date ? new Date(date).toISOString().slice(0, 10) : undefined;
 
 const urlEntry = (loc: string, lastmod?: string) => {
-  const lastmodTag = lastmod ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>` : "";
+  const lastmodTag = lastmod
+    ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>`
+    : "";
   return `  <url>\n    <loc>${escapeXml(loc)}</loc>${lastmodTag}\n  </url>`;
 };
 
 export const GET: APIRoute = async () => {
-  const { manifest: { posts } } = await getContentSnapshot();
+  const {
+    posts: sourcePosts,
+    manifest: { posts },
+  } = await getContentSnapshot();
 
   const entries = [
     ...STATIC_PATHS.map((path) => urlEntry(canonicalUrl(path))),
+    ...authorArchives(sourcePosts).map((author) =>
+      urlEntry(canonicalUrl(author.path)),
+    ),
     ...posts.map((post: SitemapPost) =>
       urlEntry(
         canonicalUrl(post.path),

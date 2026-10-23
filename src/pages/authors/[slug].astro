@@ -1,0 +1,112 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getContentSnapshot } from "../../lib/build-content.mjs";
+import {
+  authorArchives,
+  authorEntity,
+  breadcrumbSchema,
+  serializeJsonLd,
+} from "../../lib/seo-foundation.mjs";
+import { canonicalUrl, organizationJsonLd } from "../../config/site";
+
+export async function getStaticPaths() {
+  const { posts } = await getContentSnapshot();
+  return authorArchives(posts).map((author) => ({
+    params: { slug: author.slug },
+    props: { author },
+  }));
+}
+
+const { author } = Astro.props;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: `${author.name} — Articles`,
+  url: canonicalUrl(author.path),
+  about: authorEntity(author, canonicalUrl),
+  publisher: organizationJsonLd,
+  mainEntity: {
+    "@type": "ItemList",
+    itemListElement: author.posts.map((post, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: post.title,
+      url: canonicalUrl(`/blog/${post.slug.current}/`),
+    })),
+  },
+};
+const breadcrumbs = breadcrumbSchema([
+  { name: "Home", url: canonicalUrl("/") },
+  { name: author.name, url: canonicalUrl(author.path) },
+]);
+---
+
+<Layout
+  title={`${author.name} — Articles | Viral Asia`}
+  description={`Articles published under the byline ${author.name} on Viral Asia.`}
+  canonicalUrl={canonicalUrl(author.path)}
+>
+  <script type="application/ld+json" set:html={serializeJsonLd(schema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(breadcrumbs)} />
+  <main>
+    <nav aria-label="Breadcrumb">
+      <a href="/">Viral Asia</a> / <span aria-current="page"
+        >{author.name}</span>
+    </nav>
+    <h1>{author.name}</h1>
+    <h2>Articles</h2>
+    <ul>
+      {
+        author.posts.map((post) => (
+          <li>
+            <a href={`/blog/${post.slug.current}/`}>{post.title}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <footer>
+      <a href="/editorial/">Editorial &amp; corrections</a> · <a href="/"
+        >Latest stories</a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(body) {
+    background: #fff;
+    color: #111;
+  }
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+  nav,
+  footer {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 2rem 0 1rem;
+  }
+  h2 {
+    border-bottom: 4px solid #ed1c24;
+    padding-bottom: 0.6rem;
+  }
+  ul {
+    padding-left: 1.2rem;
+  }
+  li {
+    padding: 0.75rem 0;
+    line-height: 1.5;
+  }
+  a:hover {
+    color: #b80f16;
+  }
+  footer {
+    margin-top: 2rem;
+    border-top: 1px solid #dedede;
+    padding-top: 1rem;
+  }
+</style>

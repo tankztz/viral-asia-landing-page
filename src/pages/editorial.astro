@@ -1,0 +1,107 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonicalUrl, organizationJsonLd } from "../config/site";
+import { breadcrumbSchema, serializeJsonLd } from "../lib/seo-foundation.mjs";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Editorial & corrections",
+  url: canonicalUrl("/editorial/"),
+  publisher: organizationJsonLd,
+};
+const breadcrumbs = breadcrumbSchema([
+  { name: "Home", url: canonicalUrl("/") },
+  { name: "Editorial & corrections", url: canonicalUrl("/editorial/") },
+]);
+---
+
+<Layout
+  title="Editorial & corrections | Viral Asia"
+  description="Sources, factual corrections and paid-content disclosure at Viral Asia. Contact hello@viralasia.co about a story."
+  canonicalUrl={canonicalUrl("/editorial/")}
+>
+  <script type="application/ld+json" set:html={serializeJsonLd(schema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(breadcrumbs)} />
+  <main>
+    <nav aria-label="Breadcrumb">
+      <a href="/">Viral Asia</a> / <span aria-current="page"
+        >Editorial &amp; corrections</span>
+    </nav>
+    <h1>Editorial &amp; corrections</h1>
+    <section>
+      <h2>Sources and attribution</h2>
+      <p>
+        Stories should identify their sources, including original social posts,
+        official information, written responses and supplied photographs. A
+        social post or a reader's comment is not independent confirmation of a
+        claim.
+      </p>
+      <p>
+        Coverage based on those materials should not imply a firsthand visit,
+        interview or eyewitness account unless that reporting took place. Check
+        linked organisers or venues for changes to event times, prices and
+        availability.
+      </p>
+    </section>
+    <section>
+      <h2>Factual corrections</h2>
+      <p>
+        To flag a factual error, email <a href="mailto:hello@viralasia.co"
+          >hello@viralasia.co</a
+        > with the article URL, the detail you believe is wrong and a supporting
+        source where available. Use the same address to raise an attribution or disclosure
+        concern.
+      </p>
+    </section>
+    <section>
+      <h2>Paid content and relationships</h2>
+      <p>
+        Paid or sponsored content should be clearly labelled. Relevant
+        commercial relationships or support for a featured project should be
+        disclosed in the story, alongside attribution for supplied material.
+      </p>
+    </section>
+    <footer>
+      <a href="/">Latest stories</a> · <a href="/about/">About Viral Asia</a>
+    </footer>
+  </main>
+</Layout>
+
+<style>
+  :global(body) {
+    background: #fff;
+    color: #111;
+  }
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+  nav,
+  footer {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 2rem 0;
+  }
+  h2 {
+    border-bottom: 4px solid #ed1c24;
+    padding-bottom: 0.6rem;
+    margin-top: 2rem;
+  }
+  p {
+    line-height: 1.75;
+    font-size: 1.06rem;
+  }
+  a:hover {
+    color: #b80f16;
+  }
+  footer {
+    margin-top: 2rem;
+    border-top: 1px solid #dedede;
+    padding-top: 1rem;
+  }
+</style>
