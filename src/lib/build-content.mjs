@@ -10,7 +10,7 @@ export const CONTENT_SNAPSHOT_QUERY = `{
       author->{name},
       categories[]->{_id, title, slug},
       "categoryIds": categories[]._ref,
-      mainImage {asset->{url, metadata {dimensions}}}
+      mainImage {asset->{_id, url, metadata {dimensions}}}
     },
   "categories": *[_type == "category" && !(_id in path("drafts.**")) && defined(title)]
     | order(title asc, _id asc) {_id, title, slug, description}

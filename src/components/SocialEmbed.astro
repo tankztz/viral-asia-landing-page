@@ -6,7 +6,7 @@ interface SocialEmbedNode {
 }
 
 const { node } = Astro.props as { node: SocialEmbedNode };
-const platform = node?.platform || "instagram";
+const platform = node?.platform;
 const url = node?.url || "";
 const caption = node?.caption;
 
@@ -24,17 +24,6 @@ const getYouTubeEmbedUrl = (sourceUrl: string) => {
   }
 };
 
-const getInstagramEmbedUrl = (sourceUrl: string) => {
-  try {
-    const parsed = new URL(sourceUrl);
-    const match = parsed.pathname.match(/\/(p|reel|tv)\/([^/?]+)/);
-    if (!match) return undefined;
-    return `https://www.instagram.com/${match[1]}/${match[2]}/embed/captioned/`;
-  } catch {
-    return undefined;
-  }
-};
-
 const getTikTokVideoId = (sourceUrl: string) => {
   try {
     return new URL(sourceUrl).pathname.match(/\/video\/(\d+)/)?.[1] || "";
@@ -43,30 +32,12 @@ const getTikTokVideoId = (sourceUrl: string) => {
   }
 };
 
-const instagramEmbedUrl =
-  platform === "instagram" ? getInstagramEmbedUrl(url) : undefined;
 const youtubeEmbedUrl = platform === "youtube" ? getYouTubeEmbedUrl(url) : undefined;
 const tiktokVideoId = platform === "tiktok" ? getTikTokVideoId(url) : "";
 ---
 
-{url && (
+{url && platform && platform !== "instagram" && (
   <figure class={`social-embed social-embed--${platform}`}>
-    {platform === "instagram" && instagramEmbedUrl && (
-      <iframe
-        class="social-embed-frame social-embed-frame--instagram"
-        src={instagramEmbedUrl}
-        title={caption || "Embedded Instagram post"}
-        loading="lazy"
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-      ></iframe>
-    )}
-
-    {platform === "instagram" && !instagramEmbedUrl && (
-      <a class="social-embed-fallback" href={url} target="_blank" rel="noopener noreferrer">
-        View this post on Instagram
-      </a>
-    )}
-
     {platform === "tiktok" && (
       <blockquote class="tiktok-embed" cite={url} data-video-id={tiktokVideoId}>
         <a href={url} target="_blank" rel="noopener noreferrer">
@@ -122,13 +93,6 @@ const tiktokVideoId = platform === "tiktok" ? getTikTokVideoId(url) : "";
     aspect-ratio: 16 / 9;
     border: 0;
     background: #111111;
-  }
-
-  .social-embed-frame--instagram {
-    width: min(100%, 540px);
-    height: min(720px, 82vh);
-    border: 1px solid rgba(5, 5, 5, 0.14);
-    background: #ffffff;
   }
 
   .social-embed-fallback {
